@@ -1,3 +1,5 @@
+import DoctorSideBar from '../components/DoctorSideBar.jsx';
+
 const patientList = [
   { name: 'Sunita Rai', weeks: 28, id: '#SR-2024', active: true, avatar: 'from-[#ffb26b] to-[#e86f70]' },
   { name: 'Maya Tamang', weeks: 14, id: '#MT-8812', avatar: 'from-[#f3d48b] to-[#df8a72]' },
@@ -19,62 +21,6 @@ const notes = [
       'Iron-rich diet plan discussed. Patient is compliant with prenatal vitamins but experiencing nausea with ferrous sulfate. Suggested alternative liquid formulation.',
   },
 ];
-
-function IconShield({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M12 3l7 3v5c0 4.7-2.9 8.9-7 10-4.1-1.1-7-5.3-7-10V6l7-3z" fill="currentColor" />
-      <path d="M12 8v7M8.5 11.5h7" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconGrid({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <rect x="4" y="4" width="7" height="7" rx="1.5" fill="currentColor" />
-      <rect x="13" y="4" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.75" />
-      <rect x="4" y="13" width="7" height="7" rx="1.5" fill="currentColor" opacity="0.75" />
-      <rect x="13" y="13" width="7" height="7" rx="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-function IconPatient({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <circle cx="9" cy="8" r="3" fill="currentColor" />
-      <path d="M3.5 18.5a5.5 5.5 0 0111 0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M17 8v8M13 12h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconCalendar({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <rect x="4" y="6" width="16" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 3v6M16 3v6M4 10h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconChart({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M5 18V9M12 18V5M19 18v-7M4 19h16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function IconFile({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M14 3v5h5M10 12h6M10 16h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function IconBell({ className = '' }) {
   return (
@@ -115,6 +61,15 @@ function IconHistory({ className = '' }) {
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
       <path d="M5 5v5h5M6.5 14a6 6 0 106.2-8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <path d="M12 9v4l2.5 1.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconFile({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M7 3h7l5 5v13H7z" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M14 3v5h5M10 12h6M10 16h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -162,15 +117,6 @@ function IconEdit({ className = '' }) {
   );
 }
 
-function IconLogout({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M10 5H6v14h4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M13 8l4 4-4 4M17 12H9" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function PatientAvatar({ name }) {
   const avatarGradient = patientList.find((patient) => patient.name === name)?.avatar || 'from-[#ffb26b] to-[#e86f70]';
   const initials = name
@@ -189,62 +135,13 @@ function PatientAvatar({ name }) {
 }
 
 export default function DoctorDashboard() {
-  const sidebarButtonClass =
-    'flex w-full items-center gap-3 rounded-2xl border-0 px-4 py-3 text-left text-[0.95rem] text-[#54607a] transition duration-200 hover:bg-[#f2f4ff] hover:text-[#3d39de]';
   const iconClass = 'h-[18px] w-[18px] shrink-0';
   const panelClass =
     'rounded-[22px] border border-[rgba(163,157,222,0.16)] bg-[rgba(255,255,255,0.9)] shadow-[0_18px_45px_rgba(80,66,170,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_52px_rgba(80,66,170,0.14)]';
 
   return (
-    <main className="grid min-h-screen text-[#20253d] lg:grid-cols-[246px_minmax(0,1fr)] xl:grid-cols-[96px_minmax(0,1fr)] min-[1181px]:grid-cols-[246px_minmax(0,1fr)]">
-      <aside className="flex flex-row items-start gap-4 overflow-x-auto border-b border-[rgba(134,132,188,0.16)] bg-[rgba(255,255,255,0.72)] p-4 backdrop-blur-[20px] lg:flex-col lg:justify-between lg:gap-6 lg:border-b-0 lg:border-r lg:px-4 lg:py-6 xl:items-center min-[1181px]:items-stretch">
-        <div className="flex items-center gap-3 px-2 xl:justify-center min-[1181px]:justify-start">
-          <div className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#635bff] to-[#483ae6] text-white shadow-[0_12px_30px_rgba(84,72,255,0.22)]">
-            <IconShield className={iconClass} />
-          </div>
-          <div className="xl:hidden min-[1181px]:block">
-            <h1 className="m-0 text-[1.1rem] font-semibold">MaterNova</h1>
-            <p className="m-0 text-[0.78rem] uppercase tracking-[0.14em] text-[#7a7f9a]">Nepal Health Portal</p>
-          </div>
-
-          <nav className="flex items-center gap-2 lg:grid lg:gap-1.5">
-            <button
-              className={`${sidebarButtonClass} bg-[#eef2ff] text-[#3a37e0] shadow-[inset_-3px_0_0_#5348ff] lg:bg-[linear-gradient(90deg,#eef2ff_0%,#f7f8ff_100%)]`}
-              type="button"
-            >
-              <IconGrid className={iconClass} />
-              <span>Dashboard</span>
-            </button>
-            <button className={sidebarButtonClass} type="button">
-              <IconPatient className={iconClass} />
-              <span>Patient Records</span>
-            </button>
-            <button className={sidebarButtonClass} type="button">
-              <IconCalendar className={iconClass} />
-              <span>Appointments</span>
-            </button>
-            <button className={sidebarButtonClass} type="button">
-              <IconChart className={iconClass} />
-              <span>Health Analytics</span>
-            </button>
-            <button className={sidebarButtonClass} type="button">
-              <IconFile className={iconClass} />
-              <span>Medical Resources</span>
-            </button>
-          </nav>
-        </div>
-
-        <div className="ml-auto flex items-center gap-2 border-0 pt-0 lg:ml-0 lg:grid lg:w-full lg:gap-1.5 lg:border-t lg:border-[rgba(134,132,188,0.14)] lg:px-2 lg:pt-5">
-          <button className={sidebarButtonClass} type="button">
-            <IconShield className={iconClass} />
-            <span>Help &amp; Support</span>
-          </button>
-          <button className={sidebarButtonClass} type="button">
-            <IconLogout className={iconClass} />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+    <main className="grid min-h-screen text-[#20253d] lg:grid-cols-[228px_minmax(0,1fr)]">
+      <DoctorSideBar />
 
       <section className="min-w-0">
         <header className="flex flex-col gap-4 border-b border-[rgba(134,132,188,0.16)] bg-[rgba(255,255,255,0.62)] px-4 py-4 backdrop-blur-[20px] sm:px-7 lg:flex-row lg:items-center lg:justify-between lg:py-[0.85rem]">

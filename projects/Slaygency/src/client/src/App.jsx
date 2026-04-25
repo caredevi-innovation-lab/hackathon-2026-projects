@@ -21,6 +21,7 @@ export default function App() {
     <div className={shellClassName}>
       {!isDoctorRoute && <Navbar />}
       <Routes>
+        <Route path="/" element={<Navigate to="/doctor" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
