@@ -4,6 +4,7 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/PatientDashboard.jsx';
+import PatientHistory from './pages/PatientHistory.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/SubmitHealthData.jsx';
 import WorkerDashboard from './pages/WorkerDashboard.jsx';
@@ -20,9 +21,11 @@ export default function App() {
     <div className={shellClassName}>
       {!isDoctorRoute && <Navbar />}
       <Routes>
+        <Route path="/" element={<Navigate to="/doctor" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
+        <Route path="/patient-history" element={<PatientHistory />} />
         <Route path="/worker" element={<WorkerDashboard />} />
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
