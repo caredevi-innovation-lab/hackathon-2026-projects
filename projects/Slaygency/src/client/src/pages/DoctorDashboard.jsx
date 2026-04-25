@@ -190,51 +190,53 @@ function PatientAvatar({ name }) {
 
 export default function DoctorDashboard() {
   const sidebarButtonClass =
-    'flex w-full items-center gap-4 rounded-2xl border-0 bg-transparent px-4 py-3.5 text-left text-[#3f4a63] transition duration-200 hover:translate-x-0.5 hover:bg-[rgba(92,85,255,0.08)] hover:text-[#332ecc] xl:justify-center xl:px-3 xl:[&>span]:hidden min-[1181px]:justify-start min-[1181px]:px-4 min-[1181px]:[&>span]:inline';
+    'flex w-full items-center gap-3 rounded-2xl border-0 px-4 py-3 text-left text-[0.95rem] text-[#54607a] transition duration-200 hover:bg-[#f2f4ff] hover:text-[#3d39de]';
   const iconClass = 'h-[18px] w-[18px] shrink-0';
   const panelClass =
-    'rounded-[22px] border border-[rgba(163,157,222,0.16)] bg-[rgba(255,255,255,0.9)] shadow-[0_18px_45px_rgba(80,66,170,0.08)]';
+    'rounded-[22px] border border-[rgba(163,157,222,0.16)] bg-[rgba(255,255,255,0.9)] shadow-[0_18px_45px_rgba(80,66,170,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_52px_rgba(80,66,170,0.14)]';
 
   return (
-    <main className="grid min-h-screen text-[#20253d] lg:grid-cols-[246px_minmax(0,1fr)] xl:grid-cols-[96px_minmax(0,1fr)] min-[1181px]:grid-cols-[246px_minmax(0,1fr)]">
-      <aside className="flex flex-row items-start gap-4 overflow-x-auto border-b border-[rgba(134,132,188,0.16)] bg-[rgba(255,255,255,0.72)] p-4 backdrop-blur-[20px] lg:flex-col lg:justify-between lg:gap-6 lg:border-b-0 lg:border-r lg:px-4 lg:py-6 xl:items-center min-[1181px]:items-stretch">
-        <div className="flex items-center gap-3 px-2 xl:justify-center min-[1181px]:justify-start">
-          <div className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#635bff] to-[#483ae6] text-white shadow-[0_12px_30px_rgba(84,72,255,0.22)]">
-            <IconShield className={iconClass} />
+    <main className="grid min-h-screen text-[#20253d] lg:grid-cols-[228px_minmax(0,1fr)]">
+      <aside className="flex flex-row items-start gap-4 overflow-x-auto border-b border-[rgba(134,132,188,0.14)] bg-[rgba(255,255,255,0.88)] p-4 backdrop-blur-[20px] lg:flex-col lg:justify-between lg:gap-8 lg:border-b-0 lg:border-r lg:px-3 lg:py-5">
+        <div className="w-full">
+          <div className="flex items-center gap-3 px-2 pb-5">
+            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-gradient-to-br from-[#635bff] to-[#483ae6] text-white shadow-[0_10px_24px_rgba(84,72,255,0.2)]">
+              <IconShield className="h-4 w-4 shrink-0" />
+            </div>
+            <div>
+              <h1 className="m-0 text-[1rem] font-semibold tracking-[-0.01em]">Maternova</h1>
+              <p className="m-0 text-[0.68rem] uppercase tracking-[0.16em] text-[#8b92ab]">Nepal Health Portal</p>
+            </div>
           </div>
-          <div className="xl:hidden min-[1181px]:block">
-            <h1 className="m-0 text-[1.1rem] font-semibold">Aama Care</h1>
-            <p className="m-0 text-[0.78rem] uppercase tracking-[0.14em] text-[#7a7f9a]">Nepal Health Portal</p>
-          </div>
+
+          <nav className="flex items-center gap-2 lg:grid lg:gap-1.5">
+            <button
+              className={`${sidebarButtonClass} bg-[#eef2ff] text-[#3a37e0] shadow-[inset_-3px_0_0_#5348ff] lg:bg-[linear-gradient(90deg,#eef2ff_0%,#f7f8ff_100%)]`}
+              type="button"
+            >
+              <IconGrid className={iconClass} />
+              <span>Dashboard</span>
+            </button>
+            <button className={sidebarButtonClass} type="button">
+              <IconPatient className={iconClass} />
+              <span>Patient Records</span>
+            </button>
+            <button className={sidebarButtonClass} type="button">
+              <IconCalendar className={iconClass} />
+              <span>Appointments</span>
+            </button>
+            <button className={sidebarButtonClass} type="button">
+              <IconChart className={iconClass} />
+              <span>Health Analytics</span>
+            </button>
+            <button className={sidebarButtonClass} type="button">
+              <IconFile className={iconClass} />
+              <span>Medical Resources</span>
+            </button>
+          </nav>
         </div>
 
-        <nav className="flex items-center gap-2 lg:grid lg:gap-2">
-          <button
-            className={`${sidebarButtonClass} bg-[linear-gradient(90deg,rgba(95,90,255,0.14),rgba(95,90,255,0.05))] text-[#2d29d7] shadow-[inset_3px_0_0_#5348ff]`}
-            type="button"
-          >
-            <IconGrid className={iconClass} />
-            <span>Dashboard</span>
-          </button>
-          <button className={sidebarButtonClass} type="button">
-            <IconPatient className={iconClass} />
-            <span>Patient Records</span>
-          </button>
-          <button className={sidebarButtonClass} type="button">
-            <IconCalendar className={iconClass} />
-            <span>Appointments</span>
-          </button>
-          <button className={sidebarButtonClass} type="button">
-            <IconChart className={iconClass} />
-            <span>Health Analytics</span>
-          </button>
-          <button className={sidebarButtonClass} type="button">
-            <IconFile className={iconClass} />
-            <span>Medical Resources</span>
-          </button>
-        </nav>
-
-        <div className="ml-auto flex items-center gap-2 border-0 pt-0 lg:ml-0 lg:grid lg:gap-1.5 lg:self-stretch lg:border-t lg:border-[rgba(134,132,188,0.16)] lg:pt-4">
+        <div className="ml-auto flex items-center gap-2 border-0 pt-0 lg:ml-0 lg:grid lg:w-full lg:gap-1.5 lg:border-t lg:border-[rgba(134,132,188,0.14)] lg:px-2 lg:pt-5">
           <button className={sidebarButtonClass} type="button">
             <IconShield className={iconClass} />
             <span>Help &amp; Support</span>
@@ -260,21 +262,25 @@ export default function DoctorDashboard() {
             />
           </label>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex items-center gap-3">
               <button
-                className="flex h-10 w-10 items-center justify-center rounded-xl border-0 bg-transparent text-[#5c667f]"
+                className="group relative flex h-11 w-11 items-center justify-center rounded-2xl border border-[#e6e9f7] bg-white text-[#4d5a78] shadow-[0_10px_24px_rgba(96,110,160,0.12)] transition duration-200 hover:-translate-y-0.5 hover:border-[#cfd6ff] hover:text-[#4039e6] hover:shadow-[0_16px_30px_rgba(76,72,255,0.18)]"
                 type="button"
                 aria-label="Notifications"
               >
-                <IconBell className={iconClass} />
+                <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-[#ff4d6d] ring-2 ring-white" />
+                <IconBell className="h-[19px] w-[19px] shrink-0 transition duration-200 group-hover:scale-110" />
               </button>
               <button
-                className="flex h-10 w-10 items-center justify-center rounded-xl border-0 bg-transparent text-[#5c667f]"
+                className="group relative flex h-11 min-w-[52px] items-center justify-center gap-1.5 rounded-2xl border border-[#e6e9f7] bg-gradient-to-br from-white to-[#f4f6ff] px-3 text-[#4d5a78] shadow-[0_10px_24px_rgba(96,110,160,0.12)] transition duration-200 hover:-translate-y-0.5 hover:border-[#cfd6ff] hover:text-[#4039e6] hover:shadow-[0_16px_30px_rgba(76,72,255,0.18)]"
                 type="button"
                 aria-label="Translate"
               >
-                <IconTranslate className={iconClass} />
+                <IconTranslate className="h-[18px] w-[18px] shrink-0 transition duration-200 group-hover:scale-110" />
+                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-[#6a72a0] transition duration-200 group-hover:text-[#4039e6]">
+                  En
+                </span>
               </button>
             </div>
             <div className="flex items-center gap-3 border-l-0 pl-0 sm:border-l sm:border-[rgba(134,132,188,0.2)] sm:pl-4">
@@ -290,7 +296,7 @@ export default function DoctorDashboard() {
         </header>
 
         <div className="grid gap-6 p-4 sm:p-7 xl:grid-cols-[282px_minmax(0,1fr)]">
-          <section className={`${panelClass} order-2 py-4 xl:order-1`}>
+          <section className={`${panelClass} order-2 self-start py-4 md:min-h-[384px] xl:order-1`}>
             <div className="flex items-start justify-between gap-4 px-4 pb-3">
               <p className="m-0 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Active Pregnancies</p>
               <div className="flex gap-2">
@@ -313,7 +319,7 @@ export default function DoctorDashboard() {
               {patientList.map((patient) => (
                 <article
                   key={patient.id}
-                  className={`grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3.5 px-4 py-3.5 ${
+                  className={`grid grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3.5 px-4 py-3.5 transition duration-200 hover:translate-x-1 hover:bg-[#f8f9ff] ${
                     patient.active
                       ? 'border-l-[3px] border-l-[#4f48ff] bg-[linear-gradient(90deg,rgba(88,81,255,0.07),rgba(88,81,255,0))]'
                       : 'border-l-[3px] border-l-transparent'
@@ -345,7 +351,7 @@ export default function DoctorDashboard() {
                   </div>
                   <p className="m-0 text-[0.86rem] text-[#727a93]">Age: 26 | LMP: Aug 12, 2023 | EDD: May 19, 2024</p>
                 </div>
-                <span className="absolute left-2 top-[calc(100%-0.4rem)] inline-flex items-center justify-center rounded-full bg-gradient-to-b from-[#ff5858] to-[#c91e2d] px-2.5 py-1 text-[0.74rem] font-semibold uppercase text-white sm:bottom-[-0.5rem] sm:top-auto">
+                <span className="absolute -left-2 top-[calc(100%-0.3rem)] inline-flex items-center justify-center rounded-full bg-gradient-to-b from-[#ff5858] to-[#c91e2d] px-1.5 py-[0.15rem] text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-white sm:bottom-[-0.3rem] sm:top-auto">
                   High Risk
                 </span>
               </div>
@@ -393,14 +399,14 @@ export default function DoctorDashboard() {
 
                 <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,150px)_minmax(0,1fr)]">
                   <div className="grid gap-4">
-                    <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4">
+                    <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(219,78,78,0.12)]">
                       <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Elevated BP</span>
                       <strong className="my-1 block text-[1.1rem] font-semibold">145/95 mmHg</strong>
                       <p className="m-0 text-[#727a93]">Sustained increase over 48 hours (+15% trend)</p>
                       <em className="mt-2 block text-[0.78rem] font-bold uppercase not-italic text-[#d0164d]">Critical</em>
                     </article>
 
-                    <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4">
+                    <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(219,78,78,0.12)]">
                       <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Low Hemoglobin</span>
                       <strong className="my-1 block text-[1.1rem] font-semibold">9.2 g/dL</strong>
                       <p className="m-0 text-[#727a93]">Below recommended threshold of 11.0 g/dL.</p>
@@ -409,7 +415,7 @@ export default function DoctorDashboard() {
                   </div>
 
                   <div className="grid gap-4">
-                    <article className="rounded-[18px] border border-[rgba(185,191,248,0.7)] bg-gradient-to-b from-[rgba(240,243,255,0.9)] to-[rgba(234,236,255,0.75)] p-4 text-[#2b2f77]">
+                    <article className="rounded-[18px] border border-[rgba(185,191,248,0.7)] bg-gradient-to-b from-[rgba(240,243,255,0.9)] to-[rgba(234,236,255,0.75)] p-4 text-[#2b2f77] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(88,93,214,0.14)]">
                       <p className="m-0 leading-8 text-[#2f2e74]">
                         AI suggests immediate Proteinuria screening and adjustment of Iron supplementation.
                         Predicted risk of preterm labor increased by 12%.
@@ -509,7 +515,7 @@ export default function DoctorDashboard() {
 
               <div className="grid gap-4">
                 {notes.map((note) => (
-                  <article key={note.title} className="relative rounded-[18px] bg-[#fafbfe] p-4">
+                  <article key={note.title} className="relative rounded-[18px] bg-[#fafbfe] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(89,97,130,0.12)]">
                     <div className="mb-3.5 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">{note.time}</div>
                     <button
                       className="absolute right-4 top-4 border-0 bg-transparent p-0 text-[#c0c6d9]"
