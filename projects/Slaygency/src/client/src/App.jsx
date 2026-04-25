@@ -1,8 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
-import { AuthProvider } from './context/AuthContext.jsx';
-import { RoleProvider } from './context/RoleContext.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
@@ -13,14 +10,11 @@ import WorkerDashboard from './pages/WorkerDashboard.jsx';
 import './app.css';
 
 export default function App() {
-  const location = useLocation();
-  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
-
   return (
     <AuthProvider>
       <RoleProvider>
         <div className="app-shell min-h-screen">
-          {!isAuthRoute && <Navbar />}
+          <Navbar />
           <Routes>
             <Route path="/" element={<Navigate to="/patient" replace />} />
             <Route path="/login" element={<LoginPage />} />
