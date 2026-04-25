@@ -21,7 +21,6 @@ app.get('/', (_req, res) => {
   res.json({ message: 'API is running' });
 });
 
-
 app.use(notFound);
 app.use(errorHandler);
 
