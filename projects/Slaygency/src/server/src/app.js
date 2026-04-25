@@ -2,6 +2,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import alertsRoutes from './routes/alertsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import patientsRoutes from './routes/patientsRoutes.js';
@@ -26,6 +27,7 @@ app.get('/', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/alerts', alertsRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/patients', patientsRoutes);
 app.use('/api/users', userRoutes);

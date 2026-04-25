@@ -1,4 +1,5 @@
 import { HealthRecord } from '../models/HealthRecord.js';
+import { createConditionAlertFromRecord } from './alertController.js';
 
 function isRealisticBP(systolicBP, diastolicBP) {
 	if (systolicBP <= diastolicBP) return false;
@@ -45,6 +46,11 @@ export async function addHealthRecord(req, res, next) {
 			symptoms: Array.isArray(req.body.symptoms) ? req.body.symptoms : [],
 			pregnancyHistory:
 				req.body.pregnancyHistory !== undefined ? req.body.pregnancyHistory : '',
+		});
+
+		await createConditionAlertFromRecord({
+			healthRecord: record,
+			actorId: req.user.id,
 		});
 
 		return res.status(201).json(record);
@@ -95,6 +101,12 @@ export async function updateHealthRecord(req, res, next) {
 		record.pregnancyHistory = mergedPayload.pregnancyHistory;
 
 		await record.save();
+
+		await createConditionAlertFromRecord({
+			healthRecord: record,
+			actorId: req.user.id,
+		});
+
 		return res.json(record);
 	} catch (error) {
 		return next(error);
