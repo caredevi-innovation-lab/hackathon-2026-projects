@@ -203,7 +203,7 @@ export default function DoctorDashboard() {
             <IconShield className={iconClass} />
           </div>
           <div className="xl:hidden min-[1181px]:block">
-            <h1 className="m-0 text-[1.1rem] font-semibold">Aama Care</h1>
+            <h1 className="m-0 text-[1.1rem] font-semibold">MaterNova</h1>
             <p className="m-0 text-[0.78rem] uppercase tracking-[0.14em] text-[#7a7f9a]">Nepal Health Portal</p>
           </div>
         </div>
