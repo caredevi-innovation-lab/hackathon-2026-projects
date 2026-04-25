@@ -2,6 +2,8 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/user.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { notFound } from './middleware/notFound.middleware.js';
 
@@ -20,6 +22,9 @@ app.use(express.json());
 app.get('/', (_req, res) => {
   res.json({ message: 'API is running' });
 });
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 
 app.use(notFound);
