@@ -1,0 +1,56 @@
+.app-shell {
+  min-height: 100vh;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.5rem;
+  background: #0f1b34;
+  color: #fff;
+}
+
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.nav-links a.active {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(16, 31, 62, 0.08);
+}
+
+pre {
+  overflow-x: auto;
+  background: #f2f4f8;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.error {
+  color: var(--danger);
+}

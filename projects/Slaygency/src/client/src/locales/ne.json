@@ -1,0 +1,11 @@
+{
+  "appName": "मातृ स्वास्थ्य जोखिम ड्यासबोर्ड",
+  "login": "लगइन",
+  "register": "दर्ता",
+  "risk": "जोखिम",
+  "submitHealthData": "स्वास्थ्य विवरण पठाउनुहोस्",
+  "patientDashboard": "बिरामी ड्यासबोर्ड",
+  "workerDashboard": "स्वास्थ्यकर्मी ड्यासबोर्ड",
+  "doctorDashboard": "डाक्टर ड्यासबोर्ड",
+  "adminDashboard": "प्रशासक ड्यासबोर्ड"
+}

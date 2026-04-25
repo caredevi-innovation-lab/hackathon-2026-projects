@@ -1,0 +1,11 @@
+{
+  "appName": "Maternal Health Risk Dashboard",
+  "login": "Login",
+  "register": "Register",
+  "risk": "Risk",
+  "submitHealthData": "Submit Health Data",
+  "patientDashboard": "Patient Dashboard",
+  "workerDashboard": "Health Worker Dashboard",
+  "doctorDashboard": "Doctor Dashboard",
+  "adminDashboard": "Admin Dashboard"
+}
