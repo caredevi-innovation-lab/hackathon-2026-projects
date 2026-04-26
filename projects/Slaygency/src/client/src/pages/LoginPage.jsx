@@ -1,11 +1,24 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import { loginUser } from '../services/apiService.js';
 import loginImage from '../assets/images/login.jpg';
+
+function getRedirectPath(role) {
+  switch (role) {
+    case 'Admin':
+      return '/admin/dashboard';
+    case 'Doctor':
+      return '/doctor';
+    case 'Patient':
+    default:
+      return '/patient-health-data-entry';
+  }
+}
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,8 +30,10 @@ export default function LoginPage() {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
-      const { data } = await axios.post('/api/auth/login', { email, password });
+      const data = await loginUser({ email, password });
       login(data);
+      const redirectPath = getRedirectPath(data.user?.role);
+      navigate(redirectPath, { replace: true });
     } catch (error) {
       const message =
         error?.response?.data?.message ||

@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerUser } from '../services/apiService.js';
 import registerImage from '../assets/images/register.jpg';
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    // ...existing code...
+    role: 'Patient',
     agreed: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,14 +39,18 @@ export default function RegisterPage() {
       setSuccessMessage('');
       setErrorMessage('');
 
-      await axios.post('/api/auth/register', {
+      await registerUser({
         name: form.name,
         email: form.email,
         password: form.password,
         role: form.role,
+        phone: form.phone,
       });
 
-      setSuccessMessage('Registration completed. Please sign in.');
+      setSuccessMessage('Registration completed! Redirecting to sign in...');
+      setTimeout(() => {
+        navigate('/login', { replace: true });
+      }, 1200);
     } catch (error) {
       const message =
         error?.response?.data?.message ||
