@@ -1,98 +1,68 @@
-import axios from 'axios';
+/**
+ * Backward-compatible re-exports from the canonical API service.
+ * All new code should import from './services/apiService.js' directly.
+ * This file exists only so existing pages that import from './api.js' continue to work.
+ */
+export {
+  default,
+  default as api,
+} from './services/apiService.js';
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
-  timeout: 15000,
-});
+export {
+  loginUser,
+  registerUser,
+  getMe as fetchMe,
+  createHealthRecord,
+  createHealthRecord as addHealthRecord,
+  getMyHealthRecords as fetchHealth,
+  updateHealthRecord,
+  predictRisk,
+  listUsers,
+  listPatients,
+  getPatientById,
+  getAlerts,
+  createAlert,
+  resolveAlert,
+} from './services/apiService.js';
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// ── Dashboard stats (kept here for backward compat) ─────────────────────────
+import apiInstance from './services/apiService.js';
+
+export async function fetchDashboardStats() {
+  try {
+    const { data } = await apiInstance.get('/dashboard/stats');
+    return data;
+  } catch {
+    const [patientsResult, alertsResult] = await Promise.allSettled([
+      apiInstance.get('/patients', { params: { role: 'Patient', limit: 1 } }),
+      apiInstance.get('/alerts', { params: { status: 'active', limit: 10 } }),
+    ]);
+
+    const patientsData = patientsResult.status === 'fulfilled' ? patientsResult.value.data : {};
+    const alertsData = alertsResult.status === 'fulfilled' ? alertsResult.value.data : {};
+
+    const totalPatients = Number(patientsData?.total) || 0;
+    const urgentAlerts = Array.isArray(alertsData?.items) ? alertsData.items : [];
+
+    return {
+      stats: {
+        totalPatients,
+        highRiskCount: urgentAlerts.length,
+        pendingReports: 0,
+        avgResponseTime: '--',
+      },
+      urgentAlerts,
+    };
   }
-  return config;
-});
-
-// ── Auth ────────────────────────────────────────────────────────────────────
-export async function loginUser(payload) {
-  const { data } = await api.post('/auth/login', payload);
-  return data;
 }
 
-export async function registerUser(payload) {
-  const { data } = await api.post('/auth/register', payload);
+// ── Profile (backward compat) ────────────────────────────────────────────────
+export async function updateProfile(payload) {
+  const { data } = await apiInstance.patch('/users/profile', payload);
   return data;
-}
-
-export async function fetchMe() {
-  const { data } = await api.get('/auth/me');
-  return data; // { user: {...} }
 }
 
 export async function changePassword(payload) {
-  const { data } = await api.post('/auth/password/change', payload);
+  const { data } = await apiInstance.post('/auth/password/change', payload);
   return data;
 }
-
-// ── Health Records ───────────────────────────────────────────────────────────
-export async function fetchHealth() {
-  const { data } = await api.get('/health');
-  return data; // Array of health records
-}
-
-/**
- * Create a health record.
- * Backend expects: age, systolicBP, diastolicBP, hemoglobin, symptoms[], pregnancyHistory
- */
-export async function createHealthRecord(payload) {
-  const { data } = await api.post('/health', payload);
-  return data;
-}
-
-export async function updateHealthRecord(id, payload) {
-  const { data } = await api.put(`/health/${id}`, payload);
-  return data;
-}
-
-// ── Risk Analysis ────────────────────────────────────────────────────────────
-/**
- * Predict risk.
- * Backend expects: age, bpSystolic (or systolicBP), bpDiastolic (or diastolicBP),
- *                  hemoglobin, symptoms[]
- */
-export async function predictRisk(payload) {
-  const { data } = await api.post('/risk/predict', payload);
-  return data; // { success: true, prediction: {...} }
-}
-
-// ── User / Profile ───────────────────────────────────────────────────────────
-export async function updateProfile(payload) {
-  // payload: { name?, phone? }
-  const { data } = await api.patch('/users/profile', payload);
-  return data; // { user: {...} }
-}
-
-export async function fetchDashboardStats() {
-  const [patientsResult, alertsResult] = await Promise.allSettled([
-    api.get('/patients', { params: { role: 'Patient', limit: 1 } }),
-    api.get('/alerts', { params: { status: 'active', limit: 10 } }),
-  ]);
-
-  const patientsData = patientsResult.status === 'fulfilled' ? patientsResult.value.data : {};
-  const alertsData = alertsResult.status === 'fulfilled' ? alertsResult.value.data : {};
-
-  const totalPatients = Number(patientsData?.total) || 0;
-  const urgentAlerts = Array.isArray(alertsData?.items) ? alertsData.items : [];
-
-  return {
-    stats: {
-      totalPatients,
-      highRiskCount: urgentAlerts.length,
-      pendingReports: 0,
-      avgResponseTime: '--',
-    },
-    urgentAlerts,
-  };
-}
-
-export default api;

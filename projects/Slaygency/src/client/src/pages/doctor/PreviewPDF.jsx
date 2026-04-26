@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from "../../components/DoctorSideBar";
 
@@ -47,7 +47,7 @@ export default function PreviewPDF() {
                 <p className="text-sm text-gray-600 mt-2">124 Healthcare Ave, Medical District &bull; (555) 019-8273</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-gray-800 uppercase tracking-widest text-xs mb-1">Official Medical Record</p>
+                <p className="font-semibold text-gray-800  tracking-widest text-xs mb-1">Official Medical Record</p>
                 <p className="text-sm text-gray-500">Date: {new Date().toLocaleDateString()}</p>
               </div>
             </div>
@@ -56,19 +56,19 @@ export default function PreviewPDF() {
             <div className="bg-gray-50 border border-gray-200 p-5 mb-8 rounded">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Patient Name</p>
+                  <p className="text-xs text-gray-500 font-semibold  tracking-widest mb-1">Patient Name</p>
                   <p className="text-lg font-semibold text-gray-900">Elena Rostova</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Patient ID</p>
+                  <p className="text-xs text-gray-500 font-semibold  tracking-widest mb-1">Patient ID</p>
                   <p className="text-lg font-medium text-gray-800">#99281-RT</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Date of Birth</p>
+                  <p className="text-xs text-gray-500 font-semibold  tracking-widest mb-1">Date of Birth</p>
                   <p className="text-base font-medium text-gray-800">Oct 12, 1994 (31 yrs)</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Attending Physician</p>
+                  <p className="text-xs text-gray-500 font-semibold  tracking-widest mb-1">Attending Physician</p>
                   <p className="text-base font-semibold text-gray-900">Dr. Sarah Jenkins</p>
                 </div>
               </div>
@@ -130,3 +130,4 @@ export default function PreviewPDF() {
     </div>
   );
 }
+

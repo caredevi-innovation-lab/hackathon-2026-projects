@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PatientSideBar from '../../components/PatientSideBar.jsx';
+// Sidebar now provided by AppLayout
 import { createHealthRecord, predictRisk } from '../../api.js';
 
 const SYMPTOM_OPTIONS = ['Headache', 'Swelling', 'Dizziness', 'Fatigue', 'Vision Blur', 'Abdominal Pain', 'Nausea', 'Bleeding'];
@@ -36,7 +36,7 @@ function RangeInput({ name, label, value, min, max, unit, onChange, color = 'ind
     <div>
       <div className="flex justify-between items-baseline mb-2">
         <label className="text-sm font-semibold text-slate-700">{label}</label>
-        <span className={`text-xl font-black text-indigo-700`}>{value} <span className="text-xs font-medium text-slate-400">{unit}</span></span>
+        <span className={`text-xl font-semibold text-indigo-700`}>{value} <span className="text-xs font-medium text-slate-400">{unit}</span></span>
       </div>
       <input
         type="range" name={name} min={min} max={max} step={name === 'hemoglobin' ? '0.1' : '1'}
@@ -105,7 +105,7 @@ export default function PatientHealthDataEntryForm() {
     setMessage('');
 
     try {
-      // ── Backend expects these exact field names ──────────────────────────
+      // â”€â”€ Backend expects these exact field names â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const healthPayload = {
         age: Number(form.age),
         systolicBP: Number(form.systolicBP),
@@ -118,7 +118,7 @@ export default function PatientHealthDataEntryForm() {
       // Save health record first
       const record = await createHealthRecord(healthPayload);
 
-      // ── Risk service also maps bpSystolic / bpDiastolic fields ──────────
+      // â”€â”€ Risk service also maps bpSystolic / bpDiastolic fields â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let prediction = null;
       try {
         const riskRes = await predictRisk({
@@ -130,7 +130,7 @@ export default function PatientHealthDataEntryForm() {
         });
         prediction = riskRes?.prediction ?? null;
       } catch (riskErr) {
-        // AI service may be offline — use client-side estimate
+        // AI service may be offline â€” use client-side estimate
         console.warn('AI risk service unavailable, using estimate:', riskErr.message);
         prediction = {
           riskScore: liveRisk,
@@ -161,15 +161,12 @@ export default function PatientHealthDataEntryForm() {
   };
 
   return (
-    <main className="flex h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-blue-50/20 text-[#10264d] overflow-hidden">
-      <PatientSideBar />
-
-      <section className="flex-1 flex flex-col overflow-y-auto w-full min-w-0 px-4 py-6 md:px-8 md:py-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl w-full text-[#10264d]">
 
         {/* Page Header */}
         <div className="mb-8">
-          <p className="text-indigo-600 font-semibold text-sm mb-1">MaterNova — Health Data Entry</p>
-          <h1 className="text-3xl font-bold text-slate-800">Log Your Health Data</h1>
+          <p className="text-indigo-600 font-semibold text-sm mb-1">MaterNova â€” Health Data Entry</p>
+          <h1 className="text-3xl font-semibold text-slate-800">Log Your Health Data</h1>
           <p className="text-slate-500 text-sm mt-1">Fill in your current vitals for an AI-powered maternal risk assessment.</p>
         </div>
 
@@ -177,7 +174,7 @@ export default function PatientHealthDataEntryForm() {
 
           {/* Vitals Card */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <h2 className="text-base font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-slate-800 mb-6 flex items-center gap-2">
               <span className="w-7 h-7 bg-indigo-100 rounded-lg flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-4 h-4 text-indigo-600 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
               </span>
@@ -229,13 +226,13 @@ export default function PatientHealthDataEntryForm() {
 
           {/* Symptoms Card */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-            <h2 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+            <h2 className="text-base font-semibold text-slate-800 mb-4 flex items-center gap-2">
               <span className="w-7 h-7 bg-pink-100 rounded-lg flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-4 h-4 text-pink-600 fill-current"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
               </span>
               Current Symptoms
               {form.symptoms.length > 0 && (
-                <span className="ml-auto text-xs bg-pink-100 text-pink-700 font-bold px-2.5 py-1 rounded-full">{form.symptoms.length} selected</span>
+                <span className="ml-auto text-xs bg-pink-100 text-pink-700 font-semibold px-2.5 py-1 rounded-full">{form.symptoms.length} selected</span>
               )}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -262,14 +259,14 @@ export default function PatientHealthDataEntryForm() {
             liveRisk >= 60 ? 'bg-red-50 border-red-200' : liveRisk >= 35 ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-200'
           }`}>
             <div>
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Live Risk Estimate</p>
-              <p className={`text-2xl font-black ${liveRisk >= 60 ? 'text-red-700' : liveRisk >= 35 ? 'text-amber-700' : 'text-emerald-700'}`}>
+              <p className="text-xs font-semibold text-slate-500  tracking-widest mb-1">Live Risk Estimate</p>
+              <p className={`text-2xl font-semibold ${liveRisk >= 60 ? 'text-red-700' : liveRisk >= 35 ? 'text-amber-700' : 'text-emerald-700'}`}>
                 {riskLabel.text}
               </p>
               <p className="text-xs text-slate-500 mt-1">Submit to get the full AI-powered analysis</p>
             </div>
             <div className="text-right shrink-0">
-              <p className={`text-5xl font-black ${liveRisk >= 60 ? 'text-red-600' : liveRisk >= 35 ? 'text-amber-600' : 'text-emerald-600'}`}>{liveRisk}</p>
+              <p className={`text-5xl font-semibold ${liveRisk >= 60 ? 'text-red-600' : liveRisk >= 35 ? 'text-amber-600' : 'text-emerald-600'}`}>{liveRisk}</p>
               <p className="text-xs text-slate-400">/ 100</p>
             </div>
           </div>
@@ -291,18 +288,19 @@ export default function PatientHealthDataEntryForm() {
             </button>
             <button
               type="submit" disabled={submitting}
-              className="flex-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold py-3 px-8 rounded-xl shadow-md shadow-indigo-200 transition-all text-sm flex-1 flex items-center justify-center gap-2"
+              className="flex-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold py-3 px-8 rounded-xl shadow-md shadow-indigo-200 transition-all text-sm flex-1 flex items-center justify-center gap-2"
             >
               {submitting ? (
                 <>
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                   Analyzing...
                 </>
-              ) : 'Run Risk Analysis →'}
+              ) : 'Run Risk Analysis â†’'}
             </button>
           </div>
         </form>
-      </section>
-    </main>
+    </div>
   );
 }
+
+

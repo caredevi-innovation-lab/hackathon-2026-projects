@@ -1,4 +1,4 @@
-import DoctorSideBar from '../components/DoctorSideBar.jsx';
+﻿// Sidebar now provided by AppLayout
 
 const patients = [
   {
@@ -49,9 +49,7 @@ const patients = [
 
 export default function PatientRecords() {
   return (
-    <main className="grid min-h-screen text-[#20253d] lg:grid-cols-[228px_minmax(0,1fr)] bg-[#f7f8fa]">
-      <DoctorSideBar />
-      <section className="min-w-0">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full text-[#20253d]">
         {/* Header */}
         <header className="flex flex-col gap-4 border-b border-[rgba(134,132,188,0.16)] bg-white/80 px-4 py-4 backdrop-blur-[20px] sm:px-7 lg:flex-row lg:items-center lg:justify-between lg:py-[0.85rem]">
           <input
@@ -66,7 +64,7 @@ export default function PatientRecords() {
             <div className="flex items-center gap-2">
               <span className="font-semibold text-[#20253d]">Dr. Sharma</span>
               <span className="text-xs text-[#8e95ac]">Senior Obstetrician</span>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-bold">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-semibold">
                 DS
               </div>
             </div>
@@ -132,7 +130,7 @@ export default function PatientRecords() {
                 {patients.map((p) => (
                   <tr key={p.id} className="hover:bg-[#f8f9ff] transition">
                     <td className="px-6 py-4 flex items-center gap-3">
-                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-bold">
+                      <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-semibold">
                         {p.name
                           .split(' ')
                           .map((n) => n[0])
@@ -152,7 +150,7 @@ export default function PatientRecords() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`font-bold ${p.bpColor}`}>{p.bp}</span>
+                      <span className={`font-semibold ${p.bpColor}`}>{p.bp}</span>
                       <span className="ml-2 text-xs text-[#8e95ac]">{p.bpStatus}</span>
                     </td>
                     <td className="px-6 py-4 text-[#8e95ac]">{p.lastVisit}</td>
@@ -169,7 +167,7 @@ export default function PatientRecords() {
             <div className="flex items-center justify-between px-6 py-4 bg-[#f7f8ff] border-t border-[#e6e9f7]">
               <span className="text-xs text-[#8e95ac]">Showing 1 to 4 of 124 patients</span>
               <div className="flex gap-1">
-                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff] font-bold">
+                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff] font-semibold">
                   1
                 </button>
                 <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff]">
@@ -188,7 +186,7 @@ export default function PatientRecords() {
           {/* Clinic Alert */}
           <div className="rounded-2xl bg-[#433cff] text-white p-6 flex flex-col justify-between shadow-lg">
             <div>
-              <div className="text-lg font-bold mb-2">
+              <div className="text-lg font-semibold mb-2">
                 3 High-Risk patients haven't visited this week
               </div>
               <button className="mt-2 rounded-lg bg-white/20 px-4 py-2 font-semibold">
@@ -201,8 +199,8 @@ export default function PatientRecords() {
             <div className="text-xs text-[#8e95ac] font-semibold mb-1">
               REGIONAL AVG. COMPARISON
             </div>
-            <div className="text-3xl font-bold text-[#433cff] mb-1">Maternal BP Stability</div>
-            <div className="text-2xl font-bold text-[#16a34a]">
+            <div className="text-3xl font-semibold text-[#433cff] mb-1">Maternal BP Stability</div>
+            <div className="text-2xl font-semibold text-[#16a34a]">
               84% <span className="text-xs text-[#16a34a]">+2.4%</span>
             </div>
             <div className="text-xs text-[#8e95ac]">
@@ -215,16 +213,16 @@ export default function PatientRecords() {
             <div className="flex flex-col gap-1">
               <div className="flex justify-between">
                 <span>Today</span>
-                <span className="font-bold text-[#433cff]">12 Appointments</span>
+                <span className="font-semibold text-[#433cff]">12 Appointments</span>
               </div>
               <div className="flex justify-between">
                 <span>Tomorrow</span>
-                <span className="font-bold text-[#433cff]">16 Appointments</span>
+                <span className="font-semibold text-[#433cff]">16 Appointments</span>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </main>
+    </div>
   );
 }
+

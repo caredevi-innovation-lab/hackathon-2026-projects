@@ -4,7 +4,7 @@ import Badge from '../../components/admin/Badge.jsx';
 import EmptyState from '../../components/admin/EmptyState.jsx';
 import TableSkeleton from '../../components/admin/TableSkeleton.jsx';
 import Toast from '../../components/admin/Toast.jsx';
-import { getAlerts } from '../../services/apiService.js';
+import { getAlerts, resolveAlert as resolveAlertApi } from '../../services/apiService.js';
 
 function alertTone(alert) {
   if (alert.resolved || alert.status === 'resolved') return 'success';
@@ -60,9 +60,14 @@ export default function AlertsPage() {
     });
   }, [alerts, severityFilter]);
 
-  const onResolve = (id) => {
-    setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, resolved: true } : a)));
-    setToast({ show: true, text: 'Alert marked as resolved.', tone: 'success' });
+  const onResolve = async (id) => {
+    try {
+      await resolveAlertApi(id);
+      setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, resolved: true } : a)));
+      setToast({ show: true, text: 'Alert marked as resolved.', tone: 'success' });
+    } catch {
+      setToast({ show: true, text: 'Failed to resolve alert. Please try again.', tone: 'danger' });
+    }
   };
 
   return (

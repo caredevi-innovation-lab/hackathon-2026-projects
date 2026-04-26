@@ -1,14 +1,14 @@
-import AdminTopbar from './AdminTopbar.jsx';
+import PageHeader from '../ui/PageHeader.jsx';
 
+/**
+ * AdminLayout — now a thin wrapper that provides consistent page padding
+ * and title. The sidebar + topbar are handled by AppLayout in App.jsx.
+ */
 export default function AdminLayout({ title, subtitle, children }) {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,80,182,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(0,122,138,0.1),transparent_32%),linear-gradient(180deg,#f6f9ff_0%,#eef4fb_100%)] text-[#10264d]">
-      <section className="mx-auto max-w-7xl p-3 sm:p-5 lg:p-6">
-        <div className="grid gap-4">
-          <AdminTopbar title={title} subtitle={subtitle} />
-          {children}
-        </div>
-      </section>
-    </main>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <PageHeader title={title} subtitle={subtitle} />
+      <div className="grid gap-5">{children}</div>
+    </div>
   );
 }

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DoctorSideBar from '../../components/DoctorSideBar.jsx';
 import { useAuth } from '../../hooks/useAuth.js';
 import { fetchDashboardStats } from '../../api.js';
+import PageHeader from '../../components/ui/PageHeader.jsx';
+import { HiSparkles } from 'react-icons/hi2';
 
 export default function DoctorDashboard() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [stats, setStats] = useState(null);
   const [urgentAlerts, setUrgentAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function DoctorDashboard() {
           console.error('Dashboard fetch failed:', err);
           setError(err.response?.data?.message || 'Failed to load dashboard');
           // Fallback to mock data so UI isn't empty
-          setStats({ totalPatients: 0, highRiskCount: 0, pendingReports: 0, avgResponseTime: '—' });
+          setStats({ totalPatients: 0, highRiskCount: 0, pendingReports: 0, avgResponseTime: '-' });
           setUrgentAlerts([]);
         }
       } finally {
@@ -40,64 +40,30 @@ export default function DoctorDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchQuery.trim()) {
-      navigate(`/patient-records?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
-
   const doctorName = user?.name || 'Doctor';
 
   return (
-    <div className="flex min-h-screen bg-[#f8f9fe] font-sans text-gray-800">
-      <DoctorSideBar />
-      
-      <div className="flex-1 min-w-0 flex flex-col h-screen">
-        {/* Top Navbar */}
-        <header className="h-[72px] bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
-          <div className="w-[320px] bg-[#f4f6ff] rounded-full flex items-center px-4 py-2.5">
-            <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+      <PageHeader title="Dashboard" subtitle={`Welcome back, ${doctorName}`}>
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate('/alerts')} className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-indigo-600 transition-colors">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
-            <input 
-              type="text" 
-              placeholder="Search patients or records..." 
-              className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-400 font-semibold" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearch}
-            />
-          </div>
-          <div className="flex items-center gap-6">
-            <button onClick={() => navigate('/alerts')} className="text-gray-500 hover:text-[#4039e6] transition-colors relative">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              {stats?.highRiskCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#ff4d6d] text-white text-[9px] font-semibold rounded-full flex items-center justify-center">{stats.highRiskCount}</span>
-              )}
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] overflow-hidden flex items-center justify-center text-white text-xs font-semibold">
-                {doctorName.split(' ').map(n => n[0]).join('').slice(0, 2)}
-              </div>
-              <span className="text-sm font-semibold text-gray-700 hidden md:block">{doctorName}</span>
-            </div>
-            <div className="flex items-center bg-[#f4f6ff] rounded-full p-1 border border-gray-100">
-              <button className="px-3 py-1 bg-white rounded-full text-[#4039e6] text-xs font-semibold shadow-sm">EN</button>
-              <button className="px-3 py-1 text-gray-500 hover:text-gray-700 text-xs font-semibold transition-colors">NP</button>
-            </div>
-          </div>
-        </header>
+            {stats?.highRiskCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[9px] font-semibold rounded-full flex items-center justify-center">{stats.highRiskCount}</span>
+            )}
+          </button>
+        </div>
+      </PageHeader>
 
-        <main className="flex-1 p-6 overflow-x-hidden overflow-y-auto">
-          <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
+      <div className="flex flex-col gap-6">
 
           {/* Error Banner */}
           {error && (
             <div className="bg-[#fff1f5] border border-[#ff4d6d]/20 text-[#ff4d6d] px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              {error} — showing fallback data. Please check if the server is running.
+              {error} - showing fallback data. Please check if the server is running.
             </div>
           )}
           
@@ -139,7 +105,7 @@ export default function DoctorDashboard() {
               </div>
               <div>
                 <p className="text-[#8e95ac] text-xs font-semibold">Avg Response Time</p>
-                <p className="text-xl font-semibold text-gray-800">{loading ? '...' : stats?.avgResponseTime || '—'}</p>
+                <p className="text-xl font-semibold text-gray-800">{loading ? '...' : stats?.avgResponseTime || '-'}</p>
               </div>
             </div>
           </div>
@@ -147,7 +113,7 @@ export default function DoctorDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 flex flex-col gap-6">
               
-              {/* Urgent Priority Queue — from API */}
+              {/* Urgent Priority Queue â€” from API */}
               <section>
                 <div className="flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
@@ -169,7 +135,10 @@ export default function DoctorDashboard() {
                     ))
                   ) : urgentAlerts.length === 0 ? (
                     <div className="col-span-2 bg-white rounded-2xl p-8 shadow-sm text-center">
-                      <p className="text-gray-400 font-semibold text-sm">No active alerts — all patients are stable! ✨</p>
+                      <p className="text-gray-400 font-semibold text-sm inline-flex items-center gap-1.5">
+                        <span>No active alerts - all patients are stable!</span>
+                        <HiSparkles className="w-4 h-4 text-indigo-400" />
+                      </p>
                     </div>
                   ) : (
                     urgentAlerts.slice(0, 2).map((alert, idx) => {
@@ -185,12 +154,20 @@ export default function DoctorDashboard() {
                           <div>
                             <div className="flex items-start justify-between mb-2">
                               <h3 className="font-semibold text-gray-800">{alert.patientName}</h3>
-                              <span className={`${tagBg} text-[10px] font-semibold px-2.5 py-1 rounded-md`}>{tagText.length > 20 ? tagText.slice(0, 20) + '…' : tagText}</span>
+                              <span className={`${tagBg} text-[10px] font-semibold px-2.5 py-1 rounded-md`}>{tagText.length > 20 ? `${tagText.slice(0, 20)}...` : tagText}</span>
                             </div>
                             <p className="text-[#64748b] text-xs mb-4 leading-relaxed">{description}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <button onClick={() => navigate('/submit')} className="flex-1 bg-[#3630c4] hover:bg-[#282496] text-white text-xs font-semibold py-2.5 rounded-lg transition-colors">View Record</button>
+                            <button
+                              onClick={() => {
+                                const targetPatientId = alert.patientId || alert.patient?._id || '';
+                                navigate(`/submit?patientId=${encodeURIComponent(targetPatientId)}`);
+                              }}
+                              className="flex-1 bg-[#3630c4] hover:bg-[#282496] text-white text-xs font-semibold py-2.5 rounded-lg transition-colors"
+                            >
+                              View Record
+                            </button>
                             <button className="w-10 h-10 border border-gray-200 rounded-lg flex items-center justify-center text-[#4039e6] hover:bg-gray-50 transition-colors">
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                             </button>
@@ -295,9 +272,8 @@ export default function DoctorDashboard() {
               </section>
             </div>
           </div>
-          </div>
-        </main>
       </div>
     </div>
   );
 }
+

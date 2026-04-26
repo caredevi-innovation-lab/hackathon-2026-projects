@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 
@@ -104,8 +104,8 @@ export default function PatientSideBar() {
             </svg>
           </div>
           <div>
-            <h1 className="m-0 text-lg font-bold text-slate-800 leading-tight">MaterNova</h1>
-            <p className="m-0 text-[10px] tracking-wider text-slate-400 font-semibold mt-0.5 uppercase">Healthcare Portal</p>
+            <h1 className="m-0 text-lg font-semibold text-slate-800 leading-tight">MaterNova</h1>
+            <p className="m-0 text-[10px] tracking-wider text-slate-400 font-semibold mt-0.5 ">Healthcare Portal</p>
           </div>
         </div>
 
@@ -138,3 +138,4 @@ export default function PatientSideBar() {
     </aside>
   );
 }
+

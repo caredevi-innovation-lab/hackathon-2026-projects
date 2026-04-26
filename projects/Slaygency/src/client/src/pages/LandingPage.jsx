@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import patientImg from '../assets/images/patient.png';
 import doctorImg from '../assets/images/doctor.png';
 import adminImg from '../assets/images/adminstrator.png';
@@ -66,7 +66,7 @@ export default function LandingPage() {
       <main>
         <section id="overview" className="mx-auto grid w-full max-w-7xl gap-10 px-5 py-14 md:grid-cols-2 md:px-8">
           <div>
-            <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#3730a3]">
+            <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold  tracking-wide text-[#3730a3]">
               Maternal Health Intelligence
             </p>
             <h1 className="mt-5 text-4xl font-semibold leading-tight text-slate-700 md:text-5xl">
@@ -98,7 +98,7 @@ export default function LandingPage() {
               {metricCards.map((metric) => (
                 <div key={metric.label} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-2xl font-semibold text-[#3730a3]">{metric.value}</p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <p className="mt-1 text-xs font-semibold  tracking-wide text-slate-500">
                     {metric.label}
                   </p>
                 </div>
@@ -140,7 +140,7 @@ export default function LandingPage() {
           <div className="mx-auto grid w-full max-w-7xl gap-5 px-5 py-14 md:grid-cols-3 md:px-8">
             {metricCards.map((metric) => (
               <div key={metric.label} className="rounded-2xl border border-indigo-300/40 bg-indigo-700/20 p-6">
-                <p className="text-xs font-semibold uppercase tracking-wide text-indigo-200">{metric.label}</p>
+                <p className="text-xs font-semibold  tracking-wide text-indigo-200">{metric.label}</p>
                 <p className="mt-2 text-4xl font-semibold text-white">{metric.value}</p>
               </div>
             ))}
@@ -150,3 +150,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

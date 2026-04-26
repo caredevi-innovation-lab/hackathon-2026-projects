@@ -1,37 +1,33 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth.js';
-import SharedNavbar from './components/admin/SharedNavbar.jsx';
+import AppLayout from './components/layout/AppLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import LandingPage from './pages/LandingPage.jsx';
-import AboutUsPage from './pages/AboutUsPage.jsx';
-import LoginPage from './pages/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
-import PatientDashboard from './pages/patients/PatientDashboard.jsx';
-import PatientHistory from './pages/patients/PatientHistory.jsx';
-import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
-import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
-import PatientRecord from './pages/patients/PatientRecord.jsx';
-import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
-import PatientSettingsPage from './pages/patients/setting.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import AlertsPage from './pages/admin/AlertsPage.jsx';
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
 import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
 import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import PatientDashboard from './pages/patients/PatientDashboard.jsx';
+import PatientHistory from './pages/patients/PatientHistory.jsx';
+import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
+import PatientRecord from './pages/patients/PatientRecord.jsx';
+import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
+import PatientSettingsPage from './pages/patients/setting.jsx';
+import PatientsPage from './pages/admin/PatientsPage.jsx';
+import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
 import HealthEntry from './pages/doctor/HealthEntry.jsx';
 import DoctorSettingsPage from './pages/doctor/Settings.jsx';
-import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import UsersPage from './pages/admin/UsersPage.jsx';
-import PatientsPage from './pages/admin/PatientsPage.jsx';
-import AlertsPage from './pages/admin/AlertsPage.jsx';
 import './app.css';
 
 function RoleRedirect() {
   const { isAuthenticated, user } = useAuth();
-
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
   switch (user?.role) {
     case 'Admin':
       return <Navigate to="/admin/dashboard" replace />;
@@ -43,138 +39,138 @@ function RoleRedirect() {
   }
 }
 
+/**
+ * Wraps authenticated routes with the unified AppLayout (Topbar + Sidebar).
+ * Adapts navigation links based on user role automatically.
+ */
+function AuthenticatedLayout({ children, allowedRoles }) {
+  return (
+    <ProtectedRoute allowedRoles={allowedRoles}>
+      <AppLayout>{children}</AppLayout>
+    </ProtectedRoute>
+  );
+}
+
 export default function App() {
   const location = useLocation();
   const isAuthRoute = ['/login', '/register'].includes(location.pathname);
-  const isDoctorRoute =
-    location.pathname.startsWith('/doctor') ||
-    location.pathname === '/patient-records' ||
-    location.pathname === '/alerts' ||
-    location.pathname === '/submit' ||
-    location.pathname === '/health-entry' ||
-    location.pathname === '/settings';
-
-  const shellClassName = isDoctorRoute
-    ? 'app-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(92,76,255,0.12),transparent_28%),linear-gradient(180deg,#fbfaff_0%,#f6f2ff_100%)]'
-    : 'app-shell min-h-screen';
 
   return (
-    <div className={shellClassName}>
-      {!isAuthRoute && <SharedNavbar />}
+    <div className="app-shell">
       <Routes>
         <Route path="/" element={<RoleRedirect />} />
-        <Route path="/about" element={<AboutUsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
+        {/* ── Patient Routes ── */}
         <Route
           path="/patient"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientDashboard />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/patient-history"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientHistory />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/patient-health-data-entry"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientHealthDataEntryForm />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/patient-risk-assessment"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientRiskPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/my-records"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientRecord />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/health-reports"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientHealthReport />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/patient-settings"
           element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+            <AuthenticatedLayout allowedRoles={['Patient', 'patient']}>
               <PatientSettingsPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
 
+        {/* ── Doctor Routes ── */}
         <Route
           path="/doctor"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
               <DoctorDashboard />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/patient-records"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
               <DoctorPatientRecords />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/alerts"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
               <DoctorAlertCenter />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/submit"
           element={
-            <ProtectedRoute
-              allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}
-            >
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}>
               <SubmitHealthData />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/health-entry"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
               <HealthEntry />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/settings"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
               <DoctorSettingsPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
 
+        {/* ── Admin Routes ── */}
         <Route
           path="/admin"
           element={
@@ -186,33 +182,33 @@ export default function App() {
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Admin', 'admin']}>
               <AdminDashboard />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/admin/users"
           element={
-            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Admin', 'admin']}>
               <UsersPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/admin/patients"
           element={
-            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Admin', 'admin']}>
               <PatientsPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
         <Route
           path="/admin/alerts"
           element={
-            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AuthenticatedLayout allowedRoles={['Admin', 'admin']}>
               <AlertsPage />
-            </ProtectedRoute>
+            </AuthenticatedLayout>
           }
         />
 

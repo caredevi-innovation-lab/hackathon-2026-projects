@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
   timeout: 15000,
 });
 
@@ -102,6 +102,11 @@ export async function getAlerts(params = {}) {
 
 export async function createAlert(payload) {
   const { data } = await api.post('/alerts', payload);
+  return data;
+}
+
+export async function resolveAlert(alertId) {
+  const { data } = await api.patch(`/alerts/${alertId}/resolve`);
   return data;
 }
 

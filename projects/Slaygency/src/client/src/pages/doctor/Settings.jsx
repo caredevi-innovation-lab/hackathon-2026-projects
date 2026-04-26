@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import DoctorSideBar from '../../components/DoctorSideBar.jsx';
+﻿import React, { useState } from 'react';
+// Sidebar now provided by AppLayout
 import { useAuth } from '../../hooks/useAuth.js';
 
 export default function Settings() {
@@ -45,49 +45,20 @@ export default function Settings() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f8f9fe] font-sans text-gray-800">
-      <DoctorSideBar />
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1100px] mx-auto w-full">
+      <div className="flex flex-col gap-6">
 
-      <div className="flex-1 min-w-0 flex flex-col h-screen">
-        {/* Top Navbar */}
-        <header className="h-[72px] bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
-          <h1 className="text-xl font-bold text-gray-900 tracking-tight">Settings</h1>
-          <div className="flex items-center gap-5">
-            <button className="relative hover:text-[#5348ff] text-gray-400 transition-colors">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-sm font-semibold text-gray-800">{user?.name || 'Dr. Julianne Smith'}</p>
-                <p className="text-[11px] text-gray-400">{user?.role || 'Cardiologist'}</p>
-              </div>
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#312e81] to-[#4338ca] overflow-hidden flex items-end justify-center">
-                <img
-                  src="https://api.dicebear.com/7.x/avataaars/svg?seed=Julianne&backgroundColor=312e81"
-                  alt="User"
-                  className="w-8 h-8"
-                />
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6 md:p-8 overflow-x-hidden overflow-y-auto">
-          <div className="max-w-[1100px] mx-auto w-full flex flex-col gap-6">
-
-            {/* ── Top Row: Profile + Help/Status ── */}
+            {/* â”€â”€ Top Row: Profile + Help/Status â”€â”€ */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
               {/* Profile Settings (left, wider) */}
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
                 <div className="flex items-center justify-between mb-5">
                   <div>
-                    <h2 className="text-base font-bold text-gray-900">Profile Settings</h2>
+                    <h2 className="text-base font-semibold text-gray-900">Profile Settings</h2>
                     <p className="text-xs text-gray-400 mt-0.5">Manage your professional identity and public information.</p>
                   </div>
-                  <button className="px-4 py-2 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-[#5348ff] to-[#6c5ce7] shadow-[0_4px_14px_rgba(83,72,255,0.3)] hover:shadow-[0_6px_20px_rgba(83,72,255,0.45)] hover:translate-y-[-1px] transition-all duration-200">
+                  <button className="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-[#5348ff] to-[#6c5ce7] shadow-[0_4px_14px_rgba(83,72,255,0.3)] hover:shadow-[0_6px_20px_rgba(83,72,255,0.45)] hover:translate-y-[-1px] transition-all duration-200">
                     Save Changes
                   </button>
                 </div>
@@ -102,7 +73,7 @@ export default function Settings() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
                     <div>
-                      <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1.5">Full Name</label>
+                      <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-1.5">Full Name</label>
                       <input
                         type="text"
                         value={fullName}
@@ -111,7 +82,7 @@ export default function Settings() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1.5">Email Address</label>
+                      <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-1.5">Email Address</label>
                       <input
                         type="email"
                         value={email}
@@ -123,7 +94,7 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1.5">Specialization</label>
+                  <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-1.5">Specialization</label>
                   <input
                     type="text"
                     value={specialization}
@@ -134,7 +105,7 @@ export default function Settings() {
 
                 {/* Localization */}
                 <div className="mt-6 pt-5 border-t border-gray-100">
-                  <h3 className="text-base font-bold text-gray-900 mb-4">Localization</h3>
+                  <h3 className="text-base font-semibold text-gray-900 mb-4">Localization</h3>
                   <div className="flex items-center justify-between bg-[#fafbff] rounded-xl px-4 py-3 border border-gray-100">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-[#eef0ff] flex items-center justify-center">
@@ -153,7 +124,7 @@ export default function Settings() {
                       className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#5348ff]/20 cursor-pointer"
                     >
                       <option value="en-US">English (US)</option>
-                      <option value="ne-NP">नेपाली</option>
+                      <option value="ne-NP">à¤¨à¥‡à¤ªà¤¾à¤²à¥€</option>
                     </select>
                   </div>
                 </div>
@@ -164,7 +135,7 @@ export default function Settings() {
 
                 {/* Help & Support */}
                 <div className="bg-gradient-to-br from-[#5348ff] to-[#6c5ce7] rounded-2xl p-6 shadow-[0_8px_24px_rgba(83,72,255,0.25)] text-white">
-                  <h3 className="text-lg font-bold mb-2">Help & Support</h3>
+                  <h3 className="text-lg font-semibold mb-2">Help & Support</h3>
                   <p className="text-sm text-white/80 leading-relaxed mb-5">
                     Need assistance? Access our documentation or speak with technical support.
                   </p>
@@ -175,7 +146,7 @@ export default function Settings() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                       </svg>
                     </button>
-                    <button className="w-full px-4 py-2.5 rounded-xl bg-white text-[#5348ff] text-sm font-bold hover:bg-white/90 transition-colors duration-200">
+                    <button className="w-full px-4 py-2.5 rounded-xl bg-white text-[#5348ff] text-sm font-semibold hover:bg-white/90 transition-colors duration-200">
                       Report an Issue
                     </button>
                   </div>
@@ -183,7 +154,7 @@ export default function Settings() {
 
                 {/* System Status */}
                 <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
-                  <h4 className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-3">System Status</h4>
+                  <h4 className="text-[10px] text-gray-400 font-semibold  tracking-widest mb-3">System Status</h4>
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="text-sm font-semibold text-emerald-600">All systems operational</span>
@@ -193,12 +164,12 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* ── Bottom Row: Notifications + Security ── */}
+            {/* â”€â”€ Bottom Row: Notifications + Security â”€â”€ */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
               {/* Notification Preferences */}
               <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-5">
+                <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-5">
                   <span className="w-7 h-7 rounded-lg bg-[#eef0ff] flex items-center justify-center">
                     <svg className="w-3.5 h-3.5 text-[#5348ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -282,7 +253,7 @@ export default function Settings() {
 
               {/* Security & Privacy */}
               <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-5">
+                <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-5">
                   <span className="w-7 h-7 rounded-lg bg-[#eef0ff] flex items-center justify-center">
                     <svg className="w-3.5 h-3.5 text-[#5348ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -293,15 +264,15 @@ export default function Settings() {
 
                 {/* Password */}
                 <div className="mb-5">
-                  <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1.5">Password</label>
+                  <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-1.5">Password</label>
                   <div className="flex items-center gap-3">
                     <input
                       type="password"
-                      value="••••••••••"
+                      value="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                       readOnly
                       className="flex-1 px-3.5 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-800 bg-[#fafbff]"
                     />
-                    <button className="text-[#5348ff] text-sm font-bold hover:underline transition-all">Change</button>
+                    <button className="text-[#5348ff] text-sm font-semibold hover:underline transition-all">Change</button>
                   </div>
                 </div>
 
@@ -316,7 +287,7 @@ export default function Settings() {
 
                 {/* Active Sessions */}
                 <div>
-                  <h4 className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-3">Active Sessions</h4>
+                  <h4 className="text-[10px] text-gray-400 font-semibold  tracking-widest mb-3">Active Sessions</h4>
                   <div className="flex flex-col gap-3">
                     {/* Session 1 */}
                     <div className="flex items-center justify-between py-3 px-4 bg-[#fafbff] rounded-xl border border-gray-100">
@@ -327,11 +298,11 @@ export default function Settings() {
                           </svg>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-800">Windows PC • Chrome</p>
-                          <p className="text-[11px] text-gray-400">Kathmandu, Nepal • Current Session</p>
+                          <p className="text-sm font-semibold text-gray-800">Windows PC â€¢ Chrome</p>
+                          <p className="text-[11px] text-gray-400">Kathmandu, Nepal â€¢ Current Session</p>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200">Active</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold  tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-200">Active</span>
                     </div>
 
                     {/* Session 2 */}
@@ -343,8 +314,8 @@ export default function Settings() {
                           </svg>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-gray-800">iPhone 14 Pro • App</p>
-                          <p className="text-[11px] text-gray-400">Lalitpur, Nepal • 2 hours ago</p>
+                          <p className="text-sm font-semibold text-gray-800">iPhone 14 Pro â€¢ App</p>
+                          <p className="text-[11px] text-gray-400">Lalitpur, Nepal â€¢ 2 hours ago</p>
                         </div>
                       </div>
                       <button className="text-gray-400 hover:text-red-500 transition-colors">
@@ -358,19 +329,18 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* ── Footer ── */}
+            {/* â”€â”€ Footer â”€â”€ */}
             <div className="mt-4 pt-5 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-3 pb-6">
               <div className="flex items-center gap-4 text-xs text-gray-400 font-medium">
                 <span className="hover:text-[#5348ff] cursor-pointer transition-colors">Privacy Policy</span>
                 <span className="hover:text-[#5348ff] cursor-pointer transition-colors">Terms of Service</span>
                 <span className="hover:text-[#5348ff] cursor-pointer transition-colors">Cookie Settings</span>
               </div>
-              <p className="text-xs text-gray-400">© 2024 Aama CarePortal. All healthcare data is encrypted.</p>
+              <p className="text-xs text-gray-400">Â© 2024 Aama CarePortal. All healthcare data is encrypted.</p>
             </div>
 
-          </div>
-        </main>
       </div>
     </div>
   );
 }
+

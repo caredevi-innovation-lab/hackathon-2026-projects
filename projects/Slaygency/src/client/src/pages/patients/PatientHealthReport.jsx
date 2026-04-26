@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import PatientSideBar from '../../components/PatientSideBar.jsx';
+// Sidebar now provided by AppLayout
 import { fetchHealth } from '../../api.js';
 import { useAuth } from '../../hooks/useAuth.js';
+import { FaCheckCircle, FaClipboardList, FaExclamationTriangle } from 'react-icons/fa';
 
 function StatCard({ label, value, sub, color = 'indigo' }) {
   const colors = {
@@ -12,8 +13,8 @@ function StatCard({ label, value, sub, color = 'indigo' }) {
   };
   return (
     <div className={`bg-gradient-to-br ${colors[color]} text-white rounded-2xl p-5 shadow-lg`}>
-      <p className="text-xs font-bold uppercase tracking-widest text-white/70 mb-1">{label}</p>
-      <p className="text-3xl font-black leading-tight">{value}</p>
+      <p className="text-xs font-semibold  tracking-widest text-white/70 mb-1">{label}</p>
+      <p className="text-3xl font-semibold leading-tight">{value}</p>
       {sub && <p className="text-xs text-white/70 mt-1">{sub}</p>}
     </div>
   );
@@ -25,14 +26,19 @@ export default function PatientHealthReport() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
+  const [statusType, setStatusType] = useState('');
 
   async function loadData(showRefresh = false) {
     if (showRefresh) setRefreshing(true);
     try {
       const data = await fetchHealth();
       setRecords(data);
-      if (showRefresh) setStatusMsg('✓ Reports updated successfully.');
+      if (showRefresh) {
+        setStatusType('success');
+        setStatusMsg('Reports updated successfully.');
+      }
     } catch {
+      setStatusType('error');
       setStatusMsg('Could not fetch report data. Please try again.');
     } finally {
       setLoading(false);
@@ -67,31 +73,9 @@ export default function PatientHealthReport() {
   const topSymptom = Object.entries(symptomFreq).sort((a, b) => b[1] - a[1])[0];
 
   return (
-    <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
-      <PatientSideBar />
-
-      <div className="flex-1 flex flex-col overflow-y-auto relative w-full min-w-0">
-        {/* Header */}
-        <header className="flex flex-wrap justify-between items-center gap-4 py-4 px-4 md:px-8 bg-white border-b border-slate-100 sticky top-0 z-40 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">Health Reports</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Your comprehensive maternal health summary</p>
-          </div>
-          <button
-            onClick={() => loadData(true)}
-            disabled={refreshing}
-            className="border border-slate-200 bg-white text-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 flex items-center gap-2"
-          >
-            <svg viewBox="0 0 24 24" className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} stroke="currentColor" strokeWidth="2" fill="none">
-              <path strokeLinecap="round" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4zm2 5.3A8 8 0 0012 20v4c-6.6 0-12-5.4-12-12h4z"/>
-            </svg>
-            {refreshing ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </header>
-
-        <main className="p-4 md:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full">
           {statusMsg && (
-            <div className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium border ${statusMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+            <div className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium border ${statusType === 'success' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
               {statusMsg}
             </div>
           )}
@@ -102,12 +86,12 @@ export default function PatientHealthReport() {
             </div>
           ) : totalRecords === 0 ? (
             <div className="text-center py-20 bg-white rounded-2xl border border-slate-100 shadow-sm">
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
                 <svg viewBox="0 0 24 24" className="w-8 h-8 text-indigo-400 fill-current"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 0V3h4v2M9 5h6"/></svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-700 mb-2">No Reports Yet</h3>
-              <p className="text-slate-400 text-sm mb-6 max-w-sm mx-auto">Your health reports will appear here once you've logged at least one health entry.</p>
-              <Link to="/patient-health-data-entry" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors inline-block shadow-md shadow-indigo-200">
+              <h3 className="text-lg font-semibold text-slate-700 mb-2">No Reports Yet</h3>
+              <p className="text-slate-400 text-sm mb-6 max-w-sm">Your health reports will appear here once you've logged at least one health entry.</p>
+              <Link to="/patient-health-data-entry" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors inline-block shadow-md shadow-indigo-200">
                 Log Health Data
               </Link>
             </div>
@@ -117,7 +101,7 @@ export default function PatientHealthReport() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
                 <StatCard label="Total Entries" value={totalRecords} sub={`Last: ${new Date(records[0].createdAt).toLocaleDateString()}`} color="indigo" />
                 <StatCard label="Avg Blood Pressure" value={`${avgSystolic}/${avgDiastolic}`} sub="mmHg (systolic/diastolic)" color="pink" />
-                <StatCard label="Avg Hemoglobin" value={`${avgHb} g/dL`} sub={avgHb < 10.5 ? '⚠ Below normal range' : '✓ Within normal range'} color="emerald" />
+                <StatCard label="Avg Hemoglobin" value={`${avgHb} g/dL`} sub={avgHb < 10.5 ? 'Below normal range' : 'Within normal range'} color="emerald" />
               </div>
 
               {/* Insight Cards */}
@@ -125,10 +109,14 @@ export default function PatientHealthReport() {
                 {/* High Risk Events */}
                 <div className={`rounded-2xl p-6 border shadow-sm ${highRiskCount > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100'}`}>
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{highRiskCount > 0 ? '⚠️' : '✅'}</span>
-                    <h4 className="font-bold text-slate-800">High-Risk Events</h4>
+                    {highRiskCount > 0 ? (
+                      <FaExclamationTriangle className="text-xl text-red-500" />
+                    ) : (
+                      <FaCheckCircle className="text-xl text-emerald-500" />
+                    )}
+                    <h4 className="font-semibold text-slate-800">High-Risk Events</h4>
                   </div>
-                  <p className={`text-4xl font-black mb-1 ${highRiskCount > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
+                  <p className={`text-4xl font-semibold mb-1 ${highRiskCount > 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                     {highRiskCount}
                   </p>
                   <p className="text-xs text-slate-500">
@@ -137,8 +125,8 @@ export default function PatientHealthReport() {
                       : 'No high-risk events detected in your history.'}
                   </p>
                   {highRiskCount > 0 && (
-                    <Link to="/patient-risk-assessment" className="mt-3 text-xs font-bold text-red-600 hover:underline inline-block">
-                      View Risk Analysis →
+                    <Link to="/patient-risk-assessment" className="mt-3 text-xs font-semibold text-red-600 hover:underline inline-block">
+                      View Risk Analysis â†’
                     </Link>
                   )}
                 </div>
@@ -146,12 +134,12 @@ export default function PatientHealthReport() {
                 {/* Top Symptom */}
                 <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">📋</span>
-                    <h4 className="font-bold text-slate-800">Most Reported Symptom</h4>
+                    <FaClipboardList className="text-xl text-indigo-500" />
+                    <h4 className="font-semibold text-slate-800">Most Reported Symptom</h4>
                   </div>
                   {topSymptom ? (
                     <>
-                      <p className="text-3xl font-black text-indigo-600 mb-1">{topSymptom[0]}</p>
+                      <p className="text-3xl font-semibold text-indigo-600 mb-1">{topSymptom[0]}</p>
                       <p className="text-xs text-slate-500">Reported {topSymptom[1]} time{topSymptom[1] !== 1 ? 's' : ''} across your records.</p>
                     </>
                   ) : (
@@ -163,12 +151,12 @@ export default function PatientHealthReport() {
               {/* BP History Table */}
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100">
-                  <h3 className="font-bold text-slate-800">BP & Hemoglobin History</h3>
+                  <h3 className="font-semibold text-slate-800">BP & Hemoglobin History</h3>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                      <tr className="bg-slate-50 text-slate-500 text-xs font-semibold  tracking-wider">
                         <th className="px-6 py-3 text-left">Date</th>
                         <th className="px-6 py-3 text-left">Systolic</th>
                         <th className="px-6 py-3 text-left">Diastolic</th>
@@ -182,13 +170,13 @@ export default function PatientHealthReport() {
                           <td className="px-6 py-3 text-xs text-slate-500 whitespace-nowrap">
                             {new Date(r.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </td>
-                          <td className="px-6 py-3 font-bold text-slate-800">
+                          <td className="px-6 py-3 font-semibold text-slate-800">
                             <span className={r.systolicBP >= 140 ? 'text-red-600' : ''}>{r.systolicBP}</span>
                           </td>
-                          <td className="px-6 py-3 font-bold text-slate-800">
+                          <td className="px-6 py-3 font-semibold text-slate-800">
                             <span className={r.diastolicBP >= 90 ? 'text-red-600' : ''}>{r.diastolicBP}</span>
                           </td>
-                          <td className="px-6 py-3 font-bold text-slate-800">
+                          <td className="px-6 py-3 font-semibold text-slate-800">
                             <span className={r.hemoglobin < 10 ? 'text-amber-600' : ''}>{r.hemoglobin}</span>
                           </td>
                           <td className="px-6 py-3 text-xs text-slate-400">
@@ -202,8 +190,8 @@ export default function PatientHealthReport() {
               </div>
             </>
           )}
-        </main>
-      </div>
     </div>
   );
 }
+
+

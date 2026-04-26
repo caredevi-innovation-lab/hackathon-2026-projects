@@ -40,6 +40,25 @@ const healthRecordSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.Mixed,
 			default: '',
 		},
+		// AI risk assessment fields (populated after prediction)
+		riskLevel: {
+			type: String,
+			enum: ['Low', 'Moderate', 'High', null],
+			default: null,
+		},
+		riskScore: {
+			type: Number,
+			default: null,
+		},
+		riskExplanation: {
+			type: String,
+			default: '',
+		},
+		riskSource: {
+			type: String,
+			enum: ['ai', 'fallback', null],
+			default: null,
+		},
 		createdAt: {
 			type: Date,
 			default: Date.now,

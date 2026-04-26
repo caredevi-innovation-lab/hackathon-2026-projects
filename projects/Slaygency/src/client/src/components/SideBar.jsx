@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 
 function IconShield() {
@@ -53,7 +53,7 @@ export default function SideBar() {
         </span>
         <div>
           <h1 className="m-0 text-sm font-semibold">MaterNova</h1>
-          <p className="m-0 text-[0.66rem] uppercase tracking-[0.14em] text-[#8b93ab]">Healthcare Portal</p>
+          <p className="m-0 text-[0.66rem]  tracking-[0.14em] text-[#8b93ab]">Healthcare Portal</p>
         </div>
       </div>
 
@@ -80,3 +80,4 @@ export default function SideBar() {
     </aside>
   );
 }
+

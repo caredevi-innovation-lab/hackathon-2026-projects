@@ -13,10 +13,10 @@ export default function Navbar() {
       <div className="mx-auto flex w-full items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 no-underline">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#2250b6_0%,#007a8a_100%)] text-white shadow-[0_10px_24px_rgba(17,76,159,0.24)]">
-            A
+            M
           </span>
           <div>
-            <p className="m-0 text-sm font-semibold text-[#10264d]">Aama Care</p>
+            <p className="m-0 text-sm font-semibold text-[#10264d]">MaterNova</p>
             <p className="m-0 text-xs text-[#6b80a4]">Maternal Health Platform</p>
           </div>
         </Link>

@@ -130,6 +130,28 @@ export async function createAlert(req, res, next) {
     const source = manualHighRisk ? 'manual' : 'condition';
     const mergedReasons = [...new Set([...(manualHighRisk ? manualReasons : []), ...conditionRisk.reasons])];
 
+    // Prevent duplicate active alerts for the same patient + record + source
+    const duplicateQuery = {
+      patient: patient._id,
+      status: 'active',
+      source,
+    };
+    if (record) {
+      duplicateQuery.healthRecord = record._id;
+    }
+    const existingAlert = await Alert.findOne(duplicateQuery);
+    if (existingAlert) {
+      const populatedExisting = await Alert.findById(existingAlert._id)
+        .populate('patient', 'name email phone')
+        .populate('healthRecord');
+      return res.status(200).json({ alert: populatedExisting, duplicate: true });
+    }
+
+    // Build a clear, clinically specific message
+    const defaultMessage = mergedReasons.length > 0
+      ? `⚠️ Preeclampsia risk for ${patient.name}: ${mergedReasons.join(', ')}`
+      : `⚠️ High-risk alert for ${patient.name} (${source === 'manual' ? 'manual review' : 'condition-based'})`;
+
     const alert = await Alert.create({
       patient: patient._id,
       healthRecord: record?._id || null,
@@ -138,9 +160,7 @@ export async function createAlert(req, res, next) {
       priority: 'high',
       status: 'active',
       reasons: mergedReasons,
-      message:
-        String(message || '').trim() ||
-        `High-risk alert generated for ${patient.name} (${source === 'manual' ? 'manual' : 'condition-based'})`,
+      message: String(message || '').trim() || defaultMessage,
     });
 
     const populatedAlert = await Alert.findById(alert._id)
@@ -227,6 +247,6 @@ export async function createConditionAlertFromRecord({ healthRecord, actorId }) 
     priority: 'high',
     status: 'active',
     reasons: conditionRisk.reasons,
-    message: 'Condition-based high-risk alert generated from health record',
+    message: `⚠️ Preeclampsia risk detected: ${conditionRisk.reasons.join(', ')}`,
   });
 }

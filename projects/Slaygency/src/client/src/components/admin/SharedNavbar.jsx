@@ -49,11 +49,7 @@ export default function SharedNavbar() {
     <nav className="shared-navbar">
       <div className="shared-navbar-inner">
         <div className="shared-navbar-brand">
-          <span className="shared-navbar-logo">A</span>
-          <div>
-            <p className="shared-navbar-title">Aama Care</p>
-            <p className="shared-navbar-subtitle">Maternal Health Platform</p>
-          </div>
+          <span className="shared-navbar-logo">M</span>
         </div>
 
         <ul className="shared-navbar-links">

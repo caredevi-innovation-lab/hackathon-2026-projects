@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from "../../components/DoctorSideBar";
 
@@ -33,7 +33,7 @@ export default function FinalizeRecord() {
 
             {/* Signature Box */}
             <div className="w-full max-w-md bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-6 mb-8 text-left">
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Electronic Signature</label>
+              <label className="block text-xs font-semibold text-gray-400  tracking-widest mb-3">Electronic Signature</label>
               <div className="h-24 bg-white border border-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors">
                 <span className="text-gray-400 italic text-sm">Click here to draw or type your signature</span>
               </div>
@@ -68,3 +68,4 @@ export default function FinalizeRecord() {
     </div>
   );
 }
+

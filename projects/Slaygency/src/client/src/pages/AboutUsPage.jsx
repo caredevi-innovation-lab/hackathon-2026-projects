@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 const values = [
   {
@@ -46,7 +46,7 @@ export default function AboutUsPage() {
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-8 md:p-10">
-          <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#3730a3]">
+          <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold  tracking-wide text-[#3730a3]">
             About MaterNova
           </p>
           <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight text-slate-700">
@@ -82,3 +82,4 @@ export default function AboutUsPage() {
     </main>
   );
 }
+

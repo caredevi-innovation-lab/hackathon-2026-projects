@@ -1,4 +1,4 @@
-.app-shell {
+﻿.app-shell {
   min-height: 100vh;
 }
 
@@ -101,7 +101,7 @@ pre {
   padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
   letter-spacing: 0.03em;
-  text-transform: uppercase;
+  text-transform: ;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -415,7 +415,7 @@ pre {
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: ;
 }
 
 .register-role-buttons {
@@ -447,7 +447,7 @@ pre {
   color: #1f2f4f;
   font-size: 0.72rem;
   letter-spacing: 0.07em;
-  text-transform: uppercase;
+  text-transform: ;
   font-weight: 800;
 }
 
@@ -525,7 +525,7 @@ pre {
   text-align: center;
   color: #6a7694;
   font-size: 0.68rem;
-  text-transform: uppercase;
+  text-transform: ;
   letter-spacing: 0.08em;
 }
 
@@ -606,7 +606,7 @@ pre {
   }
 }
 
-/* ─── SharedNavbar ────────────────────────────────────────────────────────── */
+/* â”€â”€â”€ SharedNavbar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .shared-navbar {
   position: sticky;
   top: 0;
@@ -715,7 +715,7 @@ pre {
   display: block;
   font-size: 0.66rem;
   color: #6b80a4;
-  text-transform: uppercase;
+  text-transform: ;
   letter-spacing: 0.1em;
 }
 
@@ -747,3 +747,4 @@ pre {
     display: none;
   }
 }
+

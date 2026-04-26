@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DoctorSideBar from '../../components/DoctorSideBar.jsx';
-import { addHealthRecord } from '../../api.js';
+﻿import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+// Sidebar now provided by AppLayout
+import { addHealthRecord, getPatientById } from '../../api.js';
+import { FaClipboardList, FaCapsules, FaStethoscope, FaSyringe } from 'react-icons/fa';
+import { useAuth } from '../../hooks/useAuth.js';
 
 export default function HealthEntry() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+  const rawPatientId = searchParams.get('patientId') || '';
+  const patientId =
+    typeof rawPatientId === 'string' &&
+    rawPatientId !== 'undefined' &&
+    rawPatientId !== 'null' &&
+    /^[a-f\d]{24}$/i.test(rawPatientId)
+      ? rawPatientId
+      : '';
+  const requiresPatientSelection = ['Doctor', 'Admin'].includes(user?.role);
+  const canSubmit = !requiresPatientSelection || Boolean(patientId);
 
   const [vitals, setVitals] = useState({
     systolicBP: '120',
@@ -28,6 +42,48 @@ export default function HealthEntry() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null); // { type: 'success' | 'error', message }
   const [showDiscardDialog, setShowDiscardDialog] = useState(false);
+  const [patientDetails, setPatientDetails] = useState(null);
+  const [lastRecord, setLastRecord] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadPatient() {
+      if (!patientId) {
+        if (!cancelled) {
+          setPatientDetails(null);
+          setLastRecord(null);
+        }
+        return;
+      }
+      try {
+        const data = await getPatientById(patientId);
+        if (!cancelled) {
+          setPatientDetails(data?.patient || null);
+          const latest = Array.isArray(data?.records) && data.records.length > 0 ? data.records[0] : null;
+          setLastRecord(latest);
+        }
+      } catch {
+        if (!cancelled) {
+          setPatientDetails(null);
+          setLastRecord(null);
+        }
+      }
+    }
+    loadPatient();
+    return () => {
+      cancelled = true;
+    };
+  }, [patientId]);
+
+  useEffect(() => {
+    if (!lastRecord) return;
+    setVitals((prev) => ({
+      ...prev,
+      systolicBP: String(lastRecord.systolicBP ?? prev.systolicBP),
+      diastolicBP: String(lastRecord.diastolicBP ?? prev.diastolicBP),
+      hemoglobin: String(lastRecord.hemoglobin ?? prev.hemoglobin),
+    }));
+  }, [lastRecord]);
 
   const handleVitalChange = (field, value) => {
     setVitals((prev) => ({ ...prev, [field]: value }));
@@ -46,7 +102,7 @@ export default function HealthEntry() {
         return key.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
       });
 
-    return {
+    const payload = {
       age: 24, // gestation weeks mapped as age (matching schema requirement)
       systolicBP: Number(vitals.systolicBP),
       diastolicBP: Number(vitals.diastolicBP),
@@ -59,6 +115,10 @@ export default function HealthEntry() {
         followUpDate,
       }),
     };
+    if (patientId) {
+      payload.patientId = patientId;
+    }
+    return payload;
   };
 
   const showToast = (type, message) => {
@@ -67,6 +127,10 @@ export default function HealthEntry() {
   };
 
   const handleSave = async () => {
+    if (!canSubmit) {
+      showToast('error', 'Please open a patient from Patient Records before saving.');
+      return;
+    }
     try {
       setSaving(true);
       const payload = buildPayload();
@@ -84,11 +148,15 @@ export default function HealthEntry() {
   };
 
   const handleCompleteAndSave = async () => {
+    if (!canSubmit) {
+      showToast('error', 'Please open a patient from Patient Records before saving.');
+      return;
+    }
     try {
       setSaving(true);
       const payload = buildPayload();
       await addHealthRecord(payload);
-      showToast('success', 'Entry completed & saved! Redirecting…');
+      showToast('success', 'Entry completed & saved! Redirectingâ€¦');
       setTimeout(() => navigate('/patient-records'), 1800);
     } catch (err) {
       const msg =
@@ -110,54 +178,37 @@ export default function HealthEntry() {
     navigate(-1);
   };
 
+  const patientName = patientDetails?.name || 'Select a patient';
+  const patientDisplayId = patientDetails?.id ? `#${patientDetails.id.slice(-8).toUpperCase()}` : '--';
+  const gestationLabel = lastRecord?.age ? `Age: ${lastRecord.age}` : 'No previous records';
+  const lastVisitLabel = lastRecord?.createdAt ? new Date(lastRecord.createdAt).toLocaleDateString('en-US') : '--';
+  const progressionLabel = lastRecord?.riskLevel ? `${lastRecord.riskLevel} Risk` : 'No historical trend';
+  const patientSeed = patientDetails?.id || patientName || 'patient';
+
   return (
-    <div className="flex min-h-screen bg-[#f8f9fe] font-sans text-gray-800">
-      <DoctorSideBar />
+    <div className="w-full">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-[960px] mx-auto w-full flex flex-col gap-6">
 
-      <div className="flex-1 min-w-0 flex flex-col h-screen">
-        {/* Top Navbar */}
-        <header className="h-[72px] bg-white border-b border-gray-100 px-8 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-8" />
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-gray-500">
-              <button className="hover:text-[#4039e6] transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-              </button>
-              <button className="hover:text-[#4039e6] transition-colors">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-              </button>
-              <button className="hover:text-[#4039e6] transition-colors">
-                <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
-                  <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="flex-1 p-6 md:p-8 overflow-x-hidden overflow-y-auto">
-          <div className="max-w-[960px] mx-auto w-full flex flex-col gap-6">
-
-            {/* ── Breadcrumb ── */}
+            {/* â”€â”€ Breadcrumb â”€â”€ */}
             <nav className="flex items-center gap-2 text-sm text-gray-400 font-medium">
               <span className="hover:text-[#5348ff] cursor-pointer transition-colors">Patients</span>
               <span>/</span>
-              <span className="hover:text-[#5348ff] cursor-pointer transition-colors">Eleanor Vance</span>
+              <span className="hover:text-[#5348ff] cursor-pointer transition-colors">{patientName}</span>
               <span>/</span>
               <span className="text-[#5348ff] font-semibold">New Health Entry</span>
             </nav>
 
-            {/* ── Page Header ── */}
+            {!canSubmit && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 text-amber-700 px-4 py-3 text-sm font-medium">
+                Open a patient from Patient Records first. This page saves health records to the selected patient.
+              </div>
+            )}
+
+            {/* â”€â”€ Page Header â”€â”€ */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Clinical Health Entry</h1>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#eef0ff] text-[#5348ff] border border-[#d8daff]">
+                <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Clinical Health Entry</h1>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#eef0ff] text-[#5348ff] border border-[#d8daff]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#5348ff] animate-pulse" />
                   In Progress
                 </span>
@@ -182,12 +233,12 @@ export default function HealthEntry() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
                     </svg>
                   )}
-                  {saving ? 'Saving…' : 'Save Record'}
+                  {saving ? 'Savingâ€¦' : 'Save Record'}
                 </button>
               </div>
             </div>
 
-            {/* ── Patient Info Card ── */}
+            {/* â”€â”€ Patient Info Card â”€â”€ */}
             <div className="bg-white rounded-2xl p-5 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
               {/* Subtle gradient accent on left edge */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5348ff] to-[#6c5ce7] rounded-l-2xl" />
@@ -195,48 +246,48 @@ export default function HealthEntry() {
               <div className="flex items-center gap-4 pl-3">
                 <div className="w-16 h-16 bg-gradient-to-br from-[#312e81] to-[#4338ca] rounded-2xl overflow-hidden flex items-end justify-center shadow-md">
                   <img
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Eleanor&backgroundColor=312e81"
-                    alt="Eleanor Vance"
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(patientSeed)}&backgroundColor=312e81`}
+                    alt={patientName}
                     className="w-14 h-14"
                   />
                 </div>
                 <div>
-                  <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-0.5">Patient Name</p>
-                  <h2 className="text-xl font-bold text-gray-900 mb-1.5">Eleanor Vance</h2>
+                  <p className="text-[10px] text-gray-400 font-semibold  tracking-widest mb-0.5">Patient Name</p>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1.5">{patientName}</h2>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 font-medium">
                     <div className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5 text-[#5348ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                       </svg>
-                      <span>#482-119-204</span>
+                      <span>{patientDisplayId}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <svg className="w-3.5 h-3.5 text-[#5348ff]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                      <span>24 Weeks Gestation</span>
+                      <span>{gestationLabel}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="text-right pl-4 md:border-l border-gray-100 pr-2">
-                <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-1">Last Visit</p>
-                <p className="text-lg font-bold text-gray-900">14 Oct 2023</p>
-                <p className="text-xs text-gray-400 mt-0.5">Normal Progression</p>
+                <p className="text-[10px] text-gray-400 font-semibold  tracking-widest mb-1">Last Visit</p>
+                <p className="text-lg font-semibold text-gray-900">{lastVisitLabel}</p>
+                <p className="text-xs text-gray-400 mt-0.5">{progressionLabel}</p>
               </div>
             </div>
 
-            {/* ── Vitals + Symptoms Row ── */}
+            {/* â”€â”€ Vitals + Symptoms Row â”€â”€ */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
               {/* Vitals Entry */}
               <div className="lg:col-span-3 bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                    <span className="text-lg">💉</span>
+                  <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+                    <FaSyringe className="text-base text-[#5348ff]" />
                     Vitals Entry
                   </h3>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#eef0ff] text-[#5348ff] border border-[#d8daff]">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#eef0ff] text-[#5348ff] border border-[#d8daff]">
                     <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -247,7 +298,7 @@ export default function HealthEntry() {
                 <div className="grid grid-cols-2 gap-x-5 gap-y-5">
                   {/* Systolic BP */}
                   <div>
-                    <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                    <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                       Systolic BP (mmHg)
                     </label>
                     <input
@@ -259,7 +310,7 @@ export default function HealthEntry() {
                   </div>
                   {/* Diastolic BP */}
                   <div>
-                    <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                    <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                       Diastolic BP (mmHg)
                     </label>
                     <input
@@ -271,7 +322,7 @@ export default function HealthEntry() {
                   </div>
                   {/* Weight */}
                   <div>
-                    <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                    <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                       Weight (kg)
                     </label>
                     <input
@@ -283,7 +334,7 @@ export default function HealthEntry() {
                   </div>
                   {/* Hemoglobin */}
                   <div>
-                    <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                    <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                       Hemoglobin (g/dL)
                     </label>
                     <input
@@ -298,8 +349,8 @@ export default function HealthEntry() {
 
               {/* Symptoms */}
               <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
-                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-6">
-                  <span className="text-lg">🩺</span>
+                <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-6">
+                  <FaStethoscope className="text-base text-[#5348ff]" />
                   Symptoms
                 </h3>
 
@@ -335,10 +386,10 @@ export default function HealthEntry() {
               </div>
             </div>
 
-            {/* ── Clinical Notes ── */}
+            {/* â”€â”€ Clinical Notes â”€â”€ */}
             <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100">
-              <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-1">
-                <span className="text-lg">📋</span>
+              <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-1">
+                <FaClipboardList className="text-base text-[#5348ff]" />
                 Clinical Notes
               </h3>
               <p className="text-xs text-gray-400 mb-4">Observations, diagnosis, and mental state assessment.</p>
@@ -351,20 +402,20 @@ export default function HealthEntry() {
               />
             </div>
 
-            {/* ── Recommendations & Medications ── */}
+            {/* â”€â”€ Recommendations & Medications â”€â”€ */}
             <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(83,72,255,0.06)] border border-gray-100 relative overflow-hidden">
               {/* Left accent */}
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#5348ff] to-[#6c5ce7] rounded-l-2xl" />
 
-              <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-5 pl-3">
-                <span className="text-lg">💊</span>
+              <h3 className="text-base font-semibold text-gray-900 flex items-center gap-2 mb-5 pl-3">
+                <FaCapsules className="text-base text-[#5348ff]" />
                 Recommendations &amp; Medications
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pl-3">
                 {/* Prescription */}
                 <div>
-                  <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                  <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                     Prescription / Treatment
                   </label>
                   <div className="relative">
@@ -385,7 +436,7 @@ export default function HealthEntry() {
 
                 {/* Follow-up Date */}
                 <div>
-                  <label className="block text-[10px] text-gray-400 font-semibold uppercase tracking-widest mb-2">
+                  <label className="block text-[10px] text-gray-400 font-semibold  tracking-widest mb-2">
                     Next Follow-Up Date
                   </label>
                   <div className="relative">
@@ -412,7 +463,7 @@ export default function HealthEntry() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-800 mb-0.5">Standard Follow-up</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-0.5">Standard Follow-up</p>
                   <p className="text-xs text-gray-500 leading-relaxed">
                     Patient is currently in the late second trimester. Schedule tests for gestational diabetes at the next visit.
                   </p>
@@ -420,12 +471,12 @@ export default function HealthEntry() {
               </div>
             </div>
 
-            {/* ── Footer Actions ── */}
+            {/* â”€â”€ Footer Actions â”€â”€ */}
             <div className="flex items-center justify-center gap-4 pt-4 pb-8">
               <button
                 onClick={handleDiscard}
                 disabled={saving}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold text-[#e74c3c] bg-white border-2 border-[#fde8e8] hover:bg-[#fef2f2] hover:border-[#e74c3c]/30 transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl text-sm font-semibold text-[#e74c3c] bg-white border-2 border-[#fde8e8] hover:bg-[#fef2f2] hover:border-[#e74c3c]/30 transition-all duration-200 flex items-center gap-2 disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -435,7 +486,7 @@ export default function HealthEntry() {
               <button
                 onClick={handleCompleteAndSave}
                 disabled={saving}
-                className="px-8 py-3 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-[#5348ff] to-[#6c5ce7] shadow-[0_6px_20px_rgba(83,72,255,0.35)] hover:shadow-[0_8px_28px_rgba(83,72,255,0.5)] hover:translate-y-[-1px] transition-all duration-200 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="px-8 py-3 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-[#5348ff] to-[#6c5ce7] shadow-[0_6px_20px_rgba(83,72,255,0.35)] hover:shadow-[0_8px_28px_rgba(83,72,255,0.5)] hover:translate-y-[-1px] transition-all duration-200 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
               >
                 {saving ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
@@ -444,15 +495,13 @@ export default function HealthEntry() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
-                {saving ? 'Saving…' : 'Complete Entry & Save Record'}
+                {saving ? 'Savingâ€¦' : 'Complete Entry & Save Record'}
               </button>
             </div>
 
           </div>
-        </main>
-      </div>
 
-      {/* ── Toast Notification ── */}
+      {/* â”€â”€ Toast Notification â”€â”€ */}
       {toast && (
         <div className={`fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border transition-all duration-300 animate-[slideIn_0.3s_ease-out] ${
           toast.type === 'success'
@@ -484,7 +533,7 @@ export default function HealthEntry() {
         </div>
       )}
 
-      {/* ── Discard Confirmation Dialog ── */}
+      {/* â”€â”€ Discard Confirmation Dialog â”€â”€ */}
       {showDiscardDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setShowDiscardDialog(false)} />
@@ -494,7 +543,7 @@ export default function HealthEntry() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 text-center mb-2">Discard Changes?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 text-center mb-2">Discard Changes?</h3>
             <p className="text-sm text-gray-500 text-center mb-6">All unsaved data in this health entry will be lost. This action cannot be undone.</p>
             <div className="flex gap-3">
               <button
@@ -528,3 +577,4 @@ export default function HealthEntry() {
     </div>
   );
 }
+

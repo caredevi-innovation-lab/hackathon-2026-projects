@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import PatientSideBar from '../../components/PatientSideBar.jsx';
+// Sidebar now provided by AppLayout
 import { fetchHealth } from '../../api.js';
 import { useAuth } from '../../hooks/useAuth.js';
 
@@ -87,36 +87,7 @@ export default function PatientRecord() {
     : null;
 
   return (
-    <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
-      <PatientSideBar />
-
-      <div className="flex-1 flex flex-col overflow-y-auto relative w-full min-w-0">
-        {/* Header */}
-        <header className="flex justify-between items-center py-4 px-4 md:px-8 bg-white border-b border-slate-100 sticky top-0 z-40 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">My Records</h2>
-            <p className="text-xs text-slate-400 mt-0.5">{totalRecords} health entr{totalRecords !== 1 ? 'ies' : 'y'} logged</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-              <svg viewBox="0 0 24 24" className="w-4 h-4 text-slate-400" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
-              <input
-                type="text" placeholder="Search records..." value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-transparent text-sm text-slate-700 outline-none w-40 placeholder:text-slate-400"
-              />
-            </div>
-            <Link
-              to="/patient-health-data-entry"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all flex items-center gap-1.5"
-            >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" stroke="currentColor" strokeWidth="2.5" fill="none"><path strokeLinecap="round" d="M12 5v14M5 12h14"/></svg>
-              New Entry
-            </Link>
-          </div>
-        </header>
-
-        <main className="p-4 md:p-8 w-full">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full">
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -125,8 +96,8 @@ export default function PatientRecord() {
                 <svg viewBox="0 0 24 24" className="w-6 h-6 text-indigo-600 fill-current"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-4 0V3h4v2M9 5h6"/></svg>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Records</p>
-                <p className="text-3xl font-black text-slate-800">{totalRecords}</p>
+                <p className="text-xs text-slate-400 font-semibold  tracking-wider">Total Records</p>
+                <p className="text-3xl font-semibold text-slate-800">{totalRecords}</p>
               </div>
             </div>
             <div className="bg-white rounded-2xl p-5 border border-red-100 shadow-sm flex items-center gap-4">
@@ -134,8 +105,8 @@ export default function PatientRecord() {
                 <svg viewBox="0 0 24 24" className="w-6 h-6 text-red-500 fill-current"><path d="M12 3l10 18H2L12 3z"/></svg>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">High Risk Events</p>
-                <p className={`text-3xl font-black ${highRiskCount > 0 ? 'text-red-600' : 'text-slate-800'}`}>{highRiskCount}</p>
+                <p className="text-xs text-slate-400 font-semibold  tracking-wider">High Risk Events</p>
+                <p className={`text-3xl font-semibold ${highRiskCount > 0 ? 'text-red-600' : 'text-slate-800'}`}>{highRiskCount}</p>
               </div>
             </div>
             <div className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-sm flex items-center gap-4">
@@ -143,8 +114,8 @@ export default function PatientRecord() {
                 <svg viewBox="0 0 24 24" className="w-6 h-6 text-emerald-600 fill-current"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
               </div>
               <div>
-                <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Avg Hemoglobin</p>
-                <p className="text-3xl font-black text-slate-800">{avgHb ?? '—'} <span className="text-base font-medium text-slate-400">g/dL</span></p>
+                <p className="text-xs text-slate-400 font-semibold  tracking-wider">Avg Hemoglobin</p>
+                <p className="text-3xl font-semibold text-slate-800">{avgHb ?? 'â€”'} <span className="text-base font-medium text-slate-400">g/dL</span></p>
               </div>
             </div>
           </div>
@@ -153,7 +124,7 @@ export default function PatientRecord() {
           {records.length > 1 && (
             <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm mb-8">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-bold text-slate-800">Risk Score Trend</h3>
+                <h3 className="font-semibold text-slate-800">Risk Score Trend</h3>
                 <span className="text-xs text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Last {Math.min(records.length, 10)} entries</span>
               </div>
               <MiniLineChart records={records.slice(0, 10)} />
@@ -168,7 +139,7 @@ export default function PatientRecord() {
           {/* Records Table */}
           <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="font-bold text-slate-800">Health Log</h3>
+              <h3 className="font-semibold text-slate-800">Health Log</h3>
               {search && <p className="text-xs text-slate-400">{filtered.length} result{filtered.length !== 1 ? 's' : ''} for "{search}"</p>}
             </div>
 
@@ -188,8 +159,8 @@ export default function PatientRecord() {
               <div className="p-12 text-center">
                 <p className="text-slate-400 text-sm mb-4">{search ? 'No records match your search.' : 'No health records yet.'}</p>
                 {!search && (
-                  <Link to="/patient-health-data-entry" className="text-indigo-600 font-bold text-sm hover:underline">
-                    Log your first entry →
+                  <Link to="/patient-health-data-entry" className="text-indigo-600 font-semibold text-sm hover:underline">
+                    Log your first entry â†’
                   </Link>
                 )}
               </div>
@@ -197,7 +168,7 @@ export default function PatientRecord() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                    <tr className="bg-slate-50 text-slate-500 text-xs font-semibold  tracking-wider">
                       <th className="px-6 py-3 text-left">Date</th>
                       <th className="px-6 py-3 text-left">Blood Pressure</th>
                       <th className="px-6 py-3 text-left">Hemoglobin</th>
@@ -215,13 +186,13 @@ export default function PatientRecord() {
                             {new Date(record.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`font-bold ${record.systolicBP >= 140 || record.diastolicBP >= 90 ? 'text-red-600' : 'text-slate-800'}`}>
+                            <span className={`font-semibold ${record.systolicBP >= 140 || record.diastolicBP >= 90 ? 'text-red-600' : 'text-slate-800'}`}>
                               {record.systolicBP}/{record.diastolicBP}
                             </span>
                             <span className="text-xs text-slate-400 ml-1">mmHg</span>
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`font-bold ${record.hemoglobin < 10 ? 'text-amber-600' : 'text-slate-800'}`}>
+                            <span className={`font-semibold ${record.hemoglobin < 10 ? 'text-amber-600' : 'text-slate-800'}`}>
                               {record.hemoglobin}
                             </span>
                             <span className="text-xs text-slate-400 ml-1">g/dL</span>
@@ -242,7 +213,7 @@ export default function PatientRecord() {
                             )}
                           </td>
                           <td className="px-6 py-4">
-                            <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${risk.bg} ${risk.color}`}>
+                            <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${risk.bg} ${risk.color}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${risk.dot}`} />
                               {risk.label}
                             </span>
@@ -255,8 +226,8 @@ export default function PatientRecord() {
               </div>
             )}
           </div>
-        </main>
-      </div>
     </div>
   );
 }
+
+

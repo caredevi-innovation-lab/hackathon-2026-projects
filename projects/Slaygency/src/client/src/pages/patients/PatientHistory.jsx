@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import PatientSideBar from '../../components/PatientSideBar.jsx';
+// Sidebar now provided by AppLayout
 import { fetchHealth } from '../../api.js';
 import { useAuth } from '../../hooks/useAuth.js';
+import { FaBolt, FaCheckCircle } from 'react-icons/fa';
+import { HiMiniExclamationCircle } from 'react-icons/hi2';
 
 function getRiskLevel(record) {
   let score = 10;
@@ -17,9 +19,9 @@ function getRiskLevel(record) {
 }
 
 const TONE_STYLES = {
-  critical: { badge: 'bg-red-100 text-red-700', border: 'border-red-200', title: 'Elevated BP Detected', icon: '🔴' },
-  routine:  { badge: 'bg-amber-100 text-amber-700', border: 'border-amber-200', title: 'Routine Health Check', icon: '⚡' },
-  lab:      { badge: 'bg-emerald-100 text-emerald-700', border: 'border-emerald-200', title: 'Normal Vitals Logged', icon: '✅' },
+  critical: { badge: 'bg-red-100 text-red-700', border: 'border-red-200', title: 'Elevated BP Detected', Icon: HiMiniExclamationCircle, iconClass: 'text-red-600' },
+  routine:  { badge: 'bg-amber-100 text-amber-700', border: 'border-amber-200', title: 'Routine Health Check', Icon: FaBolt, iconClass: 'text-amber-500' },
+  lab:      { badge: 'bg-emerald-100 text-emerald-700', border: 'border-emerald-200', title: 'Normal Vitals Logged', Icon: FaCheckCircle, iconClass: 'text-emerald-500' },
 };
 
 export default function PatientHistory() {
@@ -46,42 +48,13 @@ export default function PatientHistory() {
   const highCount = records.filter((r) => getRiskLevel(r).label === 'CRITICAL ALERT').length;
 
   return (
-    <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
-      <PatientSideBar />
-
-      <div className="flex-1 flex flex-col overflow-y-auto relative w-full min-w-0">
-        {/* Header */}
-        <header className="flex flex-wrap justify-between items-center gap-3 py-4 px-4 md:px-8 bg-white border-b border-slate-100 sticky top-0 z-40 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">Health History</h2>
-            <p className="text-xs text-slate-400 mt-0.5">{user?.name} — Full interaction timeline</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <label className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
-              <svg viewBox="0 0 24 24" className="w-4 h-4 text-slate-400" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
-              <input
-                type="text" placeholder="Search symptoms, BP..." value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-transparent text-sm outline-none w-36 text-slate-700 placeholder:text-slate-400"
-              />
-            </label>
-            <Link
-              to="/patient-health-data-entry"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all flex items-center gap-1.5"
-            >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" stroke="currentColor" strokeWidth="2.5" fill="none"><path strokeLinecap="round" d="M12 5v14M5 12h14"/></svg>
-              Add New Entry
-            </Link>
-          </div>
-        </header>
-
-        <main className="p-4 md:p-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl w-full">
           <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-6">
 
             {/* Timeline */}
             <section>
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-bold text-slate-800">Interaction Timeline</h3>
+                <h3 className="text-lg font-semibold text-slate-800">Interaction Timeline</h3>
                 <span className="text-xs text-slate-400 bg-white border border-slate-100 px-3 py-1 rounded-full">{filtered.length} entr{filtered.length !== 1 ? 'ies' : 'y'}</span>
               </div>
 
@@ -101,8 +74,8 @@ export default function PatientHistory() {
                 <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
                   <p className="text-slate-400 text-sm mb-4">{search ? 'No entries match your search.' : 'No health history yet.'}</p>
                   {!search && (
-                    <Link to="/patient-health-data-entry" className="text-indigo-600 font-bold text-sm hover:underline">
-                      Log your first entry →
+                    <Link to="/patient-health-data-entry" className="text-indigo-600 font-semibold text-sm hover:underline">
+                      Log your first entry â†’
                     </Link>
                   )}
                 </div>
@@ -111,16 +84,17 @@ export default function PatientHistory() {
                   {filtered.map((record, idx) => {
                     const risk = getRiskLevel(record);
                     const style = TONE_STYLES[risk.tone];
+                    const Icon = style.Icon;
                     return (
                       <article key={record._id || idx} className={`bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition-shadow ${style.border}`}>
                         <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                           <div className="flex items-center gap-3">
-                            <span className="text-xl">{style.icon}</span>
+                            <Icon className={`text-lg ${style.iconClass}`} />
                             <div>
-                              <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${style.badge}`}>
+                              <span className={`text-[10px] font-semibold  tracking-widest px-2 py-0.5 rounded-full ${style.badge}`}>
                                 {risk.label}
                               </span>
-                              <h4 className="font-bold text-slate-800 mt-1 text-base">{style.title}</h4>
+                              <h4 className="font-semibold text-slate-800 mt-1 text-base">{style.title}</h4>
                             </div>
                           </div>
                           <p className="text-xs text-slate-400 whitespace-nowrap">
@@ -129,8 +103,8 @@ export default function PatientHistory() {
                         </div>
 
                         <p className="text-sm text-slate-600 mb-3 leading-relaxed">
-                          BP: <strong>{record.systolicBP}/{record.diastolicBP} mmHg</strong> &nbsp;•&nbsp;
-                          Hb: <strong>{record.hemoglobin} g/dL</strong> &nbsp;•&nbsp;
+                          BP: <strong>{record.systolicBP}/{record.diastolicBP} mmHg</strong> &nbsp;â€¢&nbsp;
+                          Hb: <strong>{record.hemoglobin} g/dL</strong> &nbsp;â€¢&nbsp;
                           Age: <strong>{record.age} yrs</strong>
                         </p>
 
@@ -159,7 +133,7 @@ export default function PatientHistory() {
               {/* Vitals Snapshot */}
               <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-bold text-slate-700 text-sm">Latest Vitals</h4>
+                  <h4 className="font-semibold text-slate-700 text-sm">Latest Vitals</h4>
                   {records.length > 0 && <span className="text-[10px] text-slate-400">Most recent</span>}
                 </div>
                 {records.length > 0 ? (
@@ -171,7 +145,7 @@ export default function PatientHistory() {
                     ].map(({ label, value, flag }) => (
                       <div key={label} className="flex justify-between items-center py-1.5 border-b border-slate-50 last:border-0">
                         <span className="text-xs text-slate-400">{label}</span>
-                        <span className={`font-bold text-xs ${flag ? 'text-red-600' : 'text-slate-700'}`}>{value}</span>
+                        <span className={`font-semibold text-xs ${flag ? 'text-red-600' : 'text-slate-700'}`}>{value}</span>
                       </div>
                     ))}
                   </div>
@@ -184,8 +158,8 @@ export default function PatientHistory() {
               <div className={`rounded-2xl p-5 text-white shadow-md ${
                 highCount > 0 ? 'bg-gradient-to-br from-red-600 to-red-700' : 'bg-gradient-to-br from-indigo-600 to-indigo-700'
               }`}>
-                <p className="text-xs uppercase tracking-widest text-white/70 mb-1">Active Risk Level</p>
-                <h4 className="text-2xl font-black mb-1">
+                <p className="text-xs  tracking-widest text-white/70 mb-1">Active Risk Level</p>
+                <h4 className="text-2xl font-semibold mb-1">
                   {highCount > 0 ? 'High Risk' : records.length > 0 ? 'Low Risk' : 'No Data'}
                 </h4>
                 <p className="text-xs text-white/80 mb-4">
@@ -193,7 +167,7 @@ export default function PatientHistory() {
                 </p>
                 <Link
                   to="/patient-risk-assessment"
-                  className="block w-full py-2 text-center border border-white/30 bg-white/15 hover:bg-white/25 rounded-xl text-xs font-bold transition-colors"
+                  className="block w-full py-2 text-center border border-white/30 bg-white/15 hover:bg-white/25 rounded-xl text-xs font-semibold transition-colors"
                 >
                   Full Risk Analysis
                 </Link>
@@ -201,7 +175,7 @@ export default function PatientHistory() {
 
               {/* Filter Tools */}
               <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Filter History</h4>
+                <h4 className="text-xs font-semibold text-slate-500  tracking-widest mb-3">Filter History</h4>
                 <input
                   type="text" placeholder="Search symptoms, BP..."
                   value={search} onChange={(e) => setSearch(e.target.value)}
@@ -216,8 +190,8 @@ export default function PatientHistory() {
             </aside>
 
           </div>
-        </main>
-      </div>
     </div>
   );
 }
+
+

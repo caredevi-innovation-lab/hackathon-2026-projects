@@ -42,7 +42,7 @@ export default function AdminSidebar() {
           <IconDashboard />
         </span>
         <div>
-          <h1 className="m-0 text-sm font-semibold text-[#1b2f53]">Aama Care</h1>
+          <h1 className="m-0 text-sm font-semibold text-[#1b2f53]">MaterNova</h1>
           <p className="m-0 text-[0.65rem] tracking-[0.08em] text-[#8b93ab]">
             Maternal Health Admin
           </p>
