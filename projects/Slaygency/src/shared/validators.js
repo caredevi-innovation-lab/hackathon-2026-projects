@@ -3,7 +3,7 @@ export function isValidRiskLevel(level) {
 }
 
 export function isValidRole(role) {
-  return ['Patient', 'HealthWorker', 'Doctor', 'Admin'].includes(role);
+  return ['Patient', 'Doctor', 'Admin'].includes(role);
 }
 
 export function validateHealthInput(input) {
