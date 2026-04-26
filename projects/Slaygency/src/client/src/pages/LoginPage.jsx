@@ -13,6 +13,18 @@ function getRedirectPath(role) {
   return '/patient';
 }
 
+function getRedirectPath(role) {
+  switch (role) {
+    case 'Admin':
+      return '/admin/dashboard';
+    case 'Doctor':
+      return '/doctor';
+    case 'Patient':
+    default:
+      return '/patient-health-data-entry';
+  }
+}
+
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
