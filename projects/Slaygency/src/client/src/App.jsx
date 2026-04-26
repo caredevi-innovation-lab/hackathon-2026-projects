@@ -6,11 +6,11 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import AlertsPage from './pages/AlertsPage.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import PatientDashboard from './pages/patients/PatientDashboard.jsx';
-import PatientHistory from './pages/patients/PatientHistory.jsx';
+import PatientDashboard from './pages/PatientDashboard.jsx';
+import PatientHistory from './pages/PatientHistory.jsx';
+import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
+import PatientsPage from './pages/PatientsPage.jsx';
 import PatientRecords from './pages/PatientRecords.jsx';
-import PatientRecord from './pages/patients/PatientRecord.jsx';
-import SettingsPage from './pages/patients/setting.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
@@ -40,11 +40,46 @@ export default function App() {
         {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient-records" element={<PatientRecords />} />
-        <Route path="/my-records" element={<PatientRecord />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/risk-monitoring" element={<PatientRiskPage />} />
-        <Route path="/health-reports" element={<PatientHealthReport />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+              <Navigate to="/admin/dashboard" replace />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AdminDashboard />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <UsersPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/patients"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <PatientsPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/alerts"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AlertsPage />
+            // </ProtectedRoute>
+          }
+        />
         <Route path="/submit" element={<SubmitHealthData />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
