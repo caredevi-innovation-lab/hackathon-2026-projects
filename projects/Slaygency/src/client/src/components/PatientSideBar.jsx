@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 // Modern SVG icons matching the sidebar design
 const icons = {
@@ -59,19 +60,29 @@ const icons = {
   ),
 };
 
-function SidebarItem({ icon, label, active }) {
-  return (
-    <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-      active
-        ? 'bg-indigo-50 text-indigo-700' 
-        : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600'
-    }`}>
+function SidebarItem({ icon, label, to }) {
+  const location = useLocation();
+  const active = location.pathname === to;
+  const content = (
+    <>
       <span className={`shrink-0 flex items-center justify-center ${active ? 'text-indigo-700' : 'text-slate-500'}`}>
         {icon}
       </span>
       <span>{label}</span>
-    </div>
+    </>
   );
+
+  const className = `flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
+    active
+      ? 'bg-indigo-50 text-indigo-700' 
+      : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600'
+  }`;
+
+  if (to) {
+    return <Link to={to} className={className}>{content}</Link>;
+  }
+
+  return <div className={className}>{content}</div>;
 }
 
 export default function PatientSideBar() {
@@ -87,18 +98,17 @@ export default function PatientSideBar() {
           </div>
           <div>
             <h1 className="m-0 text-lg font-bold text-slate-800">MaterNova</h1>
-            <p className="m-0 text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-0.5">Healthcare Portal</p>
+            <p className="m-0 text-[10px] tracking-wider text-slate-400 font-bold mt-0.5">Healthcare Portal</p>
           </div>
         </div>
 
         {/* Main nav */}
         <nav className="flex flex-col gap-1">
-          <SidebarItem icon={icons.overview} label="Overview" />
-          <SidebarItem icon={icons.records} label="My Records" />
-          <SidebarItem icon={icons.risk} label="Risk Monitoring" active />
-          <SidebarItem icon={icons.outreach} label="Community Outreach" />
-          <SidebarItem icon={icons.reports} label="Health Reports" />
-          <SidebarItem icon={icons.settings} label="Settings" />
+          <SidebarItem icon={icons.overview} label="Dashboard" to="/patient" />
+          <SidebarItem icon={icons.records} label="My Records" to="/my-records" />
+          <SidebarItem icon={icons.risk} label="Risk Monitoring" to="/risk-monitoring" />
+          <SidebarItem icon={icons.reports} label="Health Reports" to="/health-reports" />
+          <SidebarItem icon={icons.settings} label="Settings" to="/settings" />
         </nav>
 
         {/* Add Health Data button */}
