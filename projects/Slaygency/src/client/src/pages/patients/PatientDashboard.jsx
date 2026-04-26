@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import PatientSideBar from '../../components/PatientSideBar.jsx';
 import ironImg from '../../assets/images/iron.png';
 import sidenapImg from '../../assets/images/sidenap.png';
 import walkImg from '../../assets/images/walk.png';
+import { useAuth } from '../../hooks/useAuth.js';
+import { fetchHealth } from '../../api.js';
 
 // SVG Icons
 const BellIcon = () => (
@@ -31,22 +34,51 @@ const SugarIcon = () => (
 );
 
 export default function PatientDashboard() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await fetchHealth();
+        setRecords(data);
+      } catch (error) {
+        console.error('Failed to fetch health records:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  const latestRecord = records.length > 0 ? records[0] : null;
+  const recentBP = latestRecord?.bloodPressure || 'N/A';
+  const recentWeight = latestRecord?.weight ? `${latestRecord.weight} kg` : 'N/A';
+  const recentSugar = latestRecord?.bloodSugar ? `${latestRecord.bloodSugar} mg/dL` : 'N/A';
+  const recentHR = latestRecord?.heartRate ? `${latestRecord.heartRate} bpm` : 'N/A';
+
+  // Calculate an approximate score out of 100 based on standard metrics if we don't have a direct AI score
+  const riskScore = latestRecord?.riskScore || 15; // default to low risk mock
+  const isHighRisk = riskScore > 50;
+
   return (
     <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
       <PatientSideBar />
 
-      <div className="flex-1 flex flex-col overflow-y-auto relative">
+      <div className="flex-1 flex flex-col overflow-y-auto relative w-full">
         {/* Chat Bubble Fab */}
         <button className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg hover:bg-indigo-700 transition-colors z-50">
           <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" /></svg>
         </button>
 
         {/* Header */}
-        <header className="flex justify-between items-center py-4 px-8 bg-white border-b border-slate-200 shrink-0">
+        <header className="flex justify-between items-center py-4 px-4 md:px-8 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-40">
           <h2 className="text-xl font-bold text-slate-800">Dashboard</h2>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 border-r border-slate-200 pr-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-400 border-r border-slate-200 pr-6">
               <button className="text-indigo-600">EN</button>
               <span>|</span>
               <button className="hover:text-indigo-600">NE</button>
@@ -55,30 +87,30 @@ export default function PatientDashboard() {
             <button className="hover:opacity-80 transition-opacity"><BellIcon /></button>
 
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden shadow-sm border border-slate-100">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" className="w-full h-full object-cover" />
+              <div className="w-9 h-9 rounded-full bg-indigo-100 overflow-hidden shadow-sm border border-slate-100 flex items-center justify-center text-indigo-700 font-bold">
+                {user?.name?.charAt(0) || 'U'}
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 leading-tight">Sunita Rai</span>
-                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #8821</span>
+              <div className="hidden md:flex flex-col">
+                <span className="text-sm font-bold text-slate-800 leading-tight">{user?.name || 'Patient'}</span>
+                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #{user?.id?.substring(0, 4) || '8821'}</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="p-8 w-full">
+        <main className="p-4 md:p-8 w-full max-w-[100vw]">
 
           {/* Top Title & Button */}
-          <div className="flex justify-between items-end mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 gap-4">
             <div>
               <h3 className="text-indigo-600 font-semibold text-sm mb-1">My Journey</h3>
               <h1 className="text-2xl font-bold text-slate-800">Feeling Great Today!</h1>
             </div>
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md transition-all flex items-center gap-2">
+            <Link to="/patient-health-data-entry" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow-md transition-all flex items-center gap-2">
               <span className="flex items-center justify-center bg-white/20 rounded-full w-5 h-5"><span className="text-sm">+</span></span>
               Log Health Data
-            </button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -131,7 +163,7 @@ export default function PatientDashboard() {
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center">
               <h3 className="text-[11px] font-bold text-slate-400 mb-6 self-start w-full text-center">Health Safety Score</h3>
 
-              <div className="relative w-40 h-40 mb-6">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 mb-6">
                 <svg className="w-full h-full" viewBox="0 0 36 36">
                   {/* Background Circle */}
                   <path
@@ -144,29 +176,29 @@ export default function PatientDashboard() {
                     strokeLinecap="round"
                     transform="rotate(-225 18 18)"
                   />
-                  {/* Foreground Circle - Green */}
+                  {/* Foreground Circle - Dynamic */}
                   <path
-                    className="text-green-500"
+                    className={isHighRisk ? "text-red-500" : "text-green-500"}
                     d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="3.5"
-                    strokeDasharray="20, 100"
+                    strokeDasharray={`${(riskScore / 100) * 75}, 100`}
                     strokeLinecap="round"
                     transform="rotate(-225 18 18)"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-4xl font-black text-slate-800 leading-none">15</span>
+                  <span className="text-3xl md:text-4xl font-black text-slate-800 leading-none">{riskScore}</span>
                   <span className="text-[9px] font-bold text-slate-400 mt-1">Risk Level</span>
                 </div>
               </div>
 
-              <div className="bg-green-50 text-green-700 font-bold text-sm px-4 py-2 rounded-full flex items-center gap-1.5 mb-4">
-                <CheckIcon /> Low Risk Profile
+              <div className={`font-bold text-sm px-4 py-2 rounded-full flex items-center gap-1.5 mb-4 ${isHighRisk ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
+                <CheckIcon /> {isHighRisk ? 'High Risk Profile' : 'Low Risk Profile'}
               </div>
               <p className="text-xs text-slate-500 leading-relaxed max-w-[200px]">
-                Based on your recent BP (110/70) and symptoms, you're tracking perfectly.
+                {isHighRisk ? "Please consult your doctor immediately." : `Based on your recent BP (${recentBP}) and symptoms, you're tracking perfectly.`}
               </p>
             </div>
           </div>
@@ -209,44 +241,44 @@ export default function PatientDashboard() {
               <button className="text-indigo-600 text-xs font-bold hover:underline">View History ›</button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 divide-x divide-slate-100">
-              <div className="flex items-center gap-3 px-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+              <div className="flex flex-col md:flex-row items-center gap-3 p-4 md:p-2 md:pl-2">
                 <div className="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center shrink-0">
                   <BPIcon />
                 </div>
-                <div>
+                <div className="text-center md:text-left">
                   <p className="text-[9px] font-bold text-slate-400">Blood Pressure</p>
-                  <p className="text-lg font-bold text-slate-800">110/70 <span className="text-xs font-medium text-emerald-500 ml-1">Normal</span></p>
+                  <p className="text-lg font-bold text-slate-800">{recentBP}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-4">
+              <div className="flex flex-col md:flex-row items-center gap-3 p-4 md:p-2 md:px-4">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
                   <WeightIcon />
                 </div>
-                <div>
+                <div className="text-center md:text-left">
                   <p className="text-[9px] font-bold text-slate-400">Weight</p>
-                  <p className="text-lg font-bold text-slate-800">64.5 kg <span className="text-xs font-medium text-slate-400 ml-1">+2kg trend</span></p>
+                  <p className="text-lg font-bold text-slate-800">{recentWeight}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-4">
+              <div className="flex flex-col md:flex-row items-center gap-3 p-4 md:p-2 md:px-4">
                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
                   <SugarIcon />
                 </div>
-                <div>
+                <div className="text-center md:text-left">
                   <p className="text-[9px] font-bold text-slate-400">Blood Sugar</p>
-                  <p className="text-lg font-bold text-slate-800">92 mg/dL <span className="text-xs font-medium text-emerald-500 ml-1">Stable</span></p>
+                  <p className="text-lg font-bold text-slate-800">{recentSugar}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 px-4">
+              <div className="flex flex-col md:flex-row items-center gap-3 p-4 md:p-2 md:px-4">
                 <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center shrink-0">
                   <svg viewBox="0 0 24 24" className="w-5 h-5 text-red-500 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                 </div>
-                <div>
+                <div className="text-center md:text-left">
                   <p className="text-[9px] font-bold text-slate-400">Heart Rate</p>
-                  <p className="text-lg font-bold text-slate-800">82 bpm <span className="text-xs font-medium text-emerald-500 ml-1">Healthy</span></p>
+                  <p className="text-lg font-bold text-slate-800">{recentHR}</p>
                 </div>
               </div>
             </div>

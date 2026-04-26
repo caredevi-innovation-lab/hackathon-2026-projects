@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SideBar from '../../components/SideBar.jsx';
+import SideBar from '../../components/PatientSideBar.jsx';
+import { createHealthRecord, predictRisk } from '../../api.js';
 
 const symptomOptions = ['Headache', 'Swelling', 'Dizziness', 'Fatigue', 'Vision Blur'];
 
@@ -65,7 +66,7 @@ export default function PatientHealthDataEntryForm() {
     setMessage('');
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.age || !form.priorPregnancyHistory) {
@@ -73,27 +74,50 @@ export default function PatientHealthDataEntryForm() {
       return;
     }
 
-    const riskScore = calculateRiskScore(form);
+    try {
+      setMessage('');
+      
+      const payload = {
+        age: Number(form.age),
+        priorPregnancyHistory: form.priorPregnancyHistory,
+        bloodPressure: `${form.bpSystolic}/${form.bpDiastolic}`,
+        weight: 65, // default since we don't have weight input here yet
+        bloodSugar: 90, // default
+        heartRate: 80, // default
+        hemoglobin: Number(form.hemoglobin),
+        symptoms: form.symptoms,
+      };
 
-    navigate('/patient-risk-assessment', {
-      state: {
-        assessment: {
-          age: Number(form.age),
-          bloodPressure: `${form.bpSystolic}/${form.bpDiastolic} mmHg`,
-          symptoms: form.symptoms.length ? form.symptoms : ['No major symptom reported'],
-          riskScore,
-          confidence: Number((90 + Math.random() * 8).toFixed(1)),
-          reportId: `MR-${Math.floor(68000 + Math.random() * 1300)}`,
+      // Create record
+      const record = await createHealthRecord(payload);
+      
+      // Get risk prediction
+      const predictionResponse = await predictRisk({ 
+        bloodPressure: payload.bloodPressure,
+        age: payload.age,
+        symptoms: payload.symptoms
+      });
+
+      // Navigate to risk assessment page
+      navigate('/patient-risk-assessment', {
+        state: {
+          assessment: {
+            ...predictionResponse.prediction,
+            reportId: record._id || `MR-${Math.floor(68000 + Math.random() * 1300)}`,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error(error);
+      setMessage('Failed to submit health data. Please try again.');
+    }
   };
 
   return (
-    <main className="grid min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,80,182,0.14),transparent_30%),radial-gradient(circle_at_top_right,rgba(0,122,138,0.12),transparent_28%),linear-gradient(180deg,#f5f8ff_0%,#ecf3fb_100%)] text-[#10264d] lg:grid-cols-[220px_minmax(0,1fr)]">
+    <main className="flex h-screen bg-[radial-gradient(circle_at_top_left,rgba(34,80,182,0.14),transparent_30%),radial-gradient(circle_at_top_right,rgba(0,122,138,0.12),transparent_28%),linear-gradient(180deg,#f5f8ff_0%,#ecf3fb_100%)] text-[#10264d] overflow-hidden">
       <SideBar />
 
-      <section className="min-w-0 px-3 py-4 sm:px-5 sm:py-6 lg:px-6 lg:py-7">
+      <section className="flex-1 flex flex-col overflow-y-auto relative w-full px-3 py-4 sm:px-5 sm:py-6 lg:px-6 lg:py-7">
         <div className="flex h-full w-full flex-col gap-5">
           <header className="rounded-[1.4rem] border border-[rgba(172,188,218,0.3)] bg-[rgba(255,255,255,0.72)] px-5 py-5 shadow-[0_18px_40px_rgba(11,43,99,0.08)] backdrop-blur-xl sm:px-6">
             <div className="flex flex-wrap items-start justify-between gap-4">

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PatientSideBar from '../../components/PatientSideBar.jsx';
+import { useAuth } from '../../hooks/useAuth.js';
+import { fetchHealth } from '../../api.js';
 
 // SVGs
 const BellIcon = () => (
@@ -28,18 +30,37 @@ const EmptyCircleIcon = () => (
 );
 
 export default function SettingsPage() {
+  const { user } = useAuth();
+  const [latestRecord, setLatestRecord] = useState(null);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const records = await fetchHealth();
+        if (records.length > 0) {
+          setLatestRecord(records[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load health records for settings', err);
+      }
+    }
+    loadData();
+  }, []);
+
+  const age = latestRecord?.age || 26;
+
   return (
     <div className="flex h-screen bg-[#fcfbfe] font-sans overflow-hidden">
       <PatientSideBar />
       
-      <div className="flex-1 flex flex-col overflow-y-auto relative">
+      <div className="flex-1 flex flex-col overflow-y-auto relative w-full">
         
         {/* Header */}
-        <header className="flex justify-between items-center py-4 px-8 border-b border-indigo-50/50 bg-white shadow-sm z-10">
+        <header className="flex justify-between items-center py-4 px-4 md:px-8 border-b border-indigo-50/50 bg-white shadow-sm z-10 sticky top-0">
           <h2 className="text-lg font-bold text-indigo-600">Patient Profile</h2>
           
-          <div className="flex items-center gap-6">
-            <div className="flex items-center text-xs font-bold text-slate-400 gap-1.5 border-r border-slate-200 pr-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="hidden md:flex items-center text-xs font-bold text-slate-400 gap-1.5 border-r border-slate-200 pr-6">
               <button className="text-indigo-600">EN</button>
               <span>|</span>
               <button className="hover:text-indigo-600 transition-colors">NE</button>
@@ -50,46 +71,46 @@ export default function SettingsPage() {
             </button>
             
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full overflow-hidden shadow-sm">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" className="w-full h-full object-cover" />
+              <div className="w-9 h-9 rounded-full bg-indigo-100 overflow-hidden shadow-sm flex items-center justify-center text-indigo-700 font-bold">
+                {user?.name?.charAt(0) || 'U'}
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 leading-tight">Sunita Thapa</span>
-                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #8821</span>
+              <div className="hidden md:flex flex-col">
+                <span className="text-sm font-bold text-slate-800 leading-tight">{user?.name || 'Patient'}</span>
+                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #{user?.id?.substring(0, 4) || '8821'}</span>
               </div>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="p-8 max-w-5xl mx-auto w-full pb-12">
+        <main className="p-4 md:p-8 max-w-5xl mx-auto w-full pb-12">
           
           {/* Top Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             
             {/* Profile Info Card */}
-            <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex gap-6 items-center">
+            <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
               <div className="relative shrink-0">
-                <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-md">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="Sunita Thapa" className="w-full h-full object-cover" />
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shadow-md bg-indigo-100 flex items-center justify-center text-indigo-700 text-4xl font-bold">
+                  {user?.name?.charAt(0) || 'U'}
                 </div>
                 <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg border-2 border-white hover:bg-indigo-700 transition-colors">
                   <CameraIcon />
                 </button>
               </div>
               
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-slate-800 mb-1">Sunita Thapa</h3>
-                <p className="text-sm font-medium text-slate-500 mb-5">Lalitpur, Kathmandu Valley</p>
+              <div className="flex-1 w-full">
+                <h3 className="text-xl font-bold text-slate-800 mb-1">{user?.name || 'Patient User'}</h3>
+                <p className="text-sm font-medium text-slate-500 mb-5">{user?.email || 'patient@maternova.com'}</p>
                 
-                <div className="flex gap-4">
-                  <div className="bg-indigo-50/70 rounded-xl px-5 py-3 w-32 border border-indigo-50">
+                <div className="flex flex-wrap justify-center sm:justify-start gap-4">
+                  <div className="bg-indigo-50/70 rounded-xl px-5 py-3 w-[120px] sm:w-32 border border-indigo-50">
                     <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-1">Age</p>
-                    <p className="font-bold text-indigo-800">26 Years</p>
+                    <p className="font-bold text-indigo-800">{age} Years</p>
                   </div>
-                  <div className="bg-pink-50/70 rounded-xl px-5 py-3 w-40 border border-pink-50">
-                    <p className="text-[10px] font-bold text-pink-600 uppercase tracking-widest mb-1">Pregnancy</p>
-                    <p className="font-bold text-pink-800">Week 24</p>
+                  <div className="bg-pink-50/70 rounded-xl px-5 py-3 w-[140px] sm:w-40 border border-pink-50">
+                    <p className="text-[10px] font-bold text-pink-600 uppercase tracking-widest mb-1">Status</p>
+                    <p className="font-bold text-pink-800">Active</p>
                   </div>
                 </div>
               </div>
@@ -120,10 +141,10 @@ export default function SettingsPage() {
           </div>
 
           {/* Middle Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             
             {/* Security Settings Card */}
-            <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100">
+            <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] border border-slate-100">
               <div className="flex items-center gap-2 mb-6">
                 <LockIcon />
                 <h3 className="text-base font-bold text-slate-800">Security Settings</h3>

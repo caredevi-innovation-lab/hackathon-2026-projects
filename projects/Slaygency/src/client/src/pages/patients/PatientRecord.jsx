@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PatientSideBar from '../../components/PatientSideBar.jsx';
+import { useAuth } from '../../hooks/useAuth.js';
+import { fetchHealth } from '../../api.js';
 
 // SVG Icons
 const BellIcon = () => (
@@ -27,10 +29,36 @@ const ModerateIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 text-amber-500 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
 );
 const StableIcon = () => (
-  <svg viewBox="0 0 24 24" className="w-4 h-4 text-indigo-400 fill-current"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 10h-4v2h4v-2zm2-4H8v2h8V8z"/></svg>
+  <svg viewBox="0 0 24 24" className="w-4 h-4 text-emerald-500 fill-current"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-6 10h-4v2h4v-2zm2-4H8v2h8V8z"/></svg>
 );
 
 export default function PatientRecord() {
+  const { user } = useAuth();
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await fetchHealth();
+        setRecords(data);
+      } catch (error) {
+        console.error('Failed to fetch health records:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
+  // Helper to map risk score to risk level
+  const getRiskLevel = (score) => {
+    if (!score) return { text: 'Low', color: 'emerald', icon: <StableIcon /> };
+    if (score > 50) return { text: 'High', color: 'red', icon: <CriticalIcon /> };
+    if (score > 25) return { text: 'Moderate', color: 'amber', icon: <ModerateIcon /> };
+    return { text: 'Low', color: 'emerald', icon: <StableIcon /> };
+  };
+
   return (
     <div className="flex h-screen bg-[#f8fafc] font-sans overflow-hidden">
       <PatientSideBar />
@@ -38,11 +66,11 @@ export default function PatientRecord() {
       <div className="flex-1 flex flex-col overflow-y-auto relative">
         
         {/* Top Header */}
-        <header className="flex justify-between items-center py-4 px-8 bg-white border-b border-slate-200 shrink-0">
+        <header className="flex justify-between items-center py-4 px-4 md:px-8 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-40">
           <h2 className="text-xl font-bold text-slate-800">My Records</h2>
 
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 border-r border-slate-200 pr-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            <div className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-400 border-r border-slate-200 pr-6">
               <button className="text-indigo-600">EN</button>
               <span>|</span>
               <button className="hover:text-indigo-600">NE</button>
@@ -51,27 +79,27 @@ export default function PatientRecord() {
             <button className="hover:opacity-80 transition-opacity"><BellIcon /></button>
 
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-200 overflow-hidden shadow-sm border border-slate-100">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="Profile" className="w-full h-full object-cover" />
+              <div className="w-9 h-9 rounded-full bg-indigo-100 overflow-hidden shadow-sm border border-slate-100 flex items-center justify-center text-indigo-700 font-bold">
+                {user?.name?.charAt(0) || 'U'}
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-slate-800 leading-tight">Sunita Rai</span>
-                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #8821</span>
+              <div className="hidden md:flex flex-col">
+                <span className="text-sm font-bold text-slate-800 leading-tight">{user?.name || 'Patient'}</span>
+                <span className="text-[9px] font-bold text-slate-400 tracking-wider">Patient ID: #{user?.id?.substring(0, 4) || '8821'}</span>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="p-8 w-full pb-12">
+        <main className="p-4 md:p-8 w-full max-w-[100vw] pb-12">
           
           {/* Title Area */}
-          <div className="flex justify-between items-end mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
             <div>
               <h1 className="text-2xl font-bold text-slate-800 mb-1">Patient Risk Timeline</h1>
               <p className="text-sm text-slate-500 font-medium">Longitudinal health monitoring for current pregnancy cycle.</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
+              <button className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
                 <ExportIcon /> Export Report
               </button>
               <button className="flex items-center gap-2 px-5 py-2 bg-[#4338ca] hover:bg-[#3730a3] text-white rounded-lg text-sm font-bold shadow-md transition-colors">
@@ -81,71 +109,65 @@ export default function PatientRecord() {
           </div>
 
           {/* Chart Area */}
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 mb-6 relative w-full h-[400px]">
-            <div className="flex justify-between items-center mb-8">
+          <div className="bg-white rounded-2xl p-4 md:p-8 shadow-sm border border-slate-100 mb-6 relative w-full h-[400px]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-2">
               <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Composite Risk Score (0-100)</h3>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-4">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Low</div>
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500"><span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Moderate</div>
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500"><span className="w-2.5 h-2.5 rounded-full bg-red-500"></span> High Risk</div>
               </div>
             </div>
 
-            {/* Custom SVG Chart */}
-            <div className="relative w-full h-[250px]">
-              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 250">
-                {/* Grid lines can go here if needed */}
-                
-                {/* The main curved line */}
-                <path 
-                  d="M 50,220 C 300,210 500,160 650,80 C 720,40 850,20 950,20" 
-                  fill="none" 
-                  stroke="#dc2626" 
-                  strokeWidth="3.5" 
-                  strokeLinecap="round"
-                />
+            {/* Dynamic SVG Chart */}
+            <div className="relative w-full h-[250px] overflow-hidden sm:overflow-visible overflow-x-auto">
+              <svg className="w-[800px] sm:w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 1000 250">
+                {/* Grid lines */}
+                <line x1="0" y1="50" x2="1000" y2="50" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="0" y1="100" x2="1000" y2="100" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="0" y1="150" x2="1000" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="0" y1="200" x2="1000" y2="200" stroke="#f1f5f9" strokeWidth="1" />
 
-                {/* Week 16 Dot (Low risk) */}
-                <line x1="270" y1="205" x2="270" y2="250" stroke="#e2e8f0" strokeWidth="1.5" />
-                <circle cx="270" cy="205" r="4" fill="#dc2626" />
-
-                {/* Week 20 (Anemia Detected) */}
-                <line x1="450" y1="155" x2="450" y2="200" stroke="#fbbf24" strokeWidth="1.5" />
-                <circle cx="450" cy="155" r="4" fill="#dc2626" />
-                <foreignObject x="390" y="115" width="120" height="30">
-                  <div className="bg-white border border-slate-200 shadow-sm rounded px-2 py-1 text-[9px] font-bold text-slate-700 text-center flex items-center justify-center">
-                    Anemia Detected
-                  </div>
-                </foreignObject>
-
-                {/* Week 24 (Sudden BP Spike) */}
-                <line x1="620" y1="92" x2="620" y2="150" stroke="#fca5a5" strokeWidth="1.5" />
-                <circle cx="620" cy="92" r="4" fill="#dc2626" />
-                <foreignObject x="560" y="55" width="120" height="30">
-                  <div className="bg-red-50 border border-red-100 text-red-600 rounded px-2 py-1 text-[9px] font-bold text-center flex items-center justify-center">
-                    Sudden BP Spike
-                  </div>
-                </foreignObject>
-
-                {/* Week 32 (Emergency Visit) */}
-                <line x1="800" y1="30" x2="800" y2="70" stroke="#f87171" strokeWidth="2" />
-                <circle cx="800" cy="30" r="4" fill="#dc2626" />
-                <foreignObject x="740" y="-10" width="120" height="30">
-                  <div className="bg-red-600 text-white rounded-md px-3 py-1.5 text-[10px] font-bold text-center flex items-center justify-center shadow-sm">
-                    Emergency Visit
-                  </div>
-                </foreignObject>
-
+                {records.length > 0 ? (
+                  <>
+                    <polyline
+                      points={records.map((r, i) => {
+                        const x = 50 + (i * 900) / (records.length === 1 ? 1 : records.length - 1);
+                        const risk = r.riskScore || 15;
+                        const y = 250 - (risk / 100) * 250;
+                        return `${x},${Math.max(20, Math.min(230, y))}`;
+                      }).join(' ')}
+                      fill="none"
+                      stroke="#dc2626"
+                      strokeWidth="3.5"
+                      strokeLinejoin="round"
+                    />
+                    {records.map((r, i) => {
+                      const x = 50 + (i * 900) / (records.length === 1 ? 1 : records.length - 1);
+                      const risk = r.riskScore || 15;
+                      const y = 250 - (risk / 100) * 250;
+                      const level = getRiskLevel(risk);
+                      return (
+                        <g key={r._id || i}>
+                          <line x1={x} y1={y} x2={x} y2="250" stroke="#e2e8f0" strokeWidth="1.5" />
+                          <circle cx={x} cy={y} r="5" fill="#dc2626" />
+                          <text x={x} y={y - 15} fontSize="10" fill="#64748b" textAnchor="middle">{r.bloodPressure}</text>
+                        </g>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <text x="500" y="125" fontSize="14" fill="#94a3b8" textAnchor="middle">No records available to chart.</text>
+                )}
               </svg>
 
               {/* X-Axis Labels */}
-              <div className="absolute -bottom-6 left-0 w-full flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest px-[4%]">
-                <span>Week 12</span>
-                <span className="pl-4">Week 16</span>
-                <span className="pl-6">Week 20</span>
-                <span className="pl-8">Week 24</span>
-                <span className="pl-12">Week 28</span>
-                <span>Week 32 (Now)</span>
+              <div className="absolute -bottom-6 left-0 w-[800px] sm:w-full flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                {records.length > 0 ? records.map((r, i) => (
+                  <span key={r._id || i} className="text-center w-full">
+                    {new Date(r.createdAt || Date.now()).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </span>
+                )) : null}
               </div>
             </div>
           </div>
@@ -173,93 +195,42 @@ export default function PatientRecord() {
                     </tr>
                   </thead>
                   <tbody className="text-sm">
-                    {/* Row 1 */}
-                    <tr className="border-b border-slate-50">
-                      <td className="py-5 align-top">
-                        <div className="font-bold text-slate-800 text-xs">Week</div>
-                        <div className="font-bold text-slate-800">32</div>
-                      </td>
-                      <td className="py-5 align-top">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
-                            <CriticalIcon />
-                          </div>
-                          <span className="font-bold text-slate-800 leading-tight pt-1">Emergency<br/>Visit</span>
-                        </div>
-                      </td>
-                      <td className="py-5 pr-4 text-slate-600 text-xs leading-relaxed">
-                        Admitted with severe pre-eclampsia symptoms. BP 160/110.
-                      </td>
-                      <td className="py-5 text-center">
-                        <span className="inline-block px-2.5 py-1 bg-red-100 text-red-600 text-[9px] font-bold rounded uppercase tracking-wider">Critical</span>
-                      </td>
-                    </tr>
-
-                    {/* Row 2 */}
-                    <tr className="border-b border-slate-50">
-                      <td className="py-5 align-top">
-                        <div className="font-bold text-slate-800 text-xs">Week</div>
-                        <div className="font-bold text-slate-800">28</div>
-                      </td>
-                      <td className="py-5 align-top">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center shrink-0 mt-0.5">
-                            <svg viewBox="0 0 24 24" className="w-4 h-4 text-red-500 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-                          </div>
-                          <span className="font-bold text-slate-800 leading-tight pt-1">Sudden BP<br/>Spike</span>
-                        </div>
-                      </td>
-                      <td className="py-5 pr-4 text-slate-600 text-xs leading-relaxed">
-                        Blood pressure reading spiked significantly during routine checkup.
-                      </td>
-                      <td className="py-5 text-center">
-                        <span className="inline-block px-2.5 py-1 border border-red-200 text-red-500 text-[9px] font-bold rounded uppercase tracking-wider">High</span>
-                      </td>
-                    </tr>
-
-                    {/* Row 3 */}
-                    <tr className="border-b border-slate-50">
-                      <td className="py-5 align-top">
-                        <div className="font-bold text-slate-800 text-xs">Week</div>
-                        <div className="font-bold text-slate-800">22</div>
-                      </td>
-                      <td className="py-5 align-top">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center shrink-0 mt-0.5">
-                            <ModerateIcon />
-                          </div>
-                          <span className="font-bold text-slate-800 leading-tight pt-1">Anemia<br/>Detected</span>
-                        </div>
-                      </td>
-                      <td className="py-5 pr-4 text-slate-600 text-xs leading-relaxed">
-                        Low hemoglobin levels found in quarterly lab work. Iron prescribed.
-                      </td>
-                      <td className="py-5 text-center">
-                        <span className="inline-block px-2.5 py-1 bg-amber-50 text-amber-600 text-[9px] font-bold rounded uppercase tracking-wider">Moderate</span>
-                      </td>
-                    </tr>
-
-                    {/* Row 4 */}
-                    <tr>
-                      <td className="py-5 align-top">
-                        <div className="font-bold text-slate-800 text-xs">Week</div>
-                        <div className="font-bold text-slate-800">16</div>
-                      </td>
-                      <td className="py-5 align-top">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 mt-0.5">
-                            <StableIcon />
-                          </div>
-                          <span className="font-bold text-slate-800 leading-tight pt-1">Clinical Note<br/>Added</span>
-                        </div>
-                      </td>
-                      <td className="py-5 pr-4 text-slate-600 text-xs leading-relaxed">
-                        Patient reports slight dizziness in morning. Vitals normal.
-                      </td>
-                      <td className="py-5 text-center">
-                        <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-600 text-[9px] font-bold rounded uppercase tracking-wider">Stable</span>
-                      </td>
-                    </tr>
+                    {loading ? (
+                      <tr><td colSpan="4" className="py-4 text-center text-slate-500 text-sm">Loading records...</td></tr>
+                    ) : records.length === 0 ? (
+                      <tr><td colSpan="4" className="py-4 text-center text-slate-500 text-sm">No records found.</td></tr>
+                    ) : (
+                      records.map((record) => {
+                        const risk = getRiskLevel(record.riskScore);
+                        return (
+                          <tr key={record._id} className="border-b border-slate-50">
+                            <td className="py-5 align-top">
+                              <div className="font-bold text-slate-800 text-xs">Date</div>
+                              <div className="font-bold text-slate-800 text-xs">{new Date(record.createdAt).toLocaleDateString()}</div>
+                            </td>
+                            <td className="py-5 align-top">
+                              <div className="flex items-start gap-3">
+                                <div className={`w-8 h-8 rounded-full bg-${risk.color}-50 flex items-center justify-center shrink-0 mt-0.5`}>
+                                  {risk.icon}
+                                </div>
+                                <span className="font-bold text-slate-800 leading-tight pt-1">
+                                  {record.symptoms && record.symptoms.length > 0 ? 'Symptom Check' : 'Routine Check'}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="py-5 pr-4 text-slate-600 text-xs leading-relaxed">
+                              BP: {record.bloodPressure || 'N/A'}. 
+                              {record.symptoms?.length > 0 && ` Symptoms: ${record.symptoms.join(', ')}.`}
+                            </td>
+                            <td className="py-5 text-center">
+                              <span className={`inline-block px-2.5 py-1 bg-${risk.color}-50 text-${risk.color}-600 text-[9px] font-bold rounded uppercase tracking-wider`}>
+                                {risk.text}
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

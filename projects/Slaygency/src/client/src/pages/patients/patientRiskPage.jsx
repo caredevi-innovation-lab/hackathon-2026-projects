@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import PatientSideBar from '../../components/PatientSideBar.jsx';
+import { fetchHealth, predictRisk } from '../../api.js';
 
 const baseResult = {
   age: 28,
@@ -34,26 +35,65 @@ export default function PatientRiskPage() {
   const riskColor =
     result.riskScore >= 70 ? '#df4358' : result.riskScore >= 40 ? '#f39a37' : '#0f8f78';
 
-  const onRecheck = () => {
+  useEffect(() => {
+    // If no incoming assessment, fetch the latest health record and calculate risk
+    if (!incomingAssessment) {
+      async function loadLatestRisk() {
+        try {
+          const records = await fetchHealth();
+          if (records.length > 0) {
+            const latest = records[0];
+            const predictionResponse = await predictRisk({
+              bloodPressure: latest.bloodPressure || '120/80',
+              age: 28, // Default if not in record
+              symptoms: latest.symptoms || [],
+            });
+            setResult({
+              age: 28,
+              bloodPressure: latest.bloodPressure || '120/80',
+              symptoms: latest.symptoms || [],
+              riskScore: predictionResponse.prediction?.riskScore || 15,
+              confidence: predictionResponse.prediction?.confidence || 92.5,
+              reportId: latest._id || `MR-${Math.floor(68000 + Math.random() * 1300)}`,
+            });
+          }
+        } catch (error) {
+          console.error('Failed to load risk data:', error);
+        }
+      }
+      loadLatestRisk();
+    }
+  }, [incomingAssessment]);
+
+  const onRecheck = async () => {
     setRechecking(true);
     setStatusMessage('');
 
-    setTimeout(() => {
-      const nextScore = Math.max(
-        32,
-        Math.min(93, result.riskScore + (Math.random() > 0.5 ? 2 : -3))
-      );
+    try {
+      const records = await fetchHealth();
+      const latest = records.length > 0 ? records[0] : null;
+      
+      const predictionResponse = await predictRisk({
+        bloodPressure: latest?.bloodPressure || result.bloodPressure,
+        age: result.age,
+        symptoms: latest?.symptoms || result.symptoms,
+      });
 
       setResult((prev) => ({
         ...prev,
-        riskScore: nextScore,
-        confidence: Number((92 + Math.random() * 6).toFixed(1)),
-        reportId: `MR-${Math.floor(68000 + Math.random() * 1300)}`,
+        bloodPressure: latest?.bloodPressure || prev.bloodPressure,
+        symptoms: latest?.symptoms || prev.symptoms,
+        riskScore: predictionResponse.prediction?.riskScore || prev.riskScore,
+        confidence: predictionResponse.prediction?.confidence || prev.confidence,
+        reportId: latest?._id || `MR-${Math.floor(68000 + Math.random() * 1300)}`,
       }));
-
-      setRechecking(false);
       setStatusMessage('Risk analysis refreshed with latest available vitals.');
-    }, 850);
+    } catch (error) {
+      console.error(error);
+      setStatusMessage('Failed to refresh risk analysis.');
+    } finally {
+      setRechecking(false);
+    }
   };
 
   const onSaveReport = () => {
@@ -61,10 +101,10 @@ export default function PatientRiskPage() {
   };
 
   return (
-    <main className="grid min-h-screen bg-[radial-gradient(circle_at_16%_12%,rgba(34,80,182,0.12),transparent_34%),radial-gradient(circle_at_84%_0%,rgba(0,122,138,0.1),transparent_34%),linear-gradient(180deg,#f5f8ff_0%,#edf2fa_100%)] text-[#10264d] lg:grid-cols-[220px_minmax(0,1fr)]">
+    <main className="flex h-screen bg-[radial-gradient(circle_at_16%_12%,rgba(34,80,182,0.12),transparent_34%),radial-gradient(circle_at_84%_0%,rgba(0,122,138,0.1),transparent_34%),linear-gradient(180deg,#f5f8ff_0%,#edf2fa_100%)] text-[#10264d] overflow-hidden">
       <PatientSideBar />
 
-      <section className="min-w-0 p-3 sm:p-5 lg:p-6">
+      <section className="flex-1 flex flex-col overflow-y-auto relative w-full p-3 sm:p-5 lg:p-6">
         <div className="flex h-full w-full flex-col gap-6 p-0 sm:p-0 lg:p-0">
           <header className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[rgba(165,184,214,0.4)] pb-4">
             <div>
