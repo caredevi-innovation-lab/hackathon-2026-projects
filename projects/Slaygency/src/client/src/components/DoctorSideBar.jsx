@@ -108,7 +108,7 @@ export default function DoctorSideBar() {
           <SidebarItem icon={<IconGrid />} label="Dashboard" to="/doctor" active={location.pathname === '/doctor'} />
           <SidebarItem icon={<IconPatient />} label="Patient Records" to="/patient-records" active={location.pathname === '/patient-records'} />
           <SidebarItem icon={<IconCalendar />} label="Appointments" to="#" />
-          <SidebarItem icon={<IconChart />} label="Health Analytics" to="#" />
+          <SidebarItem icon={<IconChart />} label="Health Records" to="/submit" active={location.pathname === '/submit'} />
           <SidebarItem icon={<IconFile />} label="Medical Resources" to="#" />
         </nav>
       </div>
