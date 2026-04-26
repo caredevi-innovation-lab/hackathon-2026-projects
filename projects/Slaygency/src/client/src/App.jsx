@@ -11,6 +11,9 @@ import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
 import PatientHistory from './pages/patients/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
+import PatientRecord from './pages/patients/PatientRecord.jsx';
+import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
+import SettingsPage from './pages/patients/setting.jsx';
 import PatientsPage from './pages/PatientsPage.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
@@ -82,8 +85,31 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* ── Doctor Routes ── */}
+        <Route
+          path="/my-records"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientRecord />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/health-reports"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientHealthReport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-settings"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route
           path="/doctor"
           element={
