@@ -1,55 +1,66 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
-import registerImage from '../assets/images/register.jpg';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.js';
+import { registerUser } from '../api.js';
+
+const roleOptions = [
+  { value: 'Patient', label: 'Patient / Guardian' },
+  { value: 'Doctor', label: 'Doctor / Health Worker' },
+];
+
+function getRedirectPath(role) {
+  if (role === 'Admin' || role === 'admin') {
+    return '/admin/dashboard';
+  }
+  if (role === 'Doctor' || role === 'doctor') {
+    return '/doctor';
+  }
+  return '/patient';
+}
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     password: '',
-    // ...existing code...
+    role: 'Patient',
     agreed: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const onChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const onChange = (event) => {
+    const { name, value, type, checked } = event.target;
     setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const selectRole = (role) => {
-    setForm((prev) => ({ ...prev, role }));
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage('');
 
     if (!form.agreed) {
-      setErrorMessage('Please accept the Terms of Service and Privacy Policy.');
+      setErrorMessage('Please accept Terms and Privacy Policy to continue.');
       return;
     }
 
     try {
       setIsSubmitting(true);
-      setSuccessMessage('');
-      setErrorMessage('');
-
-      await axios.post('/api/auth/register', {
+      const data = await registerUser({
         name: form.name,
         email: form.email,
+        phone: form.phone,
         password: form.password,
         role: form.role,
       });
-
-      setSuccessMessage('Registration completed. Please sign in.');
+      login(data);
+      navigate(getRedirectPath(data?.user?.role), { replace: true });
     } catch (error) {
       const message =
         error?.response?.data?.message ||
-        'Registration failed. Please check your details and try again.';
+        'Registration failed. Please review your details and try again.';
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -57,138 +68,155 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="register-page">
-      <section className="register-shell" aria-label="Aama Care registration">
-        <aside
-          className="register-hero"
-          aria-hidden="true"
-          style={{ '--register-hero-image': `url(${registerImage})` }}
-        >
-          <h1>Elevate maternal care with intelligent monitoring.</h1>
-          <p>
-            Join a care ecosystem designed for health professionals and families. Coordinate visits,
-            streamline reporting, and reduce avoidable risks.
-          </p>
-          <blockquote>
-            &quot;The platform helped us focus on patients instead of paperwork and delays.&quot;
-          </blockquote>
-        </aside>
+    <main className="min-h-screen bg-slate-50 px-5 py-8 md:px-8">
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="mb-8 flex items-center justify-between">
+          <Link to="/" className="text-lg font-semibold text-[#3730a3]">
+            MaterNova
+          </Link>
+          <Link to="/about" className="text-sm font-semibold text-slate-600 hover:text-[#3730a3]">
+            About Us
+          </Link>
+        </div>
 
-        <section className="register-panel">
-          <header className="register-header">
-            <div className="register-brand-row">
-              <p className="register-brand">Aama Care</p>
-              <button type="button" className="register-language-pill">
-                English
-              </button>
-            </div>
+        <section className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid-cols-2">
+          <aside className="bg-gradient-to-b from-indigo-50 to-white p-8 md:p-10">
+            <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-100/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#3730a3]">
+              Account Setup
+            </p>
+            <h1 className="mt-5 text-3xl font-semibold leading-tight text-slate-700">
+              Join the network delivering coordinated maternal care.
+            </h1>
+            <p className="mt-4 text-sm font-medium leading-6 text-slate-500">
+              Create your account and choose your user type. Admin role remains restricted.
+            </p>
+          </aside>
 
-            <h2>Create account</h2>
-            <p>Start your journey toward human-centric care.</p>
-          </header>
+          <div className="p-8 md:p-10">
+            <h2 className="text-2xl font-semibold text-slate-700">Create account</h2>
+            <p className="mt-2 text-sm font-medium text-slate-500">
+              Register as a patient or doctor to access your tailored workflow.
+            </p>
 
-          <form className="register-form" onSubmit={onSubmit} noValidate>
-            <fieldset className="register-role-group">
-              <legend>Select your role</legend>
-              <div
-                className="register-role-buttons"
-                role="radiogroup"
-                aria-label="Select your role"
-              >
-                {['Patient'].map((role) => (
-                  <button
-                    key={role}
-                    type="button"
-                    role="radio"
-                    aria-checked={form.role === role}
-                    className={form.role === role ? 'active' : ''}
-                    onClick={() => selectRole(role)}
-                  >
-                    {'Patient / Guardian'}
-                  </button>
-                ))}
+            <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
+              <fieldset>
+                <legend className="mb-2 text-sm font-semibold text-slate-600">User type</legend>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {roleOptions.map((roleOption) => (
+                    <button
+                      key={roleOption.value}
+                      type="button"
+                      onClick={() => setForm((prev) => ({ ...prev, role: roleOption.value }))}
+                      className={`rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
+                        form.role === roleOption.value
+                          ? 'border-[#3730a3] bg-indigo-50 text-[#3730a3]'
+                          : 'border-slate-300 bg-white text-slate-600 hover:border-indigo-200'
+                      }`}
+                    >
+                      {roleOption.label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <div>
+                <label htmlFor="register-name" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Full name
+                </label>
+                <input
+                  id="register-name"
+                  name="name"
+                  value={form.name}
+                  onChange={onChange}
+                  autoComplete="name"
+                  required
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
               </div>
-            </fieldset>
 
-            <label htmlFor="register-name">Full name</label>
-            <input
-              id="register-name"
-              name="name"
-              value={form.name}
-              onChange={onChange}
-              placeholder="Enter your full name"
-              autoComplete="name"
-              required
-            />
+              <div>
+                <label htmlFor="register-email" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Email address
+                </label>
+                <input
+                  id="register-email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={onChange}
+                  autoComplete="email"
+                  required
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
+              </div>
 
-            <label htmlFor="register-email">Email address</label>
-            <input
-              id="register-email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={onChange}
-              placeholder="name@institution.com"
-              autoComplete="email"
-              required
-            />
+              <div>
+                <label htmlFor="register-phone" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Phone number
+                </label>
+                <input
+                  id="register-phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={onChange}
+                  autoComplete="tel"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
+              </div>
 
-            <label htmlFor="register-phone">Phone number</label>
-            <input
-              id="register-phone"
-              name="phone"
-              value={form.phone}
-              onChange={onChange}
-              placeholder="+977 98X XXX XXX"
-              autoComplete="tel"
-            />
+              <div>
+                <label htmlFor="register-password" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Password
+                </label>
+                <input
+                  id="register-password"
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={onChange}
+                  autoComplete="new-password"
+                  minLength={8}
+                  required
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
+              </div>
 
-            <label htmlFor="register-password">Password</label>
-            <input
-              id="register-password"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={onChange}
-              placeholder="Min. 8 characters"
-              autoComplete="new-password"
-              minLength={8}
-              required
-            />
+              <label htmlFor="register-terms" className="flex items-start gap-2 text-sm font-medium text-slate-500">
+                <input
+                  id="register-terms"
+                  type="checkbox"
+                  name="agreed"
+                  checked={form.agreed}
+                  onChange={onChange}
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#3730a3] focus:ring-[#3730a3]"
+                />
+                <span>I agree to the Terms of Service and Privacy Policy.</span>
+              </label>
 
-            <label className="register-terms-row" htmlFor="register-terms">
-              <input
-                id="register-terms"
-                type="checkbox"
-                name="agreed"
-                checked={form.agreed}
-                onChange={onChange}
-              />
-              <span>
-                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-              </span>
-            </label>
+              {errorMessage && (
+                <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
+                  {errorMessage}
+                </p>
+              )}
 
-            {errorMessage && <p className="register-error">{errorMessage}</p>}
-            {successMessage && <p className="register-success">{successMessage}</p>}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-lg bg-[#3730a3] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? 'Creating account...' : 'Create account'}
+              </button>
+            </form>
 
-            <button type="submit" disabled={isSubmitting} className="register-submit-btn">
-              {isSubmitting ? 'Creating account...' : 'Complete Registration'}
-            </button>
-
-            <div className="register-or-separator">or join via</div>
-
-            <div className="register-social-row">
-              <button type="button">Google</button>
-              <button type="button">Facebook</button>
-            </div>
-          </form>
-
-          <p className="register-login-note">
-            Already have an account? <Link to="/login">Sign in</Link>
-          </p>
+            <p className="mt-5 text-sm font-medium text-slate-500">
+              Already have an account?{' '}
+              <Link to="/login" className="font-semibold text-[#3730a3] hover:text-indigo-900">
+                Sign in
+              </Link>
+            </p>
+          </div>
         </section>
-      </section>
+      </div>
     </main>
   );
 }

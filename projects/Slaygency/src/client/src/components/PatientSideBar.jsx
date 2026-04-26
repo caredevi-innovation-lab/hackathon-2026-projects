@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.js';
 
-// Modern SVG icons matching the sidebar design
 const icons = {
   overview: (
     <svg viewBox="0 0 24 24" className="w-5 h-5">
@@ -13,10 +13,10 @@ const icons = {
   ),
   records: (
     <svg viewBox="0 0 24 24" className="w-5 h-5">
-      <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" fill="currentColor" opacity=".12"/>
-      <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="12" cy="13" r="2" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-      <path d="M9 18v-1a3 3 0 016 0v1" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" fill="currentColor" opacity=".12"/>
+      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <rect x="9" y="3" width="6" height="4" rx="1" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+      <path d="M9 12h6M9 16h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   risk: (
@@ -24,13 +24,6 @@ const icons = {
       <path d="M12 3l10 18H2L12 3z" fill="currentColor" opacity=".15"/>
       <path d="M12 3l10 18H2L12 3z" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M12 10v4M12 17h.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ),
-  outreach: (
-    <svg viewBox="0 0 24 24" className="w-5 h-5">
-      <path d="M17 21v-2a4 4 0 00-3-3.87M9 21v-2a4 4 0 014-4h1" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-      <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-      <circle cx="17" cy="10" r="3" stroke="currentColor" strokeWidth="1.8" fill="none"/>
     </svg>
   ),
   reports: (
@@ -49,7 +42,7 @@ const icons = {
   help: (
     <svg viewBox="0 0 24 24" className="w-5 h-5">
       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-      <path d="M12 17h.01M12 13a2 2 0 10-2-2" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <path d="M12 17h.01M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
     </svg>
   ),
   signout: (
@@ -58,47 +51,61 @@ const icons = {
       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
     </svg>
   ),
+  add: (
+    <svg viewBox="0 0 24 24" className="w-4 h-4">
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+    </svg>
+  ),
 };
 
-function SidebarItem({ icon, label, to }) {
+function SidebarItem({ icon, label, to, onClick }) {
   const location = useLocation();
-  const active = location.pathname === to;
+  const active = to && location.pathname === to;
+
+  const className = `flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer transition-all duration-150 text-sm font-medium ${
+    active
+      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
+      : 'text-slate-500 hover:bg-slate-50 hover:text-indigo-600'
+  }`;
+
   const content = (
     <>
-      <span className={`shrink-0 flex items-center justify-center ${active ? 'text-indigo-700' : 'text-slate-500'}`}>
+      <span className={`shrink-0 flex items-center justify-center transition-colors`}>
         {icon}
       </span>
-      <span>{label}</span>
+      <span className="truncate">{label}</span>
+      {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white opacity-70" />}
     </>
   );
-
-  const className = `flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-colors text-sm font-medium ${
-    active
-      ? 'bg-indigo-50 text-indigo-700' 
-      : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600'
-  }`;
 
   if (to) {
     return <Link to={to} className={className}>{content}</Link>;
   }
-
-  return <div className={className}>{content}</div>;
+  return <button onClick={onClick} className={`${className} w-full text-left`}>{content}</button>;
 }
 
 export default function PatientSideBar() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleSignOut = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
-    <aside className="flex flex-col h-screen w-64 bg-white border-r border-slate-100 shadow-sm justify-between py-6">
-      <div className="px-4">
-        {/* Logo and title */}
+    <aside className="hidden md:flex flex-col h-screen w-64 bg-white border-r border-slate-100 shadow-sm justify-between py-6 shrink-0">
+      <div className="px-4 flex flex-col gap-0">
+        {/* Logo */}
         <div className="flex items-center gap-3 mb-8 px-2">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-200">
             <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
               <path d="M12 3l7 3v5c0 4.7-2.9 8.9-7 10-4.1-1.1-7-5.3-7-10V6l7-3z" fill="currentColor" />
             </svg>
           </div>
           <div>
-            <h1 className="m-0 text-lg font-bold text-slate-800">MaterNova</h1>
-            <p className="m-0 text-[10px] tracking-wider text-slate-400 font-bold mt-0.5">Healthcare Portal</p>
+            <h1 className="m-0 text-lg font-bold text-slate-800 leading-tight">MaterNova</h1>
+            <p className="m-0 text-[10px] tracking-wider text-slate-400 font-semibold mt-0.5 uppercase">Healthcare Portal</p>
           </div>
         </div>
 
@@ -106,23 +113,27 @@ export default function PatientSideBar() {
         <nav className="flex flex-col gap-1">
           <SidebarItem icon={icons.overview} label="Dashboard" to="/patient" />
           <SidebarItem icon={icons.records} label="My Records" to="/my-records" />
-          <SidebarItem icon={icons.risk} label="Risk Monitoring" to="/risk-monitoring" />
+          <SidebarItem icon={icons.risk} label="Risk Monitoring" to="/patient-risk-assessment" />
           <SidebarItem icon={icons.reports} label="Health Reports" to="/health-reports" />
-          <SidebarItem icon={icons.settings} label="Settings" to="/settings" />
+          <SidebarItem icon={icons.settings} label="Settings" to="/patient-settings" />
         </nav>
 
-        {/* Add Health Data button */}
+        {/* Add Health Data CTA */}
         <div className="mt-6">
-          <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow-sm transition-colors text-sm flex items-center justify-center gap-2">
-            <span className="text-lg leading-none font-normal">+</span> Add Health Data
-          </button>
+          <Link
+            to="/patient-health-data-entry"
+            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-semibold py-2.5 rounded-xl shadow-md shadow-indigo-200 transition-all text-sm flex items-center justify-center gap-2"
+          >
+            {icons.add}
+            Add Health Data
+          </Link>
         </div>
       </div>
 
       {/* Bottom nav */}
-      <div className="flex flex-col gap-1 px-4 mt-8 pt-4 border-t border-slate-100">
-        <SidebarItem icon={icons.help} label="Help Center" />
-        <SidebarItem icon={icons.signout} label="Sign Out" />
+      <div className="flex flex-col gap-1 px-4 pt-4 border-t border-slate-100">
+        <SidebarItem icon={icons.help} label="Help Center" to="#" />
+        <SidebarItem icon={icons.signout} label="Sign Out" onClick={handleSignOut} />
       </div>
     </aside>
   );

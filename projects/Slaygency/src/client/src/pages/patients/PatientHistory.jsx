@@ -1,288 +1,223 @@
-import SideBar from '../../components/SideBar.jsx';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import PatientSideBar from '../../components/PatientSideBar.jsx';
+import { fetchHealth } from '../../api.js';
+import { useAuth } from '../../hooks/useAuth.js';
 
-const timelineEntries = [
-  {
-    type: 'CRITICAL ALERT',
-    title: 'Sudden BP Elevation Detected',
-    time: 'Oct 24, 2023 - 02:15 PM',
-    details:
-      'Systolic BP reached 155 mmHg during remote monitoring. Patient notified to visit clinical center immediately. Pre-eclampsia screening initiated.',
-    tags: ['TELEMONITORING', 'BP_WATCH'],
-    tone: 'critical',
-  },
-  {
-    type: 'ROUTINE CHECKUP',
-    title: 'Weekly Prenatal Visit',
-    time: 'Oct 18, 2023 - 10:00 AM',
-    details:
-      'Fetal heartbeat stable at 142 bpm. Fundal height tracking correctly for 31 weeks. Recommended iron supplement adjustment.',
-    quote: 'Patient reports mild edema in lower extremities during late evenings. - Dr. Akwren K.',
-    tone: 'routine',
-  },
-  {
-    type: 'LAB RESULTS',
-    title: 'Hemoglobin & Glucose Screening',
-    time: 'Oct 12, 2023 - 09:30 AM',
-    details:
-      'Hb levels at 11.2 g/dL (slightly low). Blood glucose levels within normal fasting range. Recommended increased leafy green intake.',
-    linkLabel: 'View Full Report (PDF)',
-    tone: 'lab',
-  },
-];
-
-const vitalsRows = [
-  {
-    metric: 'BP (mmHg)',
-    w29: '118/76',
-    w30: '120/80',
-    w31: '124/82',
-    w32: '155/95',
-    critical: true,
-  },
-  { metric: 'Weight (kg)', w29: '62.4', w30: '63.1', w31: '63.8', w32: '64.6' },
-  { metric: 'Heart Rate', w29: '78', w30: '82', w31: '80', w32: '88' },
-  { metric: 'Fundal (cm)', w29: '29', w30: '30', w31: '31', w32: '32' },
-];
-
-function IconSearch() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
-      <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M16 16l4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
+function getRiskLevel(record) {
+  let score = 10;
+  if (record.systolicBP >= 140 || record.diastolicBP >= 90) score += 35;
+  else if (record.systolicBP >= 130 || record.diastolicBP >= 85) score += 18;
+  if (record.hemoglobin < 10) score += 20;
+  score += (record.symptoms?.length || 0) * 6;
+  score = Math.min(96, score);
+  if (score >= 60) return { label: 'CRITICAL ALERT', tone: 'critical', score };
+  if (score >= 35) return { label: 'MODERATE', tone: 'routine', score };
+  return { label: 'NORMAL', tone: 'lab', score };
 }
 
-function IconBell() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px]">
-      <path
-        d="M12 4a4 4 0 00-4 4v2.3c0 .7-.2 1.3-.6 1.9L6 14.5h12l-1.4-2.3a3.5 3.5 0 01-.6-1.9V8a4 4 0 00-4-4z"
-        fill="currentColor"
-      />
-      <path d="M10 18a2 2 0 004 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  );
-}
+const TONE_STYLES = {
+  critical: { badge: 'bg-red-100 text-red-700', border: 'border-red-200', title: 'Elevated BP Detected', icon: '🔴' },
+  routine:  { badge: 'bg-amber-100 text-amber-700', border: 'border-amber-200', title: 'Routine Health Check', icon: '⚡' },
+  lab:      { badge: 'bg-emerald-100 text-emerald-700', border: 'border-emerald-200', title: 'Normal Vitals Logged', icon: '✅' },
+};
 
 export default function PatientHistory() {
-  return (
-    <main className="grid min-h-screen bg-[linear-gradient(180deg,#f9f8ff_0%,#f4f3ff_100%)] text-[#1f2538] lg:grid-cols-[220px_minmax(0,1fr)]">
-      <SideBar />
+  const { user } = useAuth();
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
-      <section className="min-w-0 p-3 sm:p-5">
-        <header className="mb-4 grid gap-3 rounded-2xl border border-[rgba(168,166,206,0.24)] bg-[rgba(255,255,255,0.9)] p-3 shadow-[0_14px_35px_rgba(78,67,170,0.08)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-          <label className="flex items-center gap-2 rounded-xl bg-[#f3f4fa] px-3 py-2 text-[#8f97ae]">
-            <IconSearch />
-            <input
-              type="text"
-              placeholder="Search patient ID, name, or records..."
-              className="w-full border-0 bg-transparent text-sm text-[#3b4358] outline-none placeholder:text-[#97a0b6]"
-            />
-          </label>
-          <div className="flex items-center justify-end gap-3">
-            <a href="#" className="text-sm text-[#68718c] no-underline hover:text-[#4048df]">
-              Dashboard
-            </a>
-            <a href="#" className="text-sm font-semibold text-[#4048df] no-underline">
-              Patients
-            </a>
-            <a href="#" className="text-sm text-[#68718c] no-underline hover:text-[#4048df]">
-              Resources
-            </a>
-            <span className="ml-2 rounded-full bg-[#eef0ff] px-2 py-1 text-[0.66rem] font-semibold uppercase tracking-[0.14em] text-[#545ce6]">
-              Role: Doctor
-            </span>
-            <button
-              type="button"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#f3f4fa] text-[#5e6782]"
+  useEffect(() => {
+    fetchHealth()
+      .then(setRecords)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = records.filter((r) => {
+    const q = search.toLowerCase();
+    if (!q) return true;
+    return (r.symptoms || []).some((s) => s.toLowerCase().includes(q))
+      || `${r.systolicBP}/${r.diastolicBP}`.includes(q)
+      || String(r.hemoglobin).includes(q);
+  });
+
+  const highCount = records.filter((r) => getRiskLevel(r).label === 'CRITICAL ALERT').length;
+
+  return (
+    <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
+      <PatientSideBar />
+
+      <div className="flex-1 flex flex-col overflow-y-auto relative w-full min-w-0">
+        {/* Header */}
+        <header className="flex flex-wrap justify-between items-center gap-3 py-4 px-4 md:px-8 bg-white border-b border-slate-100 sticky top-0 z-40 shrink-0">
+          <div>
+            <h2 className="text-xl font-bold text-slate-800">Health History</h2>
+            <p className="text-xs text-slate-400 mt-0.5">{user?.name} — Full interaction timeline</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <label className="hidden sm:flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-slate-400" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
+              <input
+                type="text" placeholder="Search symptoms, BP..." value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-transparent text-sm outline-none w-36 text-slate-700 placeholder:text-slate-400"
+              />
+            </label>
+            <Link
+              to="/patient-health-data-entry"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all flex items-center gap-1.5"
             >
-              <IconBell />
-            </button>
+              <svg viewBox="0 0 24 24" className="w-4 h-4" stroke="currentColor" strokeWidth="2.5" fill="none"><path strokeLinecap="round" d="M12 5v14M5 12h14"/></svg>
+              Add New Entry
+            </Link>
           </div>
         </header>
 
-        <section className="rounded-2xl border border-[rgba(168,166,206,0.24)] bg-[rgba(255,255,255,0.9)] p-4 shadow-[0_14px_35px_rgba(78,67,170,0.08)]">
-          <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#4bd8d0] to-[#3f74dc] text-sm font-bold text-white">
-                SS
-              </div>
-              <div>
-                <h2 className="m-0 text-3xl font-semibold leading-none">Sunita Sharma</h2>
-                <p className="m-0 mt-1 text-sm text-[#78819a]">
-                  Patient ID: #MC-2940 • 28 Years • 32 Weeks Gestation
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                className="rounded-xl border border-[#d6d9ea] bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#666f89]"
-              >
-                Export Report
-              </button>
-              <button
-                type="button"
-                className="rounded-xl border border-[#5b55ff] bg-gradient-to-br from-[#635dff] to-[#5142f7] px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white"
-              >
-                Add New Entry
-              </button>
-            </div>
-          </header>
+        <main className="p-4 md:p-8">
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-6">
 
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
-            <section className="rounded-2xl border border-[rgba(168,166,206,0.22)] bg-white p-3">
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="m-0 text-xl font-semibold text-[#4a4fb9]">Interaction Timeline</h3>
-                <button
-                  type="button"
-                  className="rounded-md border border-[#e5e7f2] bg-white px-2 py-1 text-xs text-[#7b839c]"
-                >
-                  ▼
-                </button>
+            {/* Timeline */}
+            <section>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-lg font-bold text-slate-800">Interaction Timeline</h3>
+                <span className="text-xs text-slate-400 bg-white border border-slate-100 px-3 py-1 rounded-full">{filtered.length} entr{filtered.length !== 1 ? 'ies' : 'y'}</span>
               </div>
 
-              <div className="space-y-3">
-                {timelineEntries.map((entry) => (
-                  <article key={entry.title} className="rounded-xl border border-[#eceef7] p-3">
-                    <div className="mb-1 flex items-start justify-between gap-3">
-                      <div>
-                        <p
-                          className={`m-0 text-xs font-semibold tracking-[0.08em] ${
-                            entry.tone === 'critical'
-                              ? 'text-[#d72334]'
-                              : entry.tone === 'routine'
-                                ? 'text-[#6361df]'
-                                : 'text-[#d66b87]'
-                          }`}
-                        >
-                          {entry.type}
-                        </p>
-                        <h4 className="m-0 mt-1 text-base font-semibold">{entry.title}</h4>
+              {loading ? (
+                <div className="space-y-4">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="bg-white rounded-2xl p-5 border border-slate-100 animate-pulse">
+                      <div className="flex gap-3 mb-3">
+                        <div className="w-20 h-5 bg-slate-100 rounded-full"/>
+                        <div className="flex-1 h-5 bg-slate-100 rounded"/>
                       </div>
-                      <p className="m-0 text-xs text-[#9ba2b7]">{entry.time}</p>
+                      <div className="h-4 w-3/4 bg-slate-100 rounded"/>
                     </div>
-                    <p className="m-0 text-sm text-[#6f7891]">{entry.details}</p>
+                  ))}
+                </div>
+              ) : filtered.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-2xl border border-slate-100">
+                  <p className="text-slate-400 text-sm mb-4">{search ? 'No entries match your search.' : 'No health history yet.'}</p>
+                  {!search && (
+                    <Link to="/patient-health-data-entry" className="text-indigo-600 font-bold text-sm hover:underline">
+                      Log your first entry →
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filtered.map((record, idx) => {
+                    const risk = getRiskLevel(record);
+                    const style = TONE_STYLES[risk.tone];
+                    return (
+                      <article key={record._id || idx} className={`bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition-shadow ${style.border}`}>
+                        <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-3">
+                            <span className="text-xl">{style.icon}</span>
+                            <div>
+                              <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${style.badge}`}>
+                                {risk.label}
+                              </span>
+                              <h4 className="font-bold text-slate-800 mt-1 text-base">{style.title}</h4>
+                            </div>
+                          </div>
+                          <p className="text-xs text-slate-400 whitespace-nowrap">
+                            {new Date(record.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
 
-                    {entry.tags && (
-                      <div className="mt-2 flex gap-2">
-                        {entry.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded bg-[#f1f2f9] px-2 py-1 text-[0.63rem] font-semibold text-[#8188a0]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                        <p className="text-sm text-slate-600 mb-3 leading-relaxed">
+                          BP: <strong>{record.systolicBP}/{record.diastolicBP} mmHg</strong> &nbsp;•&nbsp;
+                          Hb: <strong>{record.hemoglobin} g/dL</strong> &nbsp;•&nbsp;
+                          Age: <strong>{record.age} yrs</strong>
+                        </p>
 
-                    {entry.quote && (
-                      <blockquote className="m-0 mt-2 border-l-2 border-[#6570ff] pl-2 text-xs italic text-[#6f7891]">
-                        {entry.quote}
-                      </blockquote>
-                    )}
+                        {record.symptoms?.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {record.symptoms.map((s) => (
+                              <span key={s} className="bg-slate-100 text-slate-500 text-[10px] font-semibold px-2.5 py-1 rounded-full">{s}</span>
+                            ))}
+                          </div>
+                        )}
 
-                    {entry.linkLabel && (
-                      <button
-                        type="button"
-                        className="mt-2 border-0 bg-transparent p-0 text-xs font-semibold text-[#5a62e8]"
-                      >
-                        {entry.linkLabel}
-                      </button>
-                    )}
-                  </article>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="mt-3 w-full rounded-xl border border-[#e6e8f4] bg-[#f9faff] py-2 text-xs font-semibold uppercase tracking-[0.08em] text-[#8b92aa]"
-              >
-                Load Previous Interactions
-              </button>
+                        {record.pregnancyHistory && (
+                          <blockquote className="mt-3 border-l-2 border-indigo-400 pl-3 text-xs text-slate-500 italic">
+                            Pregnancy history: {record.pregnancyHistory}
+                          </blockquote>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
             </section>
 
-            <aside className="grid gap-4">
-              <section className="rounded-2xl border border-[rgba(168,166,206,0.22)] bg-white p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <h3 className="m-0 text-xl font-semibold text-[#4a4fb9]">Vitals Tracking</h3>
-                  <span className="rounded bg-[#f2f4ff] px-2 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.08em] text-[#7f87a3]">
-                    Last 4 Weeks
-                  </span>
+            {/* Sidebar Panel */}
+            <aside className="flex flex-col gap-5">
+              {/* Vitals Snapshot */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-bold text-slate-700 text-sm">Latest Vitals</h4>
+                  {records.length > 0 && <span className="text-[10px] text-slate-400">Most recent</span>}
                 </div>
+                {records.length > 0 ? (
+                  <div className="space-y-3 text-sm">
+                    {[
+                      { label: 'Blood Pressure', value: `${records[0].systolicBP}/${records[0].diastolicBP} mmHg`, flag: records[0].systolicBP >= 140 },
+                      { label: 'Hemoglobin', value: `${records[0].hemoglobin} g/dL`, flag: records[0].hemoglobin < 10 },
+                      { label: 'Age', value: `${records[0].age} years` },
+                    ].map(({ label, value, flag }) => (
+                      <div key={label} className="flex justify-between items-center py-1.5 border-b border-slate-50 last:border-0">
+                        <span className="text-xs text-slate-400">{label}</span>
+                        <span className={`font-bold text-xs ${flag ? 'text-red-600' : 'text-slate-700'}`}>{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400 text-center py-4">No records yet.</p>
+                )}
+              </div>
 
-                <div className="overflow-hidden rounded-xl border border-[#eceef7]">
-                  <table className="w-full border-collapse text-left text-xs">
-                    <thead className="bg-[#f7f8ff] text-[#7c839d]">
-                      <tr>
-                        <th className="px-2 py-2 font-semibold">Metric</th>
-                        <th className="px-2 py-2 font-semibold">Wk 29</th>
-                        <th className="px-2 py-2 font-semibold">Wk 30</th>
-                        <th className="px-2 py-2 font-semibold">Wk 31</th>
-                        <th className="px-2 py-2 font-semibold">Wk 32</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {vitalsRows.map((row) => (
-                        <tr key={row.metric} className="border-t border-[#eceef7]">
-                          <td className="px-2 py-2 font-semibold text-[#5f6781]">{row.metric}</td>
-                          <td className="px-2 py-2 text-[#707895]">{row.w29}</td>
-                          <td className="px-2 py-2 text-[#707895]">{row.w30}</td>
-                          <td className="px-2 py-2 text-[#707895]">{row.w31}</td>
-                          <td
-                            className={`px-2 py-2 ${row.critical ? 'font-semibold text-[#d22230]' : 'text-[#707895]'}`}
-                          >
-                            {row.w32}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <button
-                  type="button"
-                  className="mt-2 w-full border-0 bg-transparent py-1 text-xs font-semibold text-[#5a62e8]"
-                >
-                  View Detailed Analytics
-                </button>
-              </section>
-
-              <section className="rounded-2xl border border-[rgba(168,166,206,0.22)] bg-white p-3">
-                <h4 className="m-0 text-sm font-semibold uppercase tracking-[0.08em] text-[#878ea6]">
-                  History Tools
+              {/* Risk Status */}
+              <div className={`rounded-2xl p-5 text-white shadow-md ${
+                highCount > 0 ? 'bg-gradient-to-br from-red-600 to-red-700' : 'bg-gradient-to-br from-indigo-600 to-indigo-700'
+              }`}>
+                <p className="text-xs uppercase tracking-widest text-white/70 mb-1">Active Risk Level</p>
+                <h4 className="text-2xl font-black mb-1">
+                  {highCount > 0 ? 'High Risk' : records.length > 0 ? 'Low Risk' : 'No Data'}
                 </h4>
-                <input
-                  type="text"
-                  placeholder="Filter by date range..."
-                  className="mt-2 w-full rounded-lg border border-[#e1e4f1] px-3 py-2 text-sm outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Search by keyword (eg. edema)..."
-                  className="mt-2 w-full rounded-lg border border-[#e1e4f1] px-3 py-2 text-sm outline-none"
-                />
-              </section>
-
-              <section className="rounded-2xl border border-[#5d55ff] bg-gradient-to-br from-[#615aff] to-[#4739ea] p-4 text-white shadow-[0_16px_30px_rgba(80,62,232,0.35)]">
-                <p className="m-0 text-xs uppercase tracking-[0.1em] text-[#d6d4ff]">
-                  Active Risk Level
+                <p className="text-xs text-white/80 mb-4">
+                  {highCount > 0 ? `${highCount} critical event${highCount > 1 ? 's' : ''} on record` : 'Your readings look good'}
                 </p>
-                <h4 className="m-0 mt-1 text-3xl font-semibold leading-none">High Risk</h4>
-                <p className="m-0 mt-1 text-sm text-[#ddd9ff]">Requires immediate attention</p>
-                <button
-                  type="button"
-                  className="mt-3 w-full rounded-lg border border-[rgba(255,255,255,0.35)] bg-[rgba(255,255,255,0.12)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.08em] text-white"
+                <Link
+                  to="/patient-risk-assessment"
+                  className="block w-full py-2 text-center border border-white/30 bg-white/15 hover:bg-white/25 rounded-xl text-xs font-bold transition-colors"
                 >
-                  Schedule Emergency Visit
-                </button>
-              </section>
+                  Full Risk Analysis
+                </Link>
+              </div>
+
+              {/* Filter Tools */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
+                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Filter History</h4>
+                <input
+                  type="text" placeholder="Search symptoms, BP..."
+                  value={search} onChange={(e) => setSearch(e.target.value)}
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-indigo-300 transition placeholder:text-slate-400"
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="mt-2 text-xs text-indigo-600 font-semibold hover:underline w-full text-left">
+                    Clear filter
+                  </button>
+                )}
+              </div>
             </aside>
+
           </div>
-        </section>
-      </section>
-    </main>
+        </main>
+      </div>
+    </div>
   );
 }
