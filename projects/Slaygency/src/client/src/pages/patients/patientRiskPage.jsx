@@ -68,7 +68,7 @@ export default function PatientRiskPage() {
         <div className="mx-auto max-w-6xl rounded-[1.4rem] border border-[rgba(172,188,218,0.44)] bg-[rgba(255,255,255,0.93)] p-4 shadow-[0_24px_48px_rgba(11,43,99,0.1)] sm:p-6 lg:p-7">
           <header className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[rgba(165,184,214,0.4)] pb-4">
             <div>
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.13em] text-[#4a7eb4]">
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.13em] text-[#4a7eb4]">
                 Aama Care
               </p>
               <h1 className="m-0 mt-1 text-2xl font-semibold tracking-tight text-[#10264d] sm:text-[2rem]">
@@ -110,7 +110,7 @@ export default function PatientRiskPage() {
 
           <section className="grid gap-4 lg:grid-cols-[1.2fr_2fr]">
             <article className="rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-[#6580aa]">
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#6580aa]">
                 Patient Summary
               </p>
 
@@ -152,11 +152,11 @@ export default function PatientRiskPage() {
                   }}
                 >
                   <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-[inset_0_0_0_1px_rgba(174,190,217,0.42)]">
-                    <p className="m-0 text-[2rem] font-bold leading-none text-[#112f59]">
+                    <p className="m-0 text-[2rem] font-semibold leading-none text-[#112f59]">
                       {result.riskScore}%
                     </p>
                     <p
-                      className="m-0 mt-1 text-[0.68rem] font-bold uppercase tracking-[0.15em]"
+                      className="m-0 mt-1 text-[0.68rem] font-semibold uppercase tracking-[0.15em]"
                       style={{ color: riskColor }}
                     >
                       {riskCategory}
@@ -166,7 +166,7 @@ export default function PatientRiskPage() {
               </div>
 
               <div className="rounded-2xl bg-[#f8fbff] p-4">
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-[#6580aa]">
+                <p className="m-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#6580aa]">
                   AI Explanation
                 </p>
                 <p className="m-0 mt-3 text-sm leading-relaxed text-[#36547d]">
@@ -201,7 +201,7 @@ export default function PatientRiskPage() {
             </article>
 
             <article className="rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.12em] text-[#6580aa]">
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.12em] text-[#6580aa]">
                 Resources & Sharing
               </p>
               <div className="mt-3 overflow-hidden rounded-xl bg-[linear-gradient(120deg,#082b51_0%,#0e5e67_100%)] p-5 text-white">

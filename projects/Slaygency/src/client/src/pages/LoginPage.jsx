@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import { loginUser } from '../api.js';
 import loginImage from '../assets/images/login.jpg';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,8 +18,13 @@ export default function LoginPage() {
     try {
       setIsSubmitting(true);
       setErrorMessage('');
-      const { data } = await axios.post('/api/auth/login', { email, password });
+      const data = await loginUser(email, password);
       login(data);
+      // Redirect based on role
+      const role = data.user?.role;
+      if (role === 'Doctor') navigate('/doctor');
+      else if (role === 'Admin') navigate('/admin');
+      else navigate('/patient');
     } catch (error) {
       const message =
         error?.response?.data?.message ||
