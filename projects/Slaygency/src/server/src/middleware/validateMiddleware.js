@@ -15,6 +15,36 @@ export function validateHealthPayload(req, res, next) {
   return next();
 }
 
+function isFiniteNumber(value) {
+  return Number.isFinite(Number(value));
+}
+
+export function validateRiskPayload(req, res, next) {
+  const { age, bpSystolic, bpDiastolic, hemoglobin, symptoms } = req.body || {};
+
+  if (!isFiniteNumber(age) || Number(age) < 10 || Number(age) > 60) {
+    return res.status(400).json({ message: 'Age must be between 10 and 60' });
+  }
+
+  if (!isFiniteNumber(bpSystolic) || Number(bpSystolic) < 60 || Number(bpSystolic) > 200) {
+    return res.status(400).json({ message: 'Systolic BP must be between 60 and 200' });
+  }
+
+  if (!isFiniteNumber(bpDiastolic) || Number(bpDiastolic) < 40 || Number(bpDiastolic) > 130) {
+    return res.status(400).json({ message: 'Diastolic BP must be between 40 and 130' });
+  }
+
+  if (!isFiniteNumber(hemoglobin) || Number(hemoglobin) < 4 || Number(hemoglobin) > 20) {
+    return res.status(400).json({ message: 'Hemoglobin must be between 4 and 20' });
+  }
+
+  if (symptoms !== undefined && !Array.isArray(symptoms)) {
+    return res.status(400).json({ message: 'Symptoms must be an array of strings' });
+  }
+
+  return next();
+}
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function validateRegisterPayload(req, res, next) {

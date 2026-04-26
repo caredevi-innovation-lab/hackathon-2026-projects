@@ -6,6 +6,7 @@ import alertsRoutes from './routes/alertsRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import healthRoutes from './routes/healthRoutes.js';
 import patientsRoutes from './routes/patientsRoutes.js';
+import riskRoutes from './routes/riskRoutes.js';
 import userRoutes from './routes/user.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 import { notFound } from './middleware/notFound.middleware.js';
@@ -30,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/patients', patientsRoutes);
+app.use('/api/risk', riskRoutes);
 app.use('/api/users', userRoutes);
 
 
