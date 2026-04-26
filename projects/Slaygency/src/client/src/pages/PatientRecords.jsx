@@ -60,11 +60,15 @@ export default function PatientRecords() {
             className="flex-1 min-w-[220px] max-w-[340px] rounded-full bg-[#f3f4fa] px-4 py-3.5 text-[#8e95ac] border-0 outline-none"
           />
           <div className="flex gap-2">
-            <button className="rounded-lg bg-[#f4f6ff] px-4 py-2 text-[#433cff] font-semibold">EN</button>
+            <button className="rounded-lg bg-[#f4f6ff] px-4 py-2 text-[#433cff] font-semibold">
+              EN
+            </button>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-[#20253d]">Dr. Sharma</span>
               <span className="text-xs text-[#8e95ac]">Senior Obstetrician</span>
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-bold">DS</div>
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-bold">
+                DS
+              </div>
             </div>
           </div>
         </header>
@@ -72,15 +76,29 @@ export default function PatientRecords() {
         {/* Filters and Actions */}
         <div className="flex flex-wrap items-center justify-between gap-3 px-4 pt-6 sm:px-7">
           <div className="flex gap-2">
-            <button className="rounded-full px-4 py-2 font-semibold bg-[#433cff] text-white">All Patients (124)</button>
-            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">High Risk (18)</button>
-            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">Recently Added</button>
-            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">Active Monitoring <span className="ml-1 text-[#433cff]">84 Patients</span></button>
-            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">Advanced Filter</button>
+            <button className="rounded-full px-4 py-2 font-semibold bg-[#433cff] text-white">
+              All Patients (124)
+            </button>
+            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">
+              High Risk (18)
+            </button>
+            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">
+              Recently Added
+            </button>
+            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">
+              Active Monitoring <span className="ml-1 text-[#433cff]">84 Patients</span>
+            </button>
+            <button className="rounded-full px-4 py-2 font-semibold bg-[#f4f6ff] text-[#433cff]">
+              Advanced Filter
+            </button>
           </div>
           <div className="flex gap-2">
-            <button className="rounded-lg bg-[#f4f6ff] px-4 py-2 text-[#433cff] font-semibold">Export Report</button>
-            <button className="rounded-lg bg-[#433cff] px-4 py-2 text-white font-semibold">Register New Patient</button>
+            <button className="rounded-lg bg-[#f4f6ff] px-4 py-2 text-[#433cff] font-semibold">
+              Export Report
+            </button>
+            <button className="rounded-lg bg-[#433cff] px-4 py-2 text-white font-semibold">
+              Register New Patient
+            </button>
           </div>
         </div>
 
@@ -90,12 +108,24 @@ export default function PatientRecords() {
             <table className="min-w-full divide-y divide-[#e6e9f7]">
               <thead className="bg-[#f7f8ff]">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">PATIENT NAME & ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">PREGNANCY WEEK</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">RISK STATUS</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">LATEST BP</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">LAST VISIT</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">ACTION</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    PATIENT NAME & ID
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    PREGNANCY WEEK
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    RISK STATUS
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    LATEST BP
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    LAST VISIT
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-[#8e95ac]">
+                    ACTION
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#e6e9f7]">
@@ -103,7 +133,10 @@ export default function PatientRecords() {
                   <tr key={p.id} className="hover:bg-[#f8f9ff] transition">
                     <td className="px-6 py-4 flex items-center gap-3">
                       <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#433cff] to-[#4ed7cc] text-white font-bold">
-                        {p.name.split(' ').map((n) => n[0]).join('')}
+                        {p.name
+                          .split(' ')
+                          .map((n) => n[0])
+                          .join('')}
                       </div>
                       <div>
                         <div className="font-semibold text-[#20253d]">{p.name}</div>
@@ -112,7 +145,11 @@ export default function PatientRecords() {
                     </td>
                     <td className="px-6 py-4 font-semibold text-[#433cff]">Week {p.week}</td>
                     <td className="px-6 py-4">
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${p.riskColor}`}>{p.risk}</span>
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${p.riskColor}`}
+                      >
+                        {p.risk}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`font-bold ${p.bpColor}`}>{p.bp}</span>
@@ -120,7 +157,9 @@ export default function PatientRecords() {
                     </td>
                     <td className="px-6 py-4 text-[#8e95ac]">{p.lastVisit}</td>
                     <td className="px-6 py-4">
-                      <button className="text-[#433cff] font-semibold hover:underline">View Details</button>
+                      <button className="text-[#433cff] font-semibold hover:underline">
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -130,9 +169,15 @@ export default function PatientRecords() {
             <div className="flex items-center justify-between px-6 py-4 bg-[#f7f8ff] border-t border-[#e6e9f7]">
               <span className="text-xs text-[#8e95ac]">Showing 1 to 4 of 124 patients</span>
               <div className="flex gap-1">
-                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff] font-bold">1</button>
-                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff]">2</button>
-                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff]">3</button>
+                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff] font-bold">
+                  1
+                </button>
+                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff]">
+                  2
+                </button>
+                <button className="w-8 h-8 rounded bg-white border border-[#e6e9f7] text-[#433cff]">
+                  3
+                </button>
               </div>
             </div>
           </div>
@@ -143,23 +188,39 @@ export default function PatientRecords() {
           {/* Clinic Alert */}
           <div className="rounded-2xl bg-[#433cff] text-white p-6 flex flex-col justify-between shadow-lg">
             <div>
-              <div className="text-lg font-bold mb-2">3 High-Risk patients haven't visited this week</div>
-              <button className="mt-2 rounded-lg bg-white/20 px-4 py-2 font-semibold">Send Reminders</button>
+              <div className="text-lg font-bold mb-2">
+                3 High-Risk patients haven't visited this week
+              </div>
+              <button className="mt-2 rounded-lg bg-white/20 px-4 py-2 font-semibold">
+                Send Reminders
+              </button>
             </div>
           </div>
           {/* BP Stability */}
           <div className="rounded-2xl bg-white p-6 shadow-lg flex flex-col justify-between">
-            <div className="text-xs text-[#8e95ac] font-semibold mb-1">REGIONAL AVG. COMPARISON</div>
+            <div className="text-xs text-[#8e95ac] font-semibold mb-1">
+              REGIONAL AVG. COMPARISON
+            </div>
             <div className="text-3xl font-bold text-[#433cff] mb-1">Maternal BP Stability</div>
-            <div className="text-2xl font-bold text-[#16a34a]">84% <span className="text-xs text-[#16a34a]">+2.4%</span></div>
-            <div className="text-xs text-[#8e95ac]">Performing better than Bagmati regional average (75%)</div>
+            <div className="text-2xl font-bold text-[#16a34a]">
+              84% <span className="text-xs text-[#16a34a]">+2.4%</span>
+            </div>
+            <div className="text-xs text-[#8e95ac]">
+              Performing better than Bagmati regional average (75%)
+            </div>
           </div>
           {/* Upcoming Follow-ups */}
           <div className="rounded-2xl bg-white p-6 shadow-lg flex flex-col justify-between">
             <div className="text-xs text-[#8e95ac] font-semibold mb-1">UPCOMING FOLLOW-UPS</div>
             <div className="flex flex-col gap-1">
-              <div className="flex justify-between"><span>Today</span><span className="font-bold text-[#433cff]">12 Appointments</span></div>
-              <div className="flex justify-between"><span>Tomorrow</span><span className="font-bold text-[#433cff]">16 Appointments</span></div>
+              <div className="flex justify-between">
+                <span>Today</span>
+                <span className="font-bold text-[#433cff]">12 Appointments</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Tomorrow</span>
+                <span className="font-bold text-[#433cff]">16 Appointments</span>
+              </div>
             </div>
           </div>
         </div>
