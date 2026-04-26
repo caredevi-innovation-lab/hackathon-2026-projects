@@ -20,6 +20,22 @@ import SettingsPage from './pages/doctor/Settings.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import './app.css';
 
+function RoleRedirect() {
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  switch (user?.role) {
+    case 'Admin':
+      return <Navigate to="/admin/dashboard" replace />;
+    case 'Doctor':
+      return <Navigate to="/doctor" replace />;
+    case 'Patient':
+    default:
+      return <Navigate to="/patient-health-data-entry" replace />;
+  }
+}
+
 export default function App() {
   const location = useLocation();
   const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit' || location.pathname === '/health-entry' || location.pathname === '/settings';
@@ -29,9 +45,9 @@ export default function App() {
 
   return (
     <div className={shellClassName}>
+      {!isAuthRoute && <SharedNavbar />}
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/about" element={<AboutUsPage />} />
+        <Route path="/" element={<RoleRedirect />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 

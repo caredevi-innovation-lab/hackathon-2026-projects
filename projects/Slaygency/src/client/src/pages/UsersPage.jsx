@@ -6,76 +6,47 @@ import Modal from '../components/admin/Modal.jsx';
 import TableSkeleton from '../components/admin/TableSkeleton.jsx';
 import Toast from '../components/admin/Toast.jsx';
 import { IconEdit, IconTrash } from '../components/admin/icons.jsx';
+import { listUsers, updateUser, deleteUser as deleteUserApi } from '../services/apiService.js';
 
-const initialUsers = [
-  {
-    id: 'U-1',
-    name: 'Dr. Ramesh Thapa',
-    email: 'dr.ramesh@aamacare.org',
-    role: 'Doctor',
-    status: 'Active',
-  },
-  {
-    id: 'U-2',
-    name: 'Anjali Sharma',
-    email: 'anjali@aamacare.org',
-    role: 'Admin',
-    status: 'Inactive',
-  },
-  {
-    id: 'U-3',
-    name: 'Pradip Kumar',
-    email: 'pradip@aamacare.org',
-    role: 'Worker',
-    status: 'Active',
-  },
-  {
-    id: 'U-4',
-    name: 'Sita Gurung',
-    email: 'sita@aamacare.org',
-    role: 'Doctor',
-    status: 'Active',
-  },
-  {
-    id: 'U-5',
-    name: 'Mina Rai',
-    email: 'mina@aamacare.org',
-    role: 'Worker',
-    status: 'Inactive',
-  },
-];
-
-function statusTone(status) {
-  return status === 'Active' ? 'success' : 'warning';
+function statusTone(isActive) {
+  return isActive ? 'success' : 'warning';
 }
 
 export default function UsersPage() {
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
   const [query, setQuery] = useState('');
   const [role, setRole] = useState('All');
   const [selectedUser, setSelectedUser] = useState(null);
   const [toast, setToast] = useState({ show: false, text: '', tone: 'success' });
-  const [editRole, setEditRole] = useState('Worker');
+  const [editRole, setEditRole] = useState('Patient');
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 700);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!toast.show) {
-      return undefined;
+    async function fetchUsers() {
+      try {
+        const params = { limit: 100 };
+        if (role !== 'All') params.role = role;
+        if (query) params.search = query;
+        const res = await listUsers(params);
+        setUsers(res.items || []);
+      } catch {
+        setToast({ show: true, text: 'Failed to load users from server.', tone: 'danger' });
+      } finally {
+        setLoading(false);
+      }
     }
-    const timer = setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 1800);
+    fetchUsers();
+  }, [role, query]);
+
+  useEffect(() => {
+    if (!toast.show) return;
+    const timer = setTimeout(() => setToast((prev) => ({ ...prev, show: false })), 2500);
     return () => clearTimeout(timer);
   }, [toast.show]);
 
   const filtered = useMemo(() => {
     return users.filter((user) => {
-      const matchQuery =
-        user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase());
+      const matchQuery = !query || user.name?.toLowerCase().includes(query.toLowerCase()) || user.email?.toLowerCase().includes(query.toLowerCase());
       const matchRole = role === 'All' || user.role === role;
       return matchQuery && matchRole;
     });
@@ -86,77 +57,69 @@ export default function UsersPage() {
     setEditRole(user.role);
   };
 
-  const onSaveEdit = () => {
-    setUsers((prev) =>
-      prev.map((user) => (user.id === selectedUser.id ? { ...user, role: editRole } : user))
-    );
+  const onSaveEdit = async () => {
+    try {
+      await updateUser(selectedUser.id, { role: editRole });
+      setUsers((prev) => prev.map((u) => (u.id === selectedUser.id ? { ...u, role: editRole } : u)));
+      setToast({ show: true, text: 'User role updated successfully.', tone: 'success' });
+    } catch {
+      setToast({ show: true, text: 'Failed to update user role.', tone: 'danger' });
+    }
     setSelectedUser(null);
-    setToast({ show: true, text: 'User role updated successfully.', tone: 'success' });
   };
 
-  const onDelete = (id) => {
-    setUsers((prev) => prev.filter((user) => user.id !== id));
-    setToast({ show: true, text: 'User deleted.', tone: 'danger' });
+  const onDelete = async (id) => {
+    try {
+      await deleteUserApi(id);
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+      setToast({ show: true, text: 'User deactivated.', tone: 'danger' });
+    } catch {
+      setToast({ show: true, text: 'Failed to delete user.', tone: 'danger' });
+    }
   };
 
-  const onToggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id
-          ? { ...user, status: user.status === 'Active' ? 'Inactive' : 'Active' }
-          : user
-      )
-    );
-    setToast({ show: true, text: 'User status updated.', tone: 'warning' });
+  const onToggleStatus = async (user) => {
+    try {
+      const newActive = !user.isActive;
+      await updateUser(user.id, { isActive: newActive });
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, isActive: newActive } : u)));
+      setToast({ show: true, text: `User ${newActive ? 'activated' : 'deactivated'}.`, tone: 'warning' });
+    } catch {
+      setToast({ show: true, text: 'Failed to update status.', tone: 'danger' });
+    }
   };
 
   return (
     <AdminLayout title="User Management" subtitle="Manage user access, roles, and account status.">
       <Toast show={toast.show} text={toast.text} tone={toast.tone} />
-
       <section className="overflow-hidden rounded-2xl border border-[rgba(171,189,220,0.38)] bg-[linear-gradient(120deg,rgba(34,80,182,0.14)_0%,rgba(0,122,138,0.12)_100%)] px-5 py-4 shadow-[0_14px_30px_rgba(17,68,144,0.08)]">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="m-0 text-sm font-semibold text-[#1b4a85]">
-            Role governance and access control overview.
-          </p>
-          <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[#355f9a]">
-            Audit ready
-          </span>
+          <p className="m-0 text-sm font-semibold text-[#1b4a85]">Role governance and access control overview.</p>
+          <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[#355f9a]">Live data</span>
         </div>
       </section>
-
       <section className="grid gap-4">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-[#d8e3f2] bg-[rgba(255,255,255,0.75)] p-2 shadow-[0_10px_22px_rgba(17,68,144,0.07)] backdrop-blur-sm">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by name or email"
-              className="rounded-xl border border-[#d8e3f2] bg-white px-3 py-2 text-sm outline-none focus:border-[#2d78d9]"
-            />
-            <select
-              value={role}
-              onChange={(event) => setRole(event.target.value)}
-              className="rounded-xl border border-[#d8e3f2] bg-white px-3 py-2 text-sm outline-none focus:border-[#2d78d9]"
-            >
+          <div className="flex w-full flex-wrap items-center gap-3 rounded-2xl border border-[#cfddf1] bg-white p-3 shadow-[0_12px_24px_rgba(17,68,144,0.08)] lg:w-auto">
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by name or email" className="w-full rounded-xl border border-[#c9d9ef] bg-white px-4 py-3 text-base text-[#214371] outline-none placeholder:text-[#7b8fae] focus:border-[#2d78d9] lg:min-w-[360px]" />
+            <select value={role} onChange={(e) => setRole(e.target.value)} className="rounded-xl border border-[#c9d9ef] bg-white px-4 py-3 text-base text-[#214371] outline-none focus:border-[#2d78d9]">
               <option>All</option>
               <option>Admin</option>
               <option>Doctor</option>
-              <option>Worker</option>
+              <option>Patient</option>
             </select>
           </div>
-          <p className="m-0 text-xs font-semibold text-[#6782aa]">{filtered.length} users found</p>
+          <p className="m-0 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#4a6793] shadow-[0_6px_14px_rgba(17,68,144,0.08)]">{filtered.length} users found</p>
         </div>
-
         {loading ? (
           <TableSkeleton rows={5} />
         ) : filtered.length === 0 ? (
           <EmptyState title="No users found" message="Try changing your filters or search query." />
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-[#dbe4f3] bg-[rgba(255,255,255,0.78)] p-3 shadow-[0_12px_26px_rgba(17,68,144,0.08)] backdrop-blur-sm">
+          <div className="overflow-x-auto rounded-2xl border border-[#d6e2f3] bg-white p-3 shadow-[0_14px_28px_rgba(17,68,144,0.1)]">
             <table className="w-full min-w-[720px] border-separate border-spacing-y-2 text-left">
               <thead>
-                <tr className="text-xs font-semibold text-[#6a82a9]">
+                <tr className="text-sm font-semibold text-[#4f6790]">
                   <th className="px-3 py-2">Name</th>
                   <th className="px-3 py-2">Email</th>
                   <th className="px-3 py-2">Role</th>
@@ -166,38 +129,16 @@ export default function UsersPage() {
               </thead>
               <tbody>
                 {filtered.map((user) => (
-                  <tr key={user.id} className="rounded-xl border border-[#e4ebf8] bg-white/80">
+                  <tr key={user.id} className="rounded-xl border border-[#e0e8f6] bg-white transition duration-200 hover:bg-[#f7faff]">
                     <td className="px-3 py-3 text-sm font-semibold text-[#1e467f]">{user.name}</td>
-                    <td className="px-3 py-3 text-sm text-[#5f789f]">{user.email}</td>
-                    <td className="px-3 py-3 text-sm text-[#3f5f89]">{user.role}</td>
+                    <td className="px-3 py-3 text-sm text-[#4f6990]">{user.email}</td>
+                    <td className="px-3 py-3 text-sm font-medium text-[#355581]">{user.role}</td>
+                    <td className="px-3 py-3"><Badge tone={statusTone(user.isActive)}>{user.isActive ? 'Active' : 'Inactive'}</Badge></td>
                     <td className="px-3 py-3">
-                      <Badge tone={statusTone(user.status)}>{user.status}</Badge>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => openEdit(user)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-[#d6e1f2] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#41618d] hover:bg-[#f6faff]"
-                        >
-                          <IconEdit />
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onToggleStatus(user.id)}
-                          className="rounded-lg border border-[#d6e1f2] bg-white px-2.5 py-1.5 text-xs font-semibold text-[#41618d] hover:bg-[#f6faff]"
-                        >
-                          Toggle
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onDelete(user.id)}
-                          className="inline-flex items-center gap-1 rounded-lg border border-[#f0c8cf] bg-[#fff6f8] px-2.5 py-1.5 text-xs font-semibold text-[#b54057] hover:bg-[#ffeff3]"
-                        >
-                          <IconTrash />
-                          Delete
-                        </button>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button type="button" onClick={() => openEdit(user)} className="inline-flex items-center gap-1 rounded-lg border border-[#cddcf1] bg-white px-3 py-2 text-xs font-semibold text-[#345886] hover:bg-[#f3f8ff]"><IconEdit />Edit</button>
+                        <button type="button" onClick={() => onToggleStatus(user)} className="rounded-lg border border-[#cddcf1] bg-white px-3 py-2 text-xs font-semibold text-[#345886] hover:bg-[#f3f8ff]">Toggle</button>
+                        <button type="button" onClick={() => onDelete(user.id)} className="inline-flex items-center gap-1 rounded-lg border border-[#f0c8cf] bg-[#fff6f8] px-3 py-2 text-xs font-semibold text-[#b54057] hover:bg-[#ffeff3]"><IconTrash />Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -207,24 +148,13 @@ export default function UsersPage() {
           </div>
         )}
       </section>
-
-      <Modal
-        open={Boolean(selectedUser)}
-        title="Edit User Role"
-        onClose={() => setSelectedUser(null)}
-        onConfirm={onSaveEdit}
-        confirmText="Save Changes"
-      >
+      <Modal open={Boolean(selectedUser)} title="Edit User Role" onClose={() => setSelectedUser(null)} onConfirm={onSaveEdit} confirmText="Save Changes">
         <div className="grid gap-2">
           <p className="m-0 text-sm text-[#60799f]">{selectedUser?.name}</p>
-          <select
-            value={editRole}
-            onChange={(event) => setEditRole(event.target.value)}
-            className="rounded-xl border border-[#d8e3f2] bg-[#f9fbff] px-3 py-2 text-sm outline-none focus:border-[#2d78d9]"
-          >
+          <select value={editRole} onChange={(e) => setEditRole(e.target.value)} className="rounded-xl border border-[#d8e3f2] bg-[#f9fbff] px-3 py-2 text-sm outline-none focus:border-[#2d78d9]">
             <option>Admin</option>
             <option>Doctor</option>
-            <option>Worker</option>
+            <option>Patient</option>
           </select>
         </div>
       </Modal>
