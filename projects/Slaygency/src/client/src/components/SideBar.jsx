@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth.js';
+
 function IconShield() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
@@ -14,10 +17,11 @@ function IconMenu() {
   );
 }
 
-function SidebarItem({ label, active = false }) {
+function SidebarItem({ label, active = false, onClick }) {
   return (
     <button
       type="button"
+      onClick={onClick}
       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition ${
         active
           ? 'bg-[linear-gradient(90deg,rgba(95,90,255,0.15),rgba(95,90,255,0.05))] text-[#3f3cd3]'
@@ -33,6 +37,14 @@ function SidebarItem({ label, active = false }) {
 }
 
 export default function SideBar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const onSignOut = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
   return (
     <aside className="border-r border-[rgba(146,145,189,0.18)] bg-[rgba(255,255,255,0.74)] p-4 backdrop-blur-xl">
       <div className="mb-6 flex items-center gap-2 px-2">
@@ -45,6 +57,13 @@ export default function SideBar() {
         </div>
       </div>
 
+      {user && (
+        <div className="mb-4 rounded-xl bg-[#f3f4fb] px-3 py-2">
+          <p className="m-0 text-xs font-semibold text-[#3f3cd3]">{user.name}</p>
+          <p className="m-0 text-[0.65rem] text-[#8b93ab]">{user.role}</p>
+        </div>
+      )}
+
       <nav className="grid gap-1.5">
         <SidebarItem label="Overview" />
         <SidebarItem label="Patient Records" />
@@ -56,7 +75,7 @@ export default function SideBar() {
 
       <div className="mt-8 grid gap-1.5 border-t border-[rgba(146,145,189,0.18)] pt-4">
         <SidebarItem label="Help Center" />
-        <SidebarItem label="Sign Out" />
+        <SidebarItem label="Sign Out" onClick={onSignOut} />
       </div>
     </aside>
   );
