@@ -1,9 +1,11 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth.js';
+import SharedNavbar from './components/admin/SharedNavbar.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import AlertsPage from './pages/AlertsPage.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import AlertsPage from './pages/admin/AlertsPage.jsx';
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
 import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
 import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
@@ -11,14 +13,11 @@ import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
 import PatientHistory from './pages/patients/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
-import PatientRecord from './pages/patients/PatientRecord.jsx';
-import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
-import SettingsPage from './pages/patients/setting.jsx';
-import PatientsPage from './pages/PatientsPage.jsx';
+import PatientsPage from './pages/admin/PatientsPage.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
-import UsersPage from './pages/UsersPage.jsx';
+import UsersPage from './pages/admin/UsersPage.jsx';
 import './app.css';
 
 function RoleRedirect() {
@@ -39,6 +38,7 @@ function RoleRedirect() {
 
 export default function App() {
   const location = useLocation();
+  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
   const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit';
   const shellClassName = isDoctorRoute
     ? 'app-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(92,76,255,0.12),transparent_28%),linear-gradient(180deg,#fbfaff_0%,#f6f2ff_100%)]'
