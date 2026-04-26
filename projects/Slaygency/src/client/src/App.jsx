@@ -1,9 +1,11 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth.js';
+import SharedNavbar from './components/admin/SharedNavbar.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import AlertsPage from './pages/AlertsPage.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import AlertsPage from './pages/admin/AlertsPage.jsx';
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
 import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
 import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
@@ -11,7 +13,7 @@ import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
 import PatientHistory from './pages/patients/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
-import PatientsPage from './pages/PatientsPage.jsx';
+import PatientsPage from './pages/admin/PatientsPage.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
@@ -84,8 +86,31 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* ── Doctor Routes ── */}
+        <Route
+          path="/my-records"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientRecord />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/health-reports"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientHealthReport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-settings"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route
           path="/doctor"
           element={
