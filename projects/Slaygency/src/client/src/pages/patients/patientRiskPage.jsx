@@ -136,8 +136,15 @@ export default function PatientRiskPage() {
               <div className="grid place-items-center rounded-2xl bg-[#f8fbff] px-4 py-5">
                 <div className="grid h-40 w-40 place-items-center rounded-full" style={{ background: `conic-gradient(${riskColor} 0 ${result.riskScore}%, #e4ebf7 ${result.riskScore}% 100%)` }}>
                   <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-[inset_0_0_0_1px_rgba(174,190,217,0.42)]">
-                    <p className="m-0 text-[2rem] font-bold leading-none text-[#112f59]">{result.riskScore}%</p>
-                    <p className="m-0 mt-1 text-[0.68rem] font-bold tracking-[0.02em]" style={{ color: riskColor }}>{riskCategory}</p>
+                    <p className="m-0 text-[2rem] font-semibold leading-none text-[#112f59]">
+                      {result.riskScore}%
+                    </p>
+                    <p
+                      className="m-0 mt-1 text-[0.68rem] font-bold tracking-[0.02em]"
+                      style={{ color: riskColor }}
+                    >
+                      {riskCategory}
+                    </p>
                   </div>
                 </div>
               </div>

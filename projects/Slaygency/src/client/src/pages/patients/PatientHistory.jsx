@@ -105,13 +105,13 @@ export default function PatientHistory() {
         <section className="rounded-2xl border border-[rgba(168,166,206,0.24)] bg-[rgba(255,255,255,0.9)] p-4 shadow-[0_14px_35px_rgba(78,67,170,0.08)]">
           <header className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-3">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#4bd8d0] to-[#3f74dc] text-sm font-bold text-white">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[#4bd8d0] to-[#3f74dc] text-sm font-semibold text-white">
                 SS
               </div>
               <div>
                 <h2 className="m-0 text-3xl font-semibold leading-none">Sunita Sharma</h2>
                 <p className="m-0 mt-1 text-sm text-[#78819a]">
-                  Patient ID: #MC-2940 • 28 Years • 32 Weeks Gestation
+                  Patient ID: #MC-2940 â€¢ 28 Years â€¢ 32 Weeks Gestation
                 </p>
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function PatientHistory() {
                   type="button"
                   className="rounded-md border border-[#e5e7f2] bg-white px-2 py-1 text-xs text-[#7b839c]"
                 >
-                  ▼
+                  â–¼
                 </button>
               </div>
 

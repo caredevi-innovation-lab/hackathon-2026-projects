@@ -3,6 +3,36 @@ import { Alert } from '../models/Alert.js';
 import { HealthRecord } from '../models/HealthRecord.js';
 import { USER_ROLES, User } from '../models/User.js';
 
+export async function resolveAlert(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Invalid alert id' });
+    }
+
+    const alert = await Alert.findById(id);
+    if (!alert) {
+      return res.status(404).json({ message: 'Alert not found' });
+    }
+
+    if (alert.status === 'resolved') {
+      return res.status(400).json({ message: 'Alert is already resolved' });
+    }
+
+    alert.status = 'resolved';
+    await alert.save();
+
+    const populatedAlert = await Alert.findById(alert._id)
+      .populate('patient', 'name email phone')
+      .populate('healthRecord');
+
+    return res.json({ alert: populatedAlert });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 function asNumber(value) {
   const num = Number(value);
   return Number.isFinite(num) ? num : null;
