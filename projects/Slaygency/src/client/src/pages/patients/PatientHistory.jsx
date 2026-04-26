@@ -1,4 +1,4 @@
-import SideBar from '../components/SideBar.jsx';
+import SideBar from '../../components/SideBar.jsx';
 
 const timelineEntries = [
   {

@@ -1,12 +1,14 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import LandingPage from './pages/LandingPage.jsx';
+import AboutUsPage from './pages/AboutUsPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import SharedNavbar from './components/admin/SharedNavbar.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AlertsPage from './pages/admin/AlertsPage.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import PatientDashboard from './pages/PatientDashboard.jsx';
-import PatientHistory from './pages/PatientHistory.jsx';
+import PatientDashboard from './pages/patients/PatientDashboard.jsx';
+import PatientHistory from './pages/patients/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
 import PatientsPage from './pages/admin/PatientsPage.jsx';
 import PatientRecords from './pages/PatientRecords.jsx';
@@ -94,7 +96,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/submit" element={<SubmitHealthData />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

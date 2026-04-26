@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { loginUser } from '../services/apiService.js';
-import loginImage from '../assets/images/login.jpg';
+import { loginUser } from '../api.js';
+
+function getRedirectPath(role) {
+  if (role === 'Admin' || role === 'admin') {
+    return '/admin/dashboard';
+  }
+  if (role === 'Doctor' || role === 'doctor') {
+    return '/doctor';
+  }
+  return '/patient';
+}
 
 function getRedirectPath(role) {
   switch (role) {
@@ -24,20 +33,19 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setErrorMessage('');
 
     try {
       setIsSubmitting(true);
-      setErrorMessage('');
       const data = await loginUser({ email, password });
       login(data);
-      const redirectPath = getRedirectPath(data.user?.role);
-      navigate(redirectPath, { replace: true });
+      navigate(getRedirectPath(data?.user?.role), { replace: true });
     } catch (error) {
       const message =
         error?.response?.data?.message ||
-        'Unable to sign in. Please check your details and try again.';
+        'Unable to sign in. Please verify your email and password.';
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -45,64 +53,93 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-shell" aria-label="Aama Care login">
-        <aside
-          className="login-hero"
-          aria-hidden="true"
-          style={{ '--login-hero-image': `url(${loginImage})` }}
-        >
-          <h1>SAFE MOTHERHOOD, SMARTER CARE</h1>
-          <p>
-            Compassionate maternal healthcare supported by clinical excellence and modern risk
-            screening.
-          </p>
-        </aside>
+    <main className="min-h-screen bg-slate-50 px-5 py-8 md:px-8">
+      <div className="mx-auto w-full max-w-5xl">
+        <div className="mb-8 flex items-center justify-between">
+          <Link to="/" className="text-lg font-semibold text-[#3730a3]">
+            MaterNova
+          </Link>
+          <Link to="/about" className="text-sm font-semibold text-slate-600 hover:text-[#3730a3]">
+            About Us
+          </Link>
+        </div>
 
-        <section className="login-panel">
-          <header className="login-header">
-            <p className="login-eyebrow">
-              <strong>Welcome back</strong>
+        <section className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid-cols-2">
+          <aside className="bg-gradient-to-br from-indigo-50 to-white p-8 md:p-10">
+            <p className="inline-flex rounded-full border border-indigo-100 bg-indigo-100/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#3730a3]">
+              Secure Sign In
             </p>
-            <h2>Sign in to your health portal</h2>
-            <p>Access monitoring dashboards, alerts, and care recommendations in one place.</p>
-          </header>
+            <h1 className="mt-5 text-3xl font-semibold leading-tight text-slate-700">
+              Welcome back to your maternal care workspace.
+            </h1>
+            <p className="mt-4 text-sm font-medium leading-6 text-slate-500">
+              Continue to monitor patient updates, review alerts, and keep follow-ups on schedule.
+            </p>
+          </aside>
 
-          <form onSubmit={handleSubmit} className="login-form" noValidate>
-            <label htmlFor="email">Email address</label>
-            <input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder="yourname@example.com"
-              autoComplete="email"
-              required
-            />
+          <div className="p-8 md:p-10">
+            <h2 className="text-2xl font-semibold text-slate-700">Login</h2>
+            <p className="mt-2 text-sm font-medium text-slate-500">
+              Use your registered account to access role-based dashboards.
+            </p>
 
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              required
-            />
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
+              <div>
+                <label htmlFor="email" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  required
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
+              </div>
 
-            {errorMessage && <p className="login-error">{errorMessage}</p>}
+              <div>
+                <label htmlFor="password" className="mb-1 block text-sm font-semibold text-slate-600">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  required
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm font-medium text-slate-700 outline-none ring-[#3730a3]/25 transition focus:border-[#3730a3] focus:ring"
+                />
+              </div>
 
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
+              {errorMessage && (
+                <p className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
+                  {errorMessage}
+                </p>
+              )}
 
-          <p className="login-footer-note">
-            Don&apos;t have an account? <Link to="/register">Create one</Link>
-          </p>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-lg bg-[#3730a3] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-900 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {isSubmitting ? 'Signing in...' : 'Sign in'}
+              </button>
+            </form>
+
+            <p className="mt-5 text-sm font-medium text-slate-500">
+              Don&apos;t have an account?{' '}
+              <Link to="/register" className="font-semibold text-[#3730a3] hover:text-indigo-900">
+                Create one
+              </Link>
+            </p>
+          </div>
         </section>
-      </section>
+      </div>
     </main>
   );
 }
