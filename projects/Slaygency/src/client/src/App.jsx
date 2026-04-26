@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import LandingPage from './pages/LandingPage.jsx';
 import Navbar from './components/Navbar.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
@@ -25,7 +26,7 @@ export default function App() {
   return (
     <div className={shellClassName}>
       <Routes>
-        <Route path="/" element={<Navigate to="/doctor" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
