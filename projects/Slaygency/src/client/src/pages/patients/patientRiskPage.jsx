@@ -1,190 +1,317 @@
-import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import SideBar from '../../components/SideBar.jsx';
-import { predictRisk } from '../../services/apiService.js';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import PatientSideBar from '../../components/PatientSideBar.jsx';
+import { fetchHealth, predictRisk } from '../../api.js';
 
-const baseResult = {
-  age: 28,
-  bloodPressure: '150/95 mmHg',
-  symptoms: ['Headache', 'Swelling', 'Vision Blur'],
-  riskScore: 72,
-  confidence: 94.8,
-  reportId: 'MR-68219',
+function GaugeChart({ score }) {
+  // score 0-100, arc on a 220° range
+  const RADIUS = 60;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const ARC_FRACTION = 0.7; // 70% of circle = 252 degrees
+  const arcLength = CIRCUMFERENCE * ARC_FRACTION;
+  const dashOffset = arcLength - (score / 100) * arcLength;
+  const color = score >= 60 ? '#ef4444' : score >= 35 ? '#f59e0b' : '#10b981';
+
+  return (
+    <div className="relative w-48 h-48 mx-auto">
+      <svg viewBox="0 0 160 160" className="w-full h-full -rotate-[126deg]">
+        {/* Track */}
+        <circle cx="80" cy="80" r={RADIUS} fill="none" stroke="#f1f5f9" strokeWidth="12"
+          strokeDasharray={`${arcLength} ${CIRCUMFERENCE}`} strokeLinecap="round" />
+        {/* Progress */}
+        <circle cx="80" cy="80" r={RADIUS} fill="none" stroke={color} strokeWidth="12"
+          strokeDasharray={`${arcLength - dashOffset} ${CIRCUMFERENCE}`}
+          strokeLinecap="round"
+          style={{ transition: 'stroke-dasharray 1s ease, stroke 0.5s ease' }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-5xl font-black text-slate-800 leading-none">{score}</span>
+        <span className="text-xs font-bold text-slate-400 mt-1">/ 100</span>
+      </div>
+    </div>
+  );
+}
+
+const RISK_TIPS = {
+  high: [
+    'Contact your doctor or visit a clinic immediately.',
+    'Avoid strenuous physical activity and rest.',
+    'Monitor your blood pressure every few hours.',
+    'Ensure someone is with you at all times.',
+  ],
+  moderate: [
+    'Schedule a check-up with your healthcare provider this week.',
+    'Increase water intake and reduce sodium.',
+    'Track your symptoms daily and log them here.',
+    'Follow your prescribed iron and vitamin supplements.',
+  ],
+  low: [
+    'Keep up your regular prenatal check-ups.',
+    'Continue taking folic acid and prenatal vitamins.',
+    'Stay active with gentle walks and stretching.',
+    'Maintain a balanced diet rich in iron and calcium.',
+  ],
 };
 
 export default function PatientRiskPage() {
   const location = useLocation();
-  const incomingAssessment = location.state?.assessment;
-  const [result, setResult] = useState(() => ({ ...baseResult, ...incomingAssessment }));
+  const incoming = location.state?.assessment;
+
+  const [assessment, setAssessment] = useState(incoming || null);
+  const [loading, setLoading] = useState(!incoming);
   const [rechecking, setRechecking] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
+  const [statusMsg, setStatusMsg] = useState('');
 
-  const riskCategory = useMemo(() => {
-    if (result.riskScore >= 70) return 'High Risk';
-    if (result.riskScore >= 40) return 'Moderate Risk';
-    return 'Low Risk';
-  }, [result.riskScore]);
-
-  const riskColor = result.riskScore >= 70 ? '#df4358' : result.riskScore >= 40 ? '#f39a37' : '#0f8f78';
-
-  const onRecheck = async () => {
-    setRechecking(true);
-    setStatusMessage('');
-    try {
-      const bpParts = result.bloodPressure.replace(' mmHg', '').split('/');
-      const payload = {
-        age: result.age,
-        systolicBP: Number(bpParts[0]) || 120,
-        diastolicBP: Number(bpParts[1]) || 80,
-        hemoglobin: result.hemoglobin || 11.5,
-        symptoms: Array.isArray(result.symptoms) ? result.symptoms : [],
-      };
-      const response = await predictRisk(payload);
-      if (response?.prediction) {
-        const pred = response.prediction;
-        const newScore = pred.risk_score ?? pred.riskScore ?? result.riskScore;
-        setResult((prev) => ({
-          ...prev,
-          riskScore: Math.round(Number(newScore)),
-          confidence: Number((pred.confidence ?? prev.confidence).toFixed(1)),
-          reportId: pred.report_id || prev.reportId,
-        }));
-        setStatusMessage('Risk analysis refreshed with AI prediction.');
-      } else {
-        // Fallback to local recalc
-        const nextScore = Math.max(32, Math.min(93, result.riskScore + (Math.random() > 0.5 ? 2 : -3)));
-        setResult((prev) => ({
-          ...prev,
-          riskScore: nextScore,
-          confidence: Number((92 + Math.random() * 6).toFixed(1)),
-        }));
-        setStatusMessage('Risk analysis refreshed with latest available vitals.');
+  // If accessed directly (no incoming state), fetch latest record & predict
+  useEffect(() => {
+    if (incoming) return;
+    async function load() {
+      try {
+        const records = await fetchHealth();
+        if (!records.length) { setLoading(false); return; }
+        const latest = records[0];
+        let prediction = null;
+        try {
+          const res = await predictRisk({
+            age: latest.age,
+            bpSystolic: latest.systolicBP,
+            bpDiastolic: latest.diastolicBP,
+            hemoglobin: latest.hemoglobin,
+            symptoms: latest.symptoms || [],
+          });
+          prediction = res?.prediction;
+        } catch {
+          // AI offline — compute locally
+          let score = 10;
+          if (latest.systolicBP >= 140 || latest.diastolicBP >= 90) score += 35;
+          else if (latest.systolicBP >= 130 || latest.diastolicBP >= 85) score += 18;
+          if (latest.hemoglobin < 10) score += 20;
+          score += (latest.symptoms?.length || 0) * 6;
+          prediction = { riskScore: Math.min(96, score), confidence: 80 };
+        }
+        setAssessment({
+          age: latest.age,
+          bloodPressure: `${latest.systolicBP}/${latest.diastolicBP} mmHg`,
+          hemoglobin: latest.hemoglobin,
+          symptoms: latest.symptoms?.length ? latest.symptoms : ['No symptoms reported'],
+          riskScore: prediction?.riskScore ?? 15,
+          confidence: prediction?.confidence ?? 80,
+          reportId: latest._id ?? `MR-${Math.floor(68000 + Math.random() * 1300)}`,
+        });
+      } catch (err) {
+        console.error(err);
+        setStatusMsg('Could not load risk data. Please try again.');
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      // Fallback to local calculation if AI service is unavailable
-      const nextScore = Math.max(32, Math.min(93, result.riskScore + (Math.random() > 0.5 ? 2 : -3)));
-      setResult((prev) => ({
+    }
+    load();
+  }, [incoming]);
+
+  const riskScore = assessment?.riskScore ?? 0;
+  const riskCategory = useMemo(() => {
+    if (riskScore >= 60) return 'High Risk';
+    if (riskScore >= 35) return 'Moderate Risk';
+    return 'Low Risk';
+  }, [riskScore]);
+  const riskKey = riskScore >= 60 ? 'high' : riskScore >= 35 ? 'moderate' : 'low';
+  const riskColor = riskScore >= 60 ? 'text-red-600' : riskScore >= 35 ? 'text-amber-600' : 'text-emerald-600';
+  const riskBg = riskScore >= 60 ? 'bg-red-50 border-red-200' : riskScore >= 35 ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-200';
+  const riskBadge = riskScore >= 60 ? 'bg-red-100 text-red-700' : riskScore >= 35 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
+
+  const handleRecheck = async () => {
+    setRechecking(true);
+    setStatusMsg('');
+    try {
+      const records = await fetchHealth();
+      if (!records.length) { setStatusMsg('No records found to analyze.'); setRechecking(false); return; }
+      const latest = records[0];
+      let prediction = null;
+      try {
+        const res = await predictRisk({
+          age: latest.age,
+          bpSystolic: latest.systolicBP,
+          bpDiastolic: latest.diastolicBP,
+          hemoglobin: latest.hemoglobin,
+          symptoms: latest.symptoms || [],
+        });
+        prediction = res?.prediction;
+      } catch {
+        let score = 10;
+        if (latest.systolicBP >= 140 || latest.diastolicBP >= 90) score += 35;
+        else if (latest.systolicBP >= 130 || latest.diastolicBP >= 85) score += 18;
+        if (latest.hemoglobin < 10) score += 20;
+        score += (latest.symptoms?.length || 0) * 6;
+        prediction = { riskScore: Math.min(96, score), confidence: 80 };
+      }
+      setAssessment((prev) => ({
         ...prev,
-        riskScore: nextScore,
-        confidence: Number((92 + Math.random() * 6).toFixed(1)),
+        bloodPressure: `${latest.systolicBP}/${latest.diastolicBP} mmHg`,
+        hemoglobin: latest.hemoglobin,
+        symptoms: latest.symptoms?.length ? latest.symptoms : ['No symptoms reported'],
+        riskScore: prediction?.riskScore ?? prev.riskScore,
+        confidence: prediction?.confidence ?? prev.confidence,
+        reportId: latest._id ?? prev.reportId,
       }));
-      setStatusMessage('AI service unavailable. Local risk estimate applied.');
+      setStatusMsg('✓ Analysis refreshed with your latest vitals.');
+    } catch (err) {
+      setStatusMsg('Failed to refresh analysis. Please try again.');
     } finally {
       setRechecking(false);
     }
   };
 
-  const onSaveReport = () => {
-    setStatusMessage('Report saved successfully for clinical follow-up.');
-  };
-
-  const showHighRiskBanner = result.riskScore >= 70;
-
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_16%_12%,rgba(34,80,182,0.12),transparent_34%),radial-gradient(circle_at_84%_0%,rgba(0,122,138,0.1),transparent_34%),linear-gradient(180deg,#f5f8ff_0%,#edf2fa_100%)] text-[#10264d]">
-      <section className="mx-auto max-w-7xl p-3 sm:p-5 lg:p-6">
-        <div className="flex h-full w-full flex-col gap-6">
-          <header className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[rgba(165,184,214,0.4)] pb-4">
-            <div>
-              <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#4a7eb4]">Aama Care</p>
-              <h1 className="m-0 mt-1 text-2xl font-semibold tracking-tight text-[#10264d] sm:text-[2rem]">Risk Analysis Result</h1>
-              <p className="m-0 mt-1 text-sm text-[#59719a]">AI-powered maternal health assessment . ID: #{result.reportId}</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button type="button" onClick={onRecheck} disabled={rechecking} className="rounded-xl border border-[#b7c6df] bg-white px-4 py-2 text-sm font-semibold text-[#214a87] shadow-[0_6px_16px_rgba(17,68,144,0.09)] transition hover:-translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-70">
-                {rechecking ? 'Re-checking...' : 'Re-check'}
-              </button>
-              <button type="button" onClick={onSaveReport} className="rounded-xl border border-transparent bg-[linear-gradient(90deg,#2250b6_0%,#007a8a_100%)] px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_22px_rgba(17,76,159,0.24)] transition hover:-translate-y-[1px]">
-                Save Report
-              </button>
-            </div>
-          </header>
+    <div className="flex h-screen bg-[#f3f4fb] font-sans overflow-hidden">
+      <PatientSideBar />
 
-          {showHighRiskBanner && (
-            <div className="mb-5 rounded-xl border border-[#f0c7ce] bg-[#fff4f5] px-4 py-3 text-sm font-semibold text-[#af2f45]">
-              High risk detected. Immediate medical attention required.
+      <div className="flex-1 flex flex-col overflow-y-auto relative w-full min-w-0">
+        {/* Header */}
+        <header className="flex flex-wrap justify-between items-center gap-4 py-4 px-4 md:px-8 bg-white border-b border-slate-100 sticky top-0 z-40 shrink-0">
+          <div>
+            <p className="text-indigo-600 text-xs font-bold uppercase tracking-wider mb-0.5">MaterNova Risk Analysis</p>
+            <h1 className="text-xl font-bold text-slate-800">Risk Analysis Result</h1>
+            {assessment && <p className="text-xs text-slate-400 mt-0.5">Report ID: #{typeof assessment.reportId === 'string' ? assessment.reportId.slice(-8).toUpperCase() : assessment.reportId}</p>}
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRecheck} disabled={rechecking || loading}
+              className="border border-slate-200 bg-white text-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+            >
+              {rechecking ? 'Refreshing...' : '↻ Re-check'}
+            </button>
+            <Link
+              to="/patient-health-data-entry"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all"
+            >
+              + New Entry
+            </Link>
+          </div>
+        </header>
+
+        <main className="p-4 md:p-8">
+          {statusMsg && (
+            <div className={`mb-6 px-4 py-3 rounded-xl text-sm font-medium border ${statusMsg.startsWith('✓') ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+              {statusMsg}
             </div>
           )}
 
-          {statusMessage && (
-            <p className="mb-5 rounded-xl border border-[#b8d4ea] bg-[#f2f9ff] px-4 py-2.5 text-sm text-[#265687]">{statusMessage}</p>
-          )}
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <svg className="w-10 h-10 text-indigo-400 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+              <p className="text-slate-400 text-sm">Analyzing your latest health data...</p>
+            </div>
+          ) : !assessment ? (
+            <div className="text-center py-24">
+              <p className="text-slate-400 text-sm mb-4">No health data available for analysis.</p>
+              <Link to="/patient-health-data-entry" className="bg-indigo-600 text-white font-bold px-6 py-3 rounded-xl text-sm hover:bg-indigo-700 transition-colors inline-block">
+                Log Health Data
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left — Gauge + Category */}
+              <div className="lg:col-span-1 flex flex-col gap-6">
+                {/* Score Card */}
+                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm text-center">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Risk Score</h3>
+                  <GaugeChart score={riskScore} />
+                  <div className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm ${riskBadge}`}>
+                    {riskCategory}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2">
+                    AI Confidence: <span className="font-bold text-slate-600">{assessment.confidence}%</span>
+                  </p>
+                </div>
 
-          <section className="grid gap-4 lg:grid-cols-[1.2fr_2fr]">
-            <article className="rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#6580aa]">Patient Summary</p>
-              <div className="mt-3 grid gap-3 text-sm">
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Age</p>
-                  <p className="m-0 mt-0.5 text-lg font-semibold text-[#12325f]">{result.age} Years</p>
+                {/* Quick Vitals */}
+                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                  <h3 className="text-sm font-bold text-slate-700 mb-4">Analyzed Vitals</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-xs text-slate-500">Blood Pressure</span>
+                      <span className="text-sm font-bold text-slate-800">{assessment.bloodPressure}</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-xs text-slate-500">Hemoglobin</span>
+                      <span className="text-sm font-bold text-slate-800">{assessment.hemoglobin} g/dL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                      <span className="text-xs text-slate-500">Age</span>
+                      <span className="text-sm font-bold text-slate-800">{assessment.age} years</span>
+                    </div>
+                    <div className="flex justify-between items-start py-2">
+                      <span className="text-xs text-slate-500 mt-1">Symptoms</span>
+                      <div className="flex flex-wrap gap-1 justify-end max-w-[60%]">
+                        {(assessment.symptoms || []).map((s) => (
+                          <span key={s} className="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Blood Pressure</p>
-                  <p className="m-0 mt-0.5 text-lg font-semibold text-[#c13a52]">{result.bloodPressure}</p>
+              </div>
+
+              {/* Right — Recommendations */}
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                {/* Risk Banner */}
+                <div className={`rounded-2xl p-6 border ${riskBg}`}>
+                  <div className="flex items-start gap-4">
+                    <div className={`text-3xl ${riskColor}`}>
+                      {riskScore >= 60 ? '⚠️' : riskScore >= 35 ? '⚡' : '✅'}
+                    </div>
+                    <div>
+                      <h2 className={`text-xl font-black mb-1 ${riskColor}`}>{riskCategory}</h2>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {riskScore >= 60
+                          ? 'Your vitals suggest a high-risk condition. Please contact your healthcare provider immediately.'
+                          : riskScore >= 35
+                          ? 'Your readings show some elevated markers. We recommend scheduling a check-up soon.'
+                          : 'Great news! Your current readings look healthy. Keep up your prenatal care routine.'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Reported Symptoms</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {result.symptoms.map((s) => (
-                      <span key={s} className="rounded-full bg-[rgba(34,80,182,0.12)] px-2.5 py-1 text-xs font-semibold text-[#2250b6]">{s}</span>
+
+                {/* Recommendations */}
+                <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm">
+                  <h3 className="font-bold text-slate-800 mb-4">Personalized Recommendations</h3>
+                  <ul className="space-y-3">
+                    {RISK_TIPS[riskKey].map((tip, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-white text-xs font-bold ${riskScore >= 60 ? 'bg-red-500' : riskScore >= 35 ? 'bg-amber-500' : 'bg-emerald-500'}`}>
+                          {i + 1}
+                        </span>
+                        <p className="text-sm text-slate-600 leading-relaxed">{tip}</p>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
+                </div>
+
+                {/* Actions */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Link
+                    to="/my-records"
+                    className="bg-white border border-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-xl text-sm text-center hover:bg-slate-50 transition-colors"
+                  >
+                    View All Records
+                  </Link>
+                  <Link
+                    to="/patient-health-data-entry"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl text-sm text-center shadow-md shadow-indigo-200 transition-all"
+                  >
+                    Log New Health Data
+                  </Link>
                 </div>
               </div>
-            </article>
-            <article className="grid gap-4 rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)] sm:grid-cols-2">
-              <div className="grid place-items-center rounded-2xl bg-[#f8fbff] px-4 py-5">
-                <div className="grid h-40 w-40 place-items-center rounded-full" style={{ background: `conic-gradient(${riskColor} 0 ${result.riskScore}%, #e4ebf7 ${result.riskScore}% 100%)` }}>
-                  <div className="grid h-28 w-28 place-items-center rounded-full bg-white text-center shadow-[inset_0_0_0_1px_rgba(174,190,217,0.42)]">
-                    <p className="m-0 text-[2rem] font-semibold leading-none text-[#112f59]">
-                      {result.riskScore}%
-                    </p>
-                    <p
-                      className="m-0 mt-1 text-[0.68rem] font-bold tracking-[0.02em]"
-                      style={{ color: riskColor }}
-                    >
-                      {riskCategory}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-2xl bg-[#f8fbff] p-4">
-                <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#6580aa]">AI Explanation</p>
-                <p className="m-0 mt-3 text-sm leading-relaxed text-[#36547d]">High blood pressure combined with swelling indicates possible early signs of pre-eclampsia. System analysis suggests immediate clinical verification and continuous monitoring.</p>
-                <p className="m-0 mt-4 text-xs font-semibold text-[#607ba1]">Confidence: {result.confidence}%</p>
-              </div>
-            </article>
-          </section>
-
-          <section className="mt-4 grid gap-4 lg:grid-cols-2">
-            <article className="rounded-2xl border border-[#d8e0f0] bg-[linear-gradient(180deg,#f8fbff_0%,#f4f8ff_100%)] p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <h2 className="m-0 text-xl font-semibold text-[#1f4581]">Clinical Recommendations</h2>
-              <ul className="m-0 mt-4 grid gap-2.5 list-none p-0">
-                <li className="rounded-xl bg-white px-3 py-2.5 text-sm text-[#2f4e76]"><strong className="block text-[#163a6f]">Monitor BP daily</strong>Record twice daily and log in the vitals section.</li>
-                <li className="rounded-xl bg-white px-3 py-2.5 text-sm text-[#2f4e76]"><strong className="block text-[#163a6f]">Visit nearest health center</strong>Professional evaluation required within 24 hours.</li>
-                <li className="rounded-xl bg-white px-3 py-2.5 text-sm text-[#2f4e76]"><strong className="block text-[#163a6f]">Watch for severe symptoms</strong>Immediate ER if vision blurs or severe upper pain occurs.</li>
-              </ul>
-            </article>
-            <article className="rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#6580aa]">Resources & Sharing</p>
-              <div className="mt-3 overflow-hidden rounded-xl bg-[linear-gradient(120deg,#082b51_0%,#0e5e67_100%)] p-5 text-white">
-                <p className="m-0 text-xs tracking-[0.02em] text-[#b6d8ff]">Guidance</p>
-                <p className="m-0 mt-1 text-lg font-semibold">Understanding Pre-eclampsia</p>
-                <p className="m-0 mt-2 text-sm text-[#dbe9ff]">Learn warning signs and emergency care pathways.</p>
-              </div>
-              <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                <button type="button" className="rounded-xl border border-[#c9d7eb] bg-white px-3 py-2 text-sm font-semibold text-[#2b578f] hover:bg-[#f7fbff]">Share</button>
-                <button type="button" className="rounded-xl border border-[#c9d7eb] bg-white px-3 py-2 text-sm font-semibold text-[#2b578f] hover:bg-[#f7fbff]">Print</button>
-              </div>
-            </article>
-          </section>
-
-          <footer className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[rgba(165,184,214,0.4)] pt-3 text-xs text-[#6f84a3]">
-            <span>MaterNova Care Platform v2.4.0</span>
-            <span>Privacy Protocol . Terms of Use . System Online</span>
-          </footer>
-        </div>
-      </section>
-    </main>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
   );
 }

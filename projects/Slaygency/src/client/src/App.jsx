@@ -85,8 +85,31 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* ── Doctor Routes ── */}
+        <Route
+          path="/my-records"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientRecord />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/health-reports"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <PatientHealthReport />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-settings"
+          element={
+            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route
           path="/doctor"
           element={
