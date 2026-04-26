@@ -1,7 +1,13 @@
 import DoctorSideBar from '../components/DoctorSideBar.jsx';
 
 const patientList = [
-  { name: 'Sunita Rai', weeks: 28, id: '#SR-2024', active: true, avatar: 'from-[#ffb26b] to-[#e86f70]' },
+  {
+    name: 'Sunita Rai',
+    weeks: 28,
+    id: '#SR-2024',
+    active: true,
+    avatar: 'from-[#ffb26b] to-[#e86f70]',
+  },
   { name: 'Maya Tamang', weeks: 14, id: '#MT-8812', avatar: 'from-[#f3d48b] to-[#df8a72]' },
   { name: 'Priya Sharma', weeks: 32, id: '#PS-4009', avatar: 'from-[#d5a566] to-[#7f3d2d]' },
   { name: 'Anjali Karki', weeks: 20, id: '#AK-3321', avatar: 'from-[#86d0d7] to-[#5876cf]' },
@@ -11,21 +17,22 @@ const notes = [
   {
     time: 'Yesterday, 14:30',
     title: 'Weekly Check-up: Hypertension Management',
-    body:
-      'Patient reports mild headaches in the morning. Blood pressure remains above baseline. Recommended bed rest and increased fluid intake. Scheduled follow-up in 3 days.',
+    body: 'Patient reports mild headaches in the morning. Blood pressure remains above baseline. Recommended bed rest and increased fluid intake. Scheduled follow-up in 3 days.',
   },
   {
     time: '4 days ago',
     title: 'Nutrition Consultation',
-    body:
-      'Iron-rich diet plan discussed. Patient is compliant with prenatal vitamins but experiencing nausea with ferrous sulfate. Suggested alternative liquid formulation.',
+    body: 'Iron-rich diet plan discussed. Patient is compliant with prenatal vitamins but experiencing nausea with ferrous sulfate. Suggested alternative liquid formulation.',
   },
 ];
 
 function IconBell({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M12 4a4 4 0 00-4 4v2.3c0 .7-.2 1.3-.6 1.9L6 14.5h12l-1.4-2.3a3.5 3.5 0 01-.6-1.9V8a4 4 0 00-4-4z" fill="currentColor" />
+      <path
+        d="M12 4a4 4 0 00-4 4v2.3c0 .7-.2 1.3-.6 1.9L6 14.5h12l-1.4-2.3a3.5 3.5 0 01-.6-1.9V8a4 4 0 00-4-4z"
+        fill="currentColor"
+      />
       <path d="M10 18a2 2 0 004 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
@@ -34,7 +41,14 @@ function IconBell({ className = '' }) {
 function IconTranslate({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M4 6h10M9 6c0 6-2.5 9.2-6 11M7 10c1.2 2.7 3.5 5 6.5 6.5M14 6h6M17 6v12M14.5 14h5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M4 6h10M9 6c0 6-2.5 9.2-6 11M7 10c1.2 2.7 3.5 5 6.5 6.5M14 6h6M17 6v12M14.5 14h5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -51,7 +65,10 @@ function IconVideo({ className = '' }) {
 function IconPhone({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M7.5 4h3l1 4-2 1.5a15 15 0 005 5L16 13l4 1v3c0 1.1-.9 2-2 2C10.3 19 5 13.7 5 7c0-1.1.9-2 2-2z" fill="currentColor" />
+      <path
+        d="M7.5 4h3l1 4-2 1.5a15 15 0 005 5L16 13l4 1v3c0 1.1-.9 2-2 2C10.3 19 5 13.7 5 7c0-1.1.9-2 2-2z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -59,8 +76,20 @@ function IconPhone({ className = '' }) {
 function IconHistory({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M5 5v5h5M6.5 14a6 6 0 106.2-8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M12 9v4l2.5 1.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M5 5v5h5M6.5 14a6 6 0 106.2-8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M12 9v4l2.5 1.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -77,7 +106,14 @@ function IconFile({ className = '' }) {
 function IconFlag({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M6 20V4M7 5h8l-1.4 3L15 11H7z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M6 20V4M7 5h8l-1.4 3L15 11H7z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -85,7 +121,16 @@ function IconFlag({ className = '' }) {
 function IconDocument({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <rect x="5" y="4" width="14" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="2" />
+      <rect
+        x="5"
+        y="4"
+        width="14"
+        height="16"
+        rx="2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
       <path d="M9 9h6M9 13h6M9 17h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
@@ -103,7 +148,13 @@ function IconSparkle({ className = '' }) {
 function IconPlus({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
-      <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M12 5v14M5 12h14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -118,7 +169,8 @@ function IconEdit({ className = '' }) {
 }
 
 function PatientAvatar({ name }) {
-  const avatarGradient = patientList.find((patient) => patient.name === name)?.avatar || 'from-[#ffb26b] to-[#e86f70]';
+  const avatarGradient =
+    patientList.find((patient) => patient.name === name)?.avatar || 'from-[#ffb26b] to-[#e86f70]';
   const initials = name
     .split(' ')
     .map((part) => part[0])
@@ -181,7 +233,9 @@ export default function DoctorDashboard() {
             <div className="flex items-center gap-3 border-l-0 pl-0 sm:border-l sm:border-[rgba(134,132,188,0.2)] sm:pl-4">
               <div>
                 <strong className="block text-[0.96rem] font-semibold">Dr. Aarav Sharma</strong>
-                <span className="text-[0.7rem] uppercase tracking-[0.18em] text-[#433cff]">Role: Doctor</span>
+                <span className="text-[0.7rem] uppercase tracking-[0.18em] text-[#433cff]">
+                  Role: Doctor
+                </span>
               </div>
               <div className="inline-flex h-[42px] w-[42px] items-center justify-center rounded-full border-[3px] border-[#4ed7cc] bg-gradient-to-br from-[#1b2132] to-[#2a3757] text-[0.82rem] font-bold tracking-[0.04em] text-white">
                 AS
@@ -193,7 +247,9 @@ export default function DoctorDashboard() {
         <div className="grid gap-6 p-4 sm:p-7 xl:grid-cols-[282px_minmax(0,1fr)]">
           <section className={`${panelClass} order-2 self-start py-4 md:min-h-[384px] xl:order-1`}>
             <div className="flex items-start justify-between gap-4 px-4 pb-3">
-              <p className="m-0 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Active Pregnancies</p>
+              <p className="m-0 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">
+                Active Pregnancies
+              </p>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -244,7 +300,9 @@ export default function DoctorDashboard() {
                       28 Weeks Pregnant
                     </span>
                   </div>
-                  <p className="m-0 text-[0.86rem] text-[#727a93]">Age: 26 | LMP: Aug 12, 2023 | EDD: May 19, 2024</p>
+                  <p className="m-0 text-[0.86rem] text-[#727a93]">
+                    Age: 26 | LMP: Aug 12, 2023 | EDD: May 19, 2024
+                  </p>
                 </div>
                 <span className="absolute -left-2 top-[calc(100%-0.3rem)] inline-flex items-center justify-center rounded-full bg-gradient-to-b from-[#ff5858] to-[#c91e2d] px-1.5 py-[0.15rem] text-[0.58rem] font-semibold uppercase tracking-[0.08em] text-white sm:bottom-[-0.3rem] sm:top-auto">
                   High Risk
@@ -252,11 +310,17 @@ export default function DoctorDashboard() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:gap-4">
-                <button className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[#3e44d6]" type="button">
+                <button
+                  className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[#3e44d6]"
+                  type="button"
+                >
                   <IconPhone className={iconClass} />
                   <span>Emergency Contacts</span>
                 </button>
-                <button className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[#5e667b]" type="button">
+                <button
+                  className="inline-flex items-center gap-2 border-0 bg-transparent p-0 text-[#5e667b]"
+                  type="button"
+                >
                   <IconHistory className={iconClass} />
                   <span>Full Medical History</span>
                 </button>
@@ -280,7 +344,9 @@ export default function DoctorDashboard() {
                     </div>
                     <div>
                       <h3 className="m-0 text-[1.1rem] font-semibold">AI Risk Intelligence</h3>
-                      <p className="m-0 text-[#727a93]">Real-time predictive analysis based on latest vitals</p>
+                      <p className="m-0 text-[#727a93]">
+                        Real-time predictive analysis based on latest vitals
+                      </p>
                     </div>
                   </div>
                   <div className="text-left leading-none sm:text-right">
@@ -295,25 +361,39 @@ export default function DoctorDashboard() {
                 <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,150px)_minmax(0,1fr)]">
                   <div className="grid gap-4">
                     <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(219,78,78,0.12)]">
-                      <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Elevated BP</span>
-                      <strong className="my-1 block text-[1.1rem] font-semibold">145/95 mmHg</strong>
-                      <p className="m-0 text-[#727a93]">Sustained increase over 48 hours (+15% trend)</p>
-                      <em className="mt-2 block text-[0.78rem] font-bold uppercase not-italic text-[#d0164d]">Critical</em>
+                      <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">
+                        Elevated BP
+                      </span>
+                      <strong className="my-1 block text-[1.1rem] font-semibold">
+                        145/95 mmHg
+                      </strong>
+                      <p className="m-0 text-[#727a93]">
+                        Sustained increase over 48 hours (+15% trend)
+                      </p>
+                      <em className="mt-2 block text-[0.78rem] font-bold uppercase not-italic text-[#d0164d]">
+                        Critical
+                      </em>
                     </article>
 
                     <article className="rounded-[18px] border border-[rgba(239,171,171,0.42)] bg-[rgba(255,255,255,0.88)] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(219,78,78,0.12)]">
-                      <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">Low Hemoglobin</span>
+                      <span className="text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">
+                        Low Hemoglobin
+                      </span>
                       <strong className="my-1 block text-[1.1rem] font-semibold">9.2 g/dL</strong>
-                      <p className="m-0 text-[#727a93]">Below recommended threshold of 11.0 g/dL.</p>
-                      <em className="mt-2 block text-[0.78rem] font-bold uppercase not-italic text-[#d0164d]">Monitor</em>
+                      <p className="m-0 text-[#727a93]">
+                        Below recommended threshold of 11.0 g/dL.
+                      </p>
+                      <em className="mt-2 block text-[0.78rem] font-bold uppercase not-italic text-[#d0164d]">
+                        Monitor
+                      </em>
                     </article>
                   </div>
 
                   <div className="grid gap-4">
                     <article className="rounded-[18px] border border-[rgba(185,191,248,0.7)] bg-gradient-to-b from-[rgba(240,243,255,0.9)] to-[rgba(234,236,255,0.75)] p-4 text-[#2b2f77] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_28px_rgba(88,93,214,0.14)]">
                       <p className="m-0 leading-8 text-[#2f2e74]">
-                        AI suggests immediate Proteinuria screening and adjustment of Iron supplementation.
-                        Predicted risk of preterm labor increased by 12%.
+                        AI suggests immediate Proteinuria screening and adjustment of Iron
+                        supplementation. Predicted risk of preterm labor increased by 12%.
                       </p>
                     </article>
 
@@ -339,14 +419,34 @@ export default function DoctorDashboard() {
                   <strong className="block text-5xl font-semibold leading-none">142</strong>
                   <span className="text-[#9aa0b6]">bpm</span>
                 </div>
-                <p className="m-0 text-[0.8rem] uppercase tracking-[0.16em] text-[#727a93]">Fetal Heart Rate</p>
+                <p className="m-0 text-[0.8rem] uppercase tracking-[0.16em] text-[#727a93]">
+                  Fetal Heart Rate
+                </p>
                 <div className="flex h-16 items-end gap-[0.3rem]" aria-hidden="true">
-                  <span className="flex-1 rounded-t-[3px] bg-[#d7dcff]" style={{ height: '22px' }} />
-                  <span className="flex-1 rounded-t-[3px] bg-[#d7dcff]" style={{ height: '32px' }} />
-                  <span className="flex-1 rounded-t-[3px] bg-[#8e98ff]" style={{ height: '28px' }} />
-                  <span className="flex-1 rounded-t-[3px] bg-[#5a56ff]" style={{ height: '38px' }} />
-                  <span className="flex-1 rounded-t-[3px] bg-[#d7dcff]" style={{ height: '36px' }} />
-                  <span className="flex-1 rounded-t-[3px] bg-[#d7dcff]" style={{ height: '22px' }} />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#d7dcff]"
+                    style={{ height: '22px' }}
+                  />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#d7dcff]"
+                    style={{ height: '32px' }}
+                  />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#8e98ff]"
+                    style={{ height: '28px' }}
+                  />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#5a56ff]"
+                    style={{ height: '38px' }}
+                  />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#d7dcff]"
+                    style={{ height: '36px' }}
+                  />
+                  <span
+                    className="flex-1 rounded-t-[3px] bg-[#d7dcff]"
+                    style={{ height: '22px' }}
+                  />
                 </div>
               </section>
             </div>
@@ -355,7 +455,9 @@ export default function DoctorDashboard() {
               <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <h3 className="m-0 text-[1.1rem] font-semibold">Longitudinal Health Trends</h3>
-                  <p className="m-0 text-[#727a93]">Correlation of BP vs Hemoglobin over the last 8 weeks</p>
+                  <p className="m-0 text-[#727a93]">
+                    Correlation of BP vs Hemoglobin over the last 8 weeks
+                  </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-[1.15rem] text-[0.85rem] text-[#3f4561]">
                   <span className="inline-flex items-center gap-2">
@@ -370,7 +472,12 @@ export default function DoctorDashboard() {
               </div>
 
               <div className="grid gap-3">
-                <svg viewBox="0 0 700 260" preserveAspectRatio="none" aria-hidden="true" className="h-[220px] w-full sm:h-[290px]">
+                <svg
+                  viewBox="0 0 700 260"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                  className="h-[220px] w-full sm:h-[290px]"
+                >
                   <defs>
                     <linearGradient id="doctorChartFade" x1="0" x2="0" y1="0" y2="1">
                       <stop offset="0%" stopColor="#4c4cff" stopOpacity="0.08" />
@@ -380,11 +487,26 @@ export default function DoctorDashboard() {
                   <line x1="40" y1="200" x2="660" y2="200" stroke="#ebe7f8" strokeWidth="1.5" />
                   <line x1="40" y1="145" x2="660" y2="145" stroke="#f0ecfa" strokeWidth="1.5" />
                   <line x1="40" y1="90" x2="660" y2="90" stroke="#f0ecfa" strokeWidth="1.5" />
-                  <path d="M40 160 C140 160, 180 154, 260 142 S430 116, 660 100" fill="none" stroke="#3030ff" strokeWidth="3.2" strokeLinecap="round" />
-                  <path d="M40 88 C150 92, 240 104, 320 120 S500 156, 660 170" fill="none" stroke="#d0177c" strokeWidth="3.2" strokeLinecap="round" />
+                  <path
+                    d="M40 160 C140 160, 180 154, 260 142 S430 116, 660 100"
+                    fill="none"
+                    stroke="#3030ff"
+                    strokeWidth="3.2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M40 88 C150 92, 240 104, 320 120 S500 156, 660 170"
+                    fill="none"
+                    stroke="#d0177c"
+                    strokeWidth="3.2"
+                    strokeLinecap="round"
+                  />
                   <circle cx="580" cy="106" r="5.5" fill="#3030ff" stroke="#fff" strokeWidth="2" />
                   <circle cx="580" cy="164" r="5.5" fill="#d0177c" stroke="#fff" strokeWidth="2" />
-                  <path d="M40 160 C140 160, 180 154, 260 142 S430 116, 660 100 L660 220 L40 220 Z" fill="url(#doctorChartFade)" />
+                  <path
+                    d="M40 160 C140 160, 180 154, 260 142 S430 116, 660 100 L660 220 L40 220 Z"
+                    fill="url(#doctorChartFade)"
+                  />
                 </svg>
                 <div className="flex justify-between gap-2 text-[0.72rem] text-[#8a90a7] sm:text-[0.84rem]">
                   <span>Week 20</span>
@@ -402,7 +524,10 @@ export default function DoctorDashboard() {
                   <IconFile className="h-[18px] w-[18px] text-[#3e3dff]" />
                   <h3 className="m-0 text-[1.1rem] font-semibold">Clinical Progress Notes</h3>
                 </div>
-                <button className="inline-flex items-center gap-3 bg-transparent p-0 text-[#3235ff]" type="button">
+                <button
+                  className="inline-flex items-center gap-3 bg-transparent p-0 text-[#3235ff]"
+                  type="button"
+                >
                   <IconPlus className="h-[18px] w-[18px] text-[#3e3dff]" />
                   <span>Add New Note</span>
                 </button>
@@ -410,8 +535,13 @@ export default function DoctorDashboard() {
 
               <div className="grid gap-4">
                 {notes.map((note) => (
-                  <article key={note.title} className="relative rounded-[18px] bg-[#fafbfe] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(89,97,130,0.12)]">
-                    <div className="mb-3.5 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">{note.time}</div>
+                  <article
+                    key={note.title}
+                    className="relative rounded-[18px] bg-[#fafbfe] p-4 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(89,97,130,0.12)]"
+                  >
+                    <div className="mb-3.5 text-[0.72rem] uppercase tracking-[0.16em] text-[#878ea6]">
+                      {note.time}
+                    </div>
                     <button
                       className="absolute right-4 top-4 border-0 bg-transparent p-0 text-[#c0c6d9]"
                       type="button"
