@@ -17,7 +17,9 @@ import PatientsPage from './pages/admin/PatientsPage.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
-import UsersPage from './pages/admin/UsersPage.jsx';
+import HealthEntry from './pages/doctor/HealthEntry.jsx';
+import SettingsPage from './pages/doctor/Settings.jsx';
+import UsersPage from './pages/UsersPage.jsx';
 import './app.css';
 
 function RoleRedirect() {
@@ -38,8 +40,7 @@ function RoleRedirect() {
 
 export default function App() {
   const location = useLocation();
-  const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
-  const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit';
+  const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit' || location.pathname === '/health-entry' || location.pathname === '/settings';
   const shellClassName = isDoctorRoute
     ? 'app-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(92,76,255,0.12),transparent_28%),linear-gradient(180deg,#fbfaff_0%,#f6f2ff_100%)]'
     : 'app-shell min-h-screen';
@@ -139,6 +140,22 @@ export default function App() {
           element={
             <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}>
               <SubmitHealthData />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/health-entry"
+          element={
+            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+              <HealthEntry />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />
