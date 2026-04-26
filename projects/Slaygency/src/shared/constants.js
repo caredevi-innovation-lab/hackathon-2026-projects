@@ -1,6 +1,6 @@
 export const ROLES = Object.freeze({
   PATIENT: 'Patient',
-  HEALTH_WORKER: 'HealthWorker',
+  // ...existing code...
   DOCTOR: 'Doctor',
   ADMIN: 'Admin',
 });

@@ -72,11 +72,12 @@ function IconLogout() {
   );
 }
 
-function SidebarItem({ icon, label, active = false }) {
+import { Link, useLocation } from 'react-router-dom';
+function SidebarItem({ icon, label, to, active = false }) {
   return (
-    <button
-      type="button"
-      className={`flex w-full items-center gap-3 rounded-2xl border-0 px-4 py-3 text-left text-[0.95rem] transition duration-200 ${
+    <Link
+      to={to}
+      className={`flex w-full items-center gap-3 rounded-2xl border-0 px-4 py-3 text-left text-[0.95rem] transition duration-200 no-underline ${
         active
           ? 'bg-[linear-gradient(90deg,#eef2ff_0%,#f7f8ff_100%)] text-[#3a37e0] shadow-[inset_-3px_0_0_#5348ff]'
           : 'text-[#54607a] hover:bg-[#f2f4ff] hover:text-[#3d39de]'
@@ -84,11 +85,12 @@ function SidebarItem({ icon, label, active = false }) {
     >
       <span className="shrink-0">{icon}</span>
       <span>{label}</span>
-    </button>
+    </Link>
   );
 }
 
 export default function DoctorSideBar() {
+  const location = useLocation();
   return (
     <aside className="flex flex-row items-start gap-4 overflow-x-auto border-b border-[rgba(134,132,188,0.14)] bg-[rgba(255,255,255,0.88)] p-4 backdrop-blur-[20px] lg:flex-col lg:justify-between lg:gap-8 lg:border-b-0 lg:border-r lg:px-3 lg:py-5">
       <div className="w-full">
@@ -103,17 +105,17 @@ export default function DoctorSideBar() {
         </div>
 
         <nav className="flex items-center gap-2 lg:grid lg:gap-1.5">
-          <SidebarItem icon={<IconGrid />} label="Dashboard" active />
-          <SidebarItem icon={<IconPatient />} label="Patient Records" />
-          <SidebarItem icon={<IconCalendar />} label="Appointments" />
-          <SidebarItem icon={<IconChart />} label="Health Analytics" />
-          <SidebarItem icon={<IconFile />} label="Medical Resources" />
+          <SidebarItem icon={<IconGrid />} label="Dashboard" to="/doctor" active={location.pathname === '/doctor'} />
+          <SidebarItem icon={<IconPatient />} label="Patient Records" to="/patient-records" active={location.pathname === '/patient-records'} />
+          <SidebarItem icon={<IconCalendar />} label="Appointments" to="#" />
+          <SidebarItem icon={<IconChart />} label="Health Analytics" to="#" />
+          <SidebarItem icon={<IconFile />} label="Medical Resources" to="#" />
         </nav>
       </div>
 
       <div className="ml-auto flex items-center gap-2 border-0 pt-0 lg:ml-0 lg:grid lg:w-full lg:gap-1.5 lg:border-t lg:border-[rgba(134,132,188,0.14)] lg:px-2 lg:pt-5">
-        <SidebarItem icon={<IconHelp />} label="Help & Support" />
-        <SidebarItem icon={<IconLogout />} label="Logout" />
+        <SidebarItem icon={<IconHelp />} label="Help & Support" to="#" />
+        <SidebarItem icon={<IconLogout />} label="Logout" to="#" />
       </div>
     </aside>
   );

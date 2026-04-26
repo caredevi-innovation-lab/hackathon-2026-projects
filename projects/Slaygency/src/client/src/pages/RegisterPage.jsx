@@ -9,7 +9,7 @@ export default function RegisterPage() {
     email: '',
     phone: '',
     password: '',
-    role: 'HealthWorker',
+    // ...existing code...
     agreed: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                 role="radiogroup"
                 aria-label="Select your role"
               >
-                {['HealthWorker', 'Patient'].map((role) => (
+                {['Patient'].map((role) => (
                   <button
                     key={role}
                     type="button"
@@ -104,7 +104,7 @@ export default function RegisterPage() {
                     className={form.role === role ? 'active' : ''}
                     onClick={() => selectRole(role)}
                   >
-                    {role === 'HealthWorker' ? 'Healthcare Professional' : 'Patient / Guardian'}
+                    {'Patient / Guardian'}
                   </button>
                 ))}
               </div>

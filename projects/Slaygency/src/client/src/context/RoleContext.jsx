@@ -11,7 +11,7 @@ export function RoleProvider({ children }) {
     () => ({
       role,
       isPatient: role === 'Patient',
-      isHealthWorker: role === 'HealthWorker',
+      // ...existing code...
       isDoctor: role === 'Doctor',
       isAdmin: role === 'Admin',
     }),
