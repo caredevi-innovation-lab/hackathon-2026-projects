@@ -4,7 +4,9 @@ import AboutUsPage from './pages/AboutUsPage.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import AlertsPage from './pages/AlertsPage.jsx';
-import DoctorDashboard from './pages/DoctorDashboard.jsx';
+import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
+import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
+import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
 import PatientHistory from './pages/patients/PatientHistory.jsx';
@@ -13,27 +15,44 @@ import PatientRecord from './pages/patients/PatientRecord.jsx';
 import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
 import SettingsPage from './pages/patients/setting.jsx';
 import PatientsPage from './pages/PatientsPage.jsx';
-import PatientRecords from './pages/PatientRecords.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
-import SubmitHealthData from './pages/SubmitHealthData.jsx';
+import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
 import UsersPage from './pages/UsersPage.jsx';
 import './app.css';
 
+function RoleRedirect() {
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  switch (user?.role) {
+    case 'Admin':
+      return <Navigate to="/admin/dashboard" replace />;
+    case 'Doctor':
+      return <Navigate to="/doctor" replace />;
+    case 'Patient':
+    default:
+      return <Navigate to="/patient-health-data-entry" replace />;
+  }
+}
+
 export default function App() {
   const location = useLocation();
-  const isDoctorRoute = location.pathname === '/doctor';
+  const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit';
   const shellClassName = isDoctorRoute
     ? 'app-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(92,76,255,0.12),transparent_28%),linear-gradient(180deg,#fbfaff_0%,#f6f2ff_100%)]'
     : 'app-shell min-h-screen';
 
   return (
     <div className={shellClassName}>
+      {!isAuthRoute && <SharedNavbar />}
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/about" element={<AboutUsPage />} />
+        <Route path="/" element={<RoleRedirect />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* ── Patient Routes ── */}
         <Route
           path="/patient"
           element={
@@ -103,10 +122,28 @@ export default function App() {
           path="/patient-records"
           element={
             <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
-              <PatientRecords />
+              <DoctorPatientRecords />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
+              <DoctorAlertCenter />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/submit"
+          element={
+            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}>
+              <SubmitHealthData />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ── Admin Routes ── */}
         <Route
           path="/admin"
           element={
@@ -147,14 +184,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/submit"
-          element={
-            <ProtectedRoute allowedRoles={['Patient', 'patient']}>
-              <SubmitHealthData />
-            </ProtectedRoute>
-          }
-        />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
