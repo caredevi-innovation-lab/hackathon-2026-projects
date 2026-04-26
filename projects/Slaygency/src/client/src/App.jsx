@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import LandingPage from './pages/LandingPage.jsx';
+import Navbar from './components/Navbar.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import AlertsPage from './pages/AlertsPage.jsx';
@@ -10,6 +12,9 @@ import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryF
 import PatientsPage from './pages/PatientsPage.jsx';
 import PatientRecords from './pages/PatientRecords.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
+import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
+import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
+
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/SubmitHealthData.jsx';
 import UsersPage from './pages/UsersPage.jsx';
@@ -25,7 +30,7 @@ export default function App() {
   return (
     <div className={shellClassName}>
       <Routes>
-        <Route path="/" element={<Navigate to="/doctor" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
