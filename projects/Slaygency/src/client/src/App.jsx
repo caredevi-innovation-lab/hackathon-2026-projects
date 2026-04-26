@@ -1,15 +1,18 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AlertsPage from './pages/AlertsPage.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/PatientDashboard.jsx';
 import PatientHistory from './pages/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
+import PatientsPage from './pages/PatientsPage.jsx';
 import PatientRecords from './pages/PatientRecords.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/SubmitHealthData.jsx';
+import UsersPage from './pages/UsersPage.jsx';
 import './app.css';
 
 export default function App() {
@@ -32,7 +35,46 @@ export default function App() {
         {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient-records" element={<PatientRecords />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+              <Navigate to="/admin/dashboard" replace />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AdminDashboard />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <UsersPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/patients"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <PatientsPage />
+            // </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/alerts"
+          element={
+            // <ProtectedRoute allowedRoles={['Admin', 'admin']}>
+            <AlertsPage />
+            // </ProtectedRoute>
+          }
+        />
         <Route path="/submit" element={<SubmitHealthData />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
