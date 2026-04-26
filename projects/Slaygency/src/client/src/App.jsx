@@ -5,7 +5,9 @@ import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/PatientDashboard.jsx';
 import PatientHistory from './pages/PatientHistory.jsx';
+import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
 import PatientRecords from './pages/PatientRecords.jsx';
+import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/SubmitHealthData.jsx';
 import './app.css';
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/patient-history" element={<PatientHistory />} />
+        <Route path="/patient-health-data-entry" element={<PatientHealthDataEntryForm />} />
+        <Route path="/patient-risk-assessment" element={<PatientRiskPage />} />
         {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient-records" element={<PatientRecords />} />
