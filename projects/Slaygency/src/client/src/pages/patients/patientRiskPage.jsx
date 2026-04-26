@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import SideBar from '../../components/SideBar.jsx';
+import PatientSideBar from '../../components/PatientSideBar.jsx';
 
 const baseResult = {
   age: 28,
@@ -62,18 +62,20 @@ export default function PatientRiskPage() {
 
   return (
     <main className="grid min-h-screen bg-[radial-gradient(circle_at_16%_12%,rgba(34,80,182,0.12),transparent_34%),radial-gradient(circle_at_84%_0%,rgba(0,122,138,0.1),transparent_34%),linear-gradient(180deg,#f5f8ff_0%,#edf2fa_100%)] text-[#10264d] lg:grid-cols-[220px_minmax(0,1fr)]">
-      <SideBar />
+      <PatientSideBar />
 
       <section className="min-w-0 p-3 sm:p-5 lg:p-6">
         <div className="flex h-full w-full flex-col gap-6 p-0 sm:p-0 lg:p-0">
           <header className="mb-4 flex flex-wrap items-start justify-between gap-4 border-b border-[rgba(165,184,214,0.4)] pb-4">
             <div>
-              <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#4a7eb4]">Aama Care</p>
-              <h1 className="m-0 mt-1 text-2xl font-semibold tracking-tight text-[#10264d] sm:text-[2rem]">
+              <p className="m-0 text-sm font-semibold text-indigo-600">
+                MaterNova Risk Analysis
+              </p>
+              <h1 className="m-0 mt-1 text-2xl font-bold text-slate-800 sm:text-[2rem]">
                 Risk Analysis Result
               </h1>
-              <p className="m-0 mt-1 text-sm text-[#59719a]">
-                AI-powered maternal health assessment . ID: #{result.reportId}
+              <p className="m-0 mt-1 text-sm text-slate-500">
+                AI-powered maternal health assessment • ID: #{result.reportId}
               </p>
             </div>
 
@@ -108,30 +110,30 @@ export default function PatientRiskPage() {
 
           <section className="grid gap-4 lg:grid-cols-[1.2fr_2fr]">
             <article className="rounded-2xl border border-[#d8e0f0] bg-white p-4 shadow-[0_8px_22px_rgba(13,60,126,0.08)]">
-              <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#6580aa]">
+              <p className="m-0 text-sm font-bold text-slate-800 mb-4">
                 Patient Summary
               </p>
 
-              <div className="mt-3 grid gap-3 text-sm">
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Age</p>
-                  <p className="m-0 mt-0.5 text-lg font-semibold text-[#12325f]">
+              <div className="flex flex-col gap-4 text-sm border-t border-slate-100 pt-4">
+                <div className="flex justify-between items-center">
+                  <p className="m-0 text-slate-500 font-medium">Age</p>
+                  <p className="m-0 text-base font-bold text-slate-800">
                     {result.age} Years
                   </p>
                 </div>
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Blood Pressure</p>
-                  <p className="m-0 mt-0.5 text-lg font-semibold text-[#c13a52]">
+                <div className="flex justify-between items-center">
+                  <p className="m-0 text-slate-500 font-medium">Blood Pressure</p>
+                  <p className="m-0 text-base font-bold text-red-500">
                     {result.bloodPressure}
                   </p>
                 </div>
-                <div className="rounded-xl bg-[#f5f9ff] px-3 py-2">
-                  <p className="m-0 text-xs text-[#6884ab]">Reported Symptoms</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
+                <div>
+                  <p className="m-0 text-slate-500 font-medium mb-2">Reported Symptoms</p>
+                  <div className="flex flex-wrap gap-2">
                     {result.symptoms.map((symptom) => (
                       <span
                         key={symptom}
-                        className="rounded-full bg-[rgba(34,80,182,0.12)] px-2.5 py-1 text-xs font-semibold text-[#2250b6]"
+                        className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700"
                       >
                         {symptom}
                       </span>
@@ -164,7 +166,7 @@ export default function PatientRiskPage() {
               </div>
 
               <div className="rounded-2xl bg-[#f8fbff] p-4">
-                <p className="m-0 text-xs font-bold tracking-[0.02em] text-[#6580aa]">
+                <p className="m-0 text-sm font-bold text-slate-800">
                   AI Explanation
                 </p>
                 <p className="m-0 mt-3 text-sm leading-relaxed text-[#36547d]">
