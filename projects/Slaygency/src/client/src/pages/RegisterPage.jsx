@@ -3,11 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { registerUser } from '../services/apiService.js';
 import registerImage from '../assets/images/register.jpg';
-
-const roleOptions = [
-  { value: 'Patient', label: 'Patient / Guardian' },
-  { value: 'Doctor', label: 'Doctor / Health Worker' },
-];
+import { useTranslation } from 'react-i18next';
 
 function getRedirectPath(role) {
   if (role === 'Admin' || role === 'admin') {
@@ -22,6 +18,11 @@ function getRedirectPath(role) {
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
+  const roleOptions = [
+    { value: 'Patient', label: t('register.patient_role') },
+    { value: 'Doctor', label: t('register.doctor_role') },
+  ];
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -48,7 +49,7 @@ export default function RegisterPage() {
     setErrorMessage('');
 
     if (!form.agreed) {
-      setErrorMessage('Please accept Terms and Privacy Policy to continue.');
+      setErrorMessage(t('register.need_terms'));
       return;
     }
 
@@ -65,7 +66,7 @@ export default function RegisterPage() {
     } catch (error) {
       const message =
         error?.response?.data?.message ||
-        'Registration failed. Please review your details and try again.';
+        t('register.failed');
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -74,42 +75,34 @@ export default function RegisterPage() {
 
   return (
     <main className="register-page">
-      <section className="register-shell" aria-label="Aama Care registration">
+      <section className="register-shell" aria-label={t('register.aria')}>
         <aside
           className="register-hero"
           aria-hidden="true"
           style={{ '--register-hero-image': `url(${registerImage})` }}
         >
-          <h1>Elevate maternal care with intelligent monitoring.</h1>
-          <p>
-            Join a care ecosystem designed for health professionals and families. Coordinate visits,
-            streamline reporting, and reduce avoidable risks.
-          </p>
-          <blockquote>
-            &quot;The platform helped us focus on patients instead of paperwork and delays.&quot;
-          </blockquote>
+          <h1>{t('register.hero_title')}</h1>
+          <p>{t('register.hero_subtitle')}</p>
+          <blockquote>&quot;{t('register.hero_quote')}&quot;</blockquote>
         </aside>
 
         <section className="register-panel">
           <header className="register-header">
             <div className="register-brand-row">
-              <p className="register-brand">Aama Care</p>
-              <button type="button" className="register-language-pill">
-                English
-              </button>
+              <p className="register-brand">{t('app_name')}</p>
             </div>
 
-            <h2>Create account</h2>
-            <p>Start your journey toward human-centric care.</p>
+            <h2>{t('register.title')}</h2>
+            <p>{t('register.subtitle')}</p>
           </header>
 
           <form className="register-form" onSubmit={onSubmit} noValidate>
             <fieldset className="register-role-group">
-              <legend>Select your role</legend>
+              <legend>{t('register.role_title')}</legend>
               <div
                 className="register-role-buttons"
                 role="radiogroup"
-                aria-label="Select your role"
+                aria-label={t('register.role_title')}
               >
                 {roleOptions.map((option) => (
                   <button
@@ -126,47 +119,47 @@ export default function RegisterPage() {
               </div>
             </fieldset>
 
-            <label htmlFor="register-name">Full name</label>
+            <label htmlFor="register-name">{t('register.name')}</label>
             <input
               id="register-name"
               name="name"
               value={form.name}
               onChange={onChange}
-              placeholder="Enter your full name"
+              placeholder={t('register.name_placeholder')}
               autoComplete="name"
               required
             />
 
-            <label htmlFor="register-email">Email address</label>
+            <label htmlFor="register-email">{t('register.email')}</label>
             <input
               id="register-email"
               name="email"
               type="email"
               value={form.email}
               onChange={onChange}
-              placeholder="name@institution.com"
+              placeholder={t('register.email_placeholder')}
               autoComplete="email"
               required
             />
 
-            <label htmlFor="register-phone">Phone number</label>
+            <label htmlFor="register-phone">{t('register.phone')}</label>
             <input
               id="register-phone"
               name="phone"
               value={form.phone}
               onChange={onChange}
-              placeholder="+977 98X XXX XXX"
+              placeholder={t('register.phone_placeholder')}
               autoComplete="tel"
             />
 
-            <label htmlFor="register-password">Password</label>
+            <label htmlFor="register-password">{t('register.password')}</label>
             <input
               id="register-password"
               name="password"
               type="password"
               value={form.password}
               onChange={onChange}
-              placeholder="Min. 8 characters"
+              placeholder={t('register.password_placeholder')}
               autoComplete="new-password"
               minLength={8}
               required
@@ -181,7 +174,7 @@ export default function RegisterPage() {
                 onChange={onChange}
               />
               <span>
-                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                {t('register.terms')}
               </span>
             </label>
 
@@ -189,19 +182,19 @@ export default function RegisterPage() {
             {successMessage && <p className="register-success">{successMessage}</p>}
 
             <button type="submit" disabled={isSubmitting} className="register-submit-btn">
-              {isSubmitting ? 'Creating account...' : 'Complete Registration'}
+              {isSubmitting ? t('register.creating') : t('register.submit')}
             </button>
 
-            <div className="register-or-separator">or join via</div>
+            <div className="register-or-separator">{t('register.join_via')}</div>
 
             <div className="register-social-row">
-              <button type="button">Google</button>
-              <button type="button">Facebook</button>
+              <button type="button">{t('register.google')}</button>
+              <button type="button">{t('register.facebook')}</button>
             </div>
           </form>
 
           <p className="register-login-note">
-            Already have an account? <Link to="/login">Sign in</Link>
+            {t('register.already')} <Link to="/login">{t('register.signin')}</Link>
           </p>
         </section>
       </section>

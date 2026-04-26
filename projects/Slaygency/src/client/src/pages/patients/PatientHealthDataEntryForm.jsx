@@ -1,5 +1,6 @@
 ﻿import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 // Sidebar now provided by AppLayout
 import { createHealthRecord, predictRisk } from '../../api.js';
 
@@ -51,6 +52,9 @@ function RangeInput({ name, label, value, min, max, unit, onChange, color = 'ind
 }
 
 export default function PatientHealthDataEntryForm() {
+  const { i18n, t } = useTranslation();
+  const isNe = i18n.language?.startsWith('ne');
+  const tx = (en, ne) => (isNe ? ne : en);
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
@@ -87,9 +91,9 @@ export default function PatientHealthDataEntryForm() {
     return Math.min(96, score);
   }, [form]);
 
-  const riskLabel = liveRisk >= 60 ? { text: 'High Risk', cls: 'bg-red-100 text-red-700' }
-    : liveRisk >= 35 ? { text: 'Moderate', cls: 'bg-amber-100 text-amber-700' }
-    : { text: 'Low Risk', cls: 'bg-emerald-100 text-emerald-700' };
+  const riskLabel = liveRisk >= 60 ? { text: tx('High Risk', 'उच्च जोखिम'), cls: 'bg-red-100 text-red-700' }
+    : liveRisk >= 35 ? { text: tx('Moderate', 'मध्यम'), cls: 'bg-amber-100 text-amber-700' }
+    : { text: tx('Low Risk', 'न्यून जोखिम'), cls: 'bg-emerald-100 text-emerald-700' };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -154,7 +158,7 @@ export default function PatientHealthDataEntryForm() {
       });
     } catch (err) {
       console.error('Health data submission failed:', err);
-      setMessage(err?.response?.data?.message || 'Failed to submit. Please try again.');
+      setMessage(err?.response?.data?.message || tx('Failed to submit. Please try again.', 'पठाउन असफल भयो। फेरि प्रयास गर्नुहोस्।'));
     } finally {
       setSubmitting(false);
     }
@@ -165,8 +169,8 @@ export default function PatientHealthDataEntryForm() {
 
         {/* Page Header */}
         <div className="mb-8">
-          <p className="text-indigo-600 font-semibold text-sm mb-1">MaterNova â€” Health Data Entry</p>
-          <h1 className="text-3xl font-semibold text-slate-800">Log Your Health Data</h1>
+          <p className="text-indigo-600 font-semibold text-sm mb-1">{t('app_name')} — {tx('Health Data Entry', 'स्वास्थ्य डेटा प्रविष्टि')}</p>
+          <h1 className="text-3xl font-semibold text-slate-800">{tx('Log Your Health Data', 'आफ्नो स्वास्थ्य डेटा भर्नुहोस्')}</h1>
           <p className="text-slate-500 text-sm mt-1">Fill in your current vitals for an AI-powered maternal risk assessment.</p>
         </div>
 
@@ -259,11 +263,11 @@ export default function PatientHealthDataEntryForm() {
             liveRisk >= 60 ? 'bg-red-50 border-red-200' : liveRisk >= 35 ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-200'
           }`}>
             <div>
-              <p className="text-xs font-semibold text-slate-500  tracking-widest mb-1">Live Risk Estimate</p>
+              <p className="text-xs font-semibold text-slate-500  tracking-widest mb-1">{tx('Live Risk Estimate', 'प्रत्यक्ष जोखिम अनुमान')}</p>
               <p className={`text-2xl font-semibold ${liveRisk >= 60 ? 'text-red-700' : liveRisk >= 35 ? 'text-amber-700' : 'text-emerald-700'}`}>
                 {riskLabel.text}
               </p>
-              <p className="text-xs text-slate-500 mt-1">Submit to get the full AI-powered analysis</p>
+              <p className="text-xs text-slate-500 mt-1">{tx('Submit to get the full AI-powered analysis', 'पूरा AI विश्लेषणका लागि सबमिट गर्नुहोस्')}</p>
             </div>
             <div className="text-right shrink-0">
               <p className={`text-5xl font-semibold ${liveRisk >= 60 ? 'text-red-600' : liveRisk >= 35 ? 'text-amber-600' : 'text-emerald-600'}`}>{liveRisk}</p>
@@ -295,7 +299,7 @@ export default function PatientHealthDataEntryForm() {
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
                   Analyzing...
                 </>
-              ) : 'Run Risk Analysis â†’'}
+              ) : tx('Run Risk Analysis →', 'जोखिम विश्लेषण चलाउनुहोस् →')}
             </button>
           </div>
         </form>

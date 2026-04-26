@@ -1,7 +1,8 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth.js';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import LandingPage from './pages/LandingPage.jsx';
+import AboutUsPage from './pages/AboutUsPage.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AlertsPage from './pages/admin/AlertsPage.jsx';
 import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
@@ -23,22 +24,6 @@ import DoctorSettingsPage from './pages/doctor/Settings.jsx';
 import UsersPage from './pages/admin/UsersPage.jsx';
 import './app.css';
 
-function RoleRedirect() {
-  const { isAuthenticated, user } = useAuth();
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  switch (user?.role) {
-    case 'Admin':
-      return <Navigate to="/admin/dashboard" replace />;
-    case 'Doctor':
-      return <Navigate to="/doctor" replace />;
-    case 'Patient':
-    default:
-      return <Navigate to="/patient-health-data-entry" replace />;
-  }
-}
-
 /**
  * Wraps authenticated routes with the unified AppLayout (Topbar + Sidebar).
  * Adapts navigation links based on user role automatically.
@@ -52,13 +37,11 @@ function AuthenticatedLayout({ children, allowedRoles }) {
 }
 
 export default function App() {
-  const location = useLocation();
-  const isAuthRoute = ['/login', '/register'].includes(location.pathname);
-
   return (
     <div className="app-shell">
       <Routes>
-        <Route path="/" element={<RoleRedirect />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutUsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 

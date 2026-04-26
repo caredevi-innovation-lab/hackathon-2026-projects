@@ -1,108 +1,142 @@
-# SlayGency MERN Starter (Hackathon 2026)
+# MaterNova (SlayGency) - Hackathon 2026
 
-A production-ready MERN starter scaffold aligned with the CareDevi hackathon repository requirements.
+MaterNova is a role-based maternal health platform built by Team SlayGency.
+It supports patients, doctors, and admins with end-to-end workflows for health entry, risk prediction, alerts, and monitoring.
 
 ## Team
-- Team Name: SlayGency
-- Members: Add names + GitHub handles
 
-## Project Structure
+- Kushal JK
+- Samana Upreti
+- Pranisha Karki
+- Dinisha Parajuli
+
+## What This Project Does
+
+- Patient registration and login (role-based)
+- Patient health data entry (BP, hemoglobin, symptoms, history)
+- AI-assisted risk prediction flow
+- Doctor dashboard, alert center, and patient record views
+- Admin monitoring for users, patients, and alerts
+- English/Nepali i18n support with global language switch in app layout
+
+## Tech Stack
+
+- Frontend: React 18, Vite, React Router, Tailwind CSS, Axios, react-i18next
+- Backend: Node.js, Express, MongoDB (Mongoose), JWT auth, bcryptjs
+- Tooling: ESLint, Prettier, Nodemon, Concurrently
+
+## Repository Structure
 
 ```text
-projects/slaygency-mern/
-├── README.md
-├── responsible-ai.md
-├── package.json
-├── .gitignore
-├── .editorconfig
-├── .eslintrc.cjs
-├── .prettierrc
-├── docker-compose.yml
-├── demo/
-│   └── README.md
-└── src/
-    ├── server/
-    │   ├── package.json
-    │   ├── .env.example
-    │   └── src/
-    │       ├── app.js
-    │       ├── index.js
-    │       ├── config/
-    │       │   └── db.js
-    │       ├── controllers/
-    │       │   └── health.controller.js
-    │       ├── middleware/
-    │       │   ├── error.middleware.js
-    │       │   └── notFound.middleware.js
-    │       ├── models/
-    │       │   └── User.js
-    │       └── routes/
-    │           ├── health.routes.js
-    │           └── user.routes.js
-    └── client/
-        ├── package.json
-        ├── index.html
-        ├── vite.config.js
-        ├── .env.example
-        ├── public/
-        │   └── vite.svg
-        └── src/
-            ├── main.jsx
-            ├── App.jsx
-            ├── api.js
-            ├── index.css
-            ├── app.css
-            └── components/
-                └── Navbar.jsx
+projects/Slaygency/
+|- README.md
+|- responsible-ai.md
+|- package.json
+|- src/
+|  |- client/   # React + Vite frontend
+|  \- server/   # Express + MongoDB backend
+\- demo/
 ```
 
-## Included Stack
-- Frontend: React 18, Vite, React Router, Axios
-- Backend: Node.js, Express 5, Mongoose, JWT, bcryptjs, Helmet, CORS, Morgan
-- Tooling: ESLint, Prettier, Nodemon, Concurrently
-- DB: MongoDB (local or Docker)
+## Environment Variables
 
-## Quick Start
+Create `src/server/.env` with:
 
-1. Install dependencies from project root:
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/slaygency
+JWT_SECRET=your-secret-key
+CLIENT_URL=http://localhost:5173
+```
+
+Create `src/client/.env` with:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+## Run Locally
+
+From `projects/Slaygency`:
 
 ```bash
 npm install
-```
-
-2. Copy environment files:
-
-```bash
-copy src\server\.env.example src\server\.env
-copy src\client\.env.example src\client\.env
-```
-
-3. Start MongoDB (optional via Docker):
-
-```bash
-docker compose up -d
-```
-
-4. Run both client and server:
-
-```bash
 npm run dev
 ```
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5000
-- Health check: http://localhost:5000/api/health
+App URLs:
 
-## Available Scripts
-- `npm run dev` - run server and client together
-- `npm run dev:server` - run backend only
-- `npm run dev:client` - run frontend only
-- `npm run lint` - lint all packages
-- `npm run format` - format all packages
-- `npm run build` - build frontend
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5000`
+- API root check: `http://localhost:5000/`
 
-## Hackathon Deliverables Checklist
-- [ ] Frequent commits
-- [ ] Fill this README with project problem/approach/architecture/data/setup/team
-- [ ] Upload demo assets to `demo/`
-- [ ] Complete `responsible-ai.md`
+## NPM Scripts
+
+At project root:
+
+- `npm run dev` - run frontend + backend together
+- `npm run dev:server` - backend only
+- `npm run dev:client` - frontend only
+- `npm run build` - production build for frontend
+- `npm run start` - run backend in production mode
+
+## Main Application Routes
+
+Public:
+
+- `/` - landing page
+- `/about` - about page
+- `/login`
+- `/register`
+
+Patient:
+
+- `/patient`
+- `/patient-health-data-entry`
+- `/patient-risk-assessment`
+- `/my-records`
+- `/health-reports`
+- `/patient-settings`
+
+Doctor:
+
+- `/doctor`
+- `/patient-records`
+- `/alerts`
+- `/submit`
+- `/health-entry`
+- `/settings`
+
+Admin:
+
+- `/admin/dashboard`
+- `/admin/users`
+- `/admin/patients`
+- `/admin/alerts`
+
+## API Overview
+
+Base URL: `/api`
+
+- Auth: `/auth/register`, `/auth/login`, `/auth/me`, password routes
+- Health records: `/health` (create, list, update)
+- Risk: `/risk/predict`, `/risk/health`
+- Patients: `/patients`, `/patients/:id` (doctor/admin)
+- Alerts: `/alerts`, `/alerts/:id/resolve` (doctor/admin)
+- Dashboard: `/dashboard/stats` (doctor/admin)
+- Users (admin): `/users/admin`, `/users/admin/:userId`, etc.
+
+## Demo Flow (Recommended)
+
+1. Start at landing page (`/`)
+2. Show About page and team contributors
+3. Register/Login for each role
+4. Patient logs health data and views risk/report
+5. Doctor reviews patient records and alerts
+6. Admin reviews system-level dashboard/users/patients/alerts
+
+## Notes
+
+- If MongoDB is not running, backend endpoints will fail.
+- Auth-protected pages redirect unauthenticated users to `/`.
+- Some legacy components exist in the codebase but the current app uses the unified role-based layout.

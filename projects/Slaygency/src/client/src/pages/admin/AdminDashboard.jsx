@@ -127,7 +127,7 @@ export default function AdminDashboard() {
           <section className="overflow-hidden rounded-2xl border border-[rgba(171,189,220,0.38)] bg-[linear-gradient(120deg,rgba(34,80,182,0.16)_0%,rgba(0,122,138,0.14)_100%)] px-5 py-4 shadow-[0_14px_30px_rgba(17,68,144,0.08)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="m-0 text-sm font-semibold text-[#1b4a85]">
-                Live data from your MaterNova backend.
+                Live data from your app backend.
               </p>
               <span className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-[#355f9a]">
                 Connected

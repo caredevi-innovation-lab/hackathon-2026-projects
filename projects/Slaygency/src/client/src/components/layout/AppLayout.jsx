@@ -2,6 +2,7 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.js';
 import { HeartPulse } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // â”€â”€ Icons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -80,26 +81,26 @@ const icons = {
 // â”€â”€ Navigation Config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const PATIENT_NAV = [
-  { label: 'Health Entry', to: '/patient-health-data-entry', icon: icons.healthEntry },
-  { label: 'My Records', to: '/my-records', icon: icons.records },
-  { label: 'Reports', to: '/health-reports', icon: icons.reports },
-  { label: 'Settings', to: '/patient-settings', icon: icons.settings },
+  { labelKey: 'nav.health_entry', to: '/patient-health-data-entry', icon: icons.healthEntry },
+  { labelKey: 'nav.my_records', to: '/my-records', icon: icons.records },
+  { labelKey: 'nav.reports', to: '/health-reports', icon: icons.reports },
+  { labelKey: 'nav.settings', to: '/patient-settings', icon: icons.settings },
 ];
 
 const DOCTOR_NAV = [
-  { label: 'Dashboard', to: '/doctor', icon: icons.dashboard },
-  { label: 'Patients', to: '/patient-records', icon: icons.patients },
-  { label: 'Alerts', to: '/alerts', icon: icons.alerts },
-  { label: 'Health Records', to: '/health-entry', icon: icons.records },
-  { label: 'Settings', to: '/settings', icon: icons.settings },
+  { labelKey: 'nav.dashboard', to: '/doctor', icon: icons.dashboard },
+  { labelKey: 'nav.patients', to: '/patient-records', icon: icons.patients },
+  { labelKey: 'nav.alerts', to: '/alerts', icon: icons.alerts },
+  { labelKey: 'nav.health_records', to: '/health-entry', icon: icons.records },
+  { labelKey: 'nav.settings', to: '/settings', icon: icons.settings },
 ];
 
 const ADMIN_NAV = [
-  { label: 'Dashboard', to: '/admin/dashboard', icon: icons.dashboard },
-  { label: 'Users', to: '/admin/users', icon: icons.users },
-  { label: 'Patients', to: '/admin/patients', icon: icons.patients },
-  { label: 'Alerts', to: '/admin/alerts', icon: icons.alerts },
-  { label: 'Settings', to: '/settings', icon: icons.settings },
+  { labelKey: 'nav.dashboard', to: '/admin/dashboard', icon: icons.dashboard },
+  { labelKey: 'nav.users', to: '/admin/users', icon: icons.users },
+  { labelKey: 'nav.patients', to: '/admin/patients', icon: icons.patients },
+  { labelKey: 'nav.alerts', to: '/admin/alerts', icon: icons.alerts },
+  { labelKey: 'nav.settings', to: '/settings', icon: icons.settings },
 ];
 
 function getNavForRole(role) {
@@ -140,8 +141,9 @@ function Topbar({ onToggleSidebar, sidebarOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [query, setQuery] = useState('');
+  const { t, i18n } = useTranslation();
 
-  const initials = (user?.name || 'U')
+  const initials = (user?.name || t('roles.user'))
     .split(' ')
     .map((n) => n[0])
     .join('')
@@ -191,7 +193,7 @@ function Topbar({ onToggleSidebar, sidebarOpen }) {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleTopbarSearch}
-              placeholder={location.pathname === '/alerts' ? 'Search alerts...' : 'Search patients...'}
+              placeholder={location.pathname === '/alerts' ? t('topbar.search_alerts') : t('topbar.search_patients')}
               className="w-full bg-transparent border-0 outline-none text-sm text-slate-700 placeholder-slate-400"
             />
           </div>
@@ -199,10 +201,24 @@ function Topbar({ onToggleSidebar, sidebarOpen }) {
       </div>
 
       <div className="flex items-center gap-3">
+        <label className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+          <span className="font-medium">{t('topbar.lang_label')}</span>
+          <select
+            value={i18n.language?.startsWith('ne') ? 'ne' : 'en'}
+            onChange={(e) => i18n.changeLanguage(e.target.value)}
+            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-700 outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+            aria-label={t('topbar.lang_label')}
+          >
+            <option value="en">{t('common.english')}</option>
+            <option value="ne">{t('common.nepali')}</option>
+          </select>
+        </label>
         {/* User info */}
         <div className="hidden md:flex flex-col items-end mr-1">
-          <span className="text-sm font-semibold text-slate-700 leading-tight">{user?.name || 'User'}</span>
-          <span className="text-[10px] font-semibold text-slate-400  tracking-wider">{user?.role || 'Patient'}</span>
+          <span className="text-sm font-semibold text-slate-700 leading-tight">{user?.name || t('roles.user')}</span>
+          <span className="text-[10px] font-semibold text-slate-400  tracking-wider">
+            {user?.role === 'Doctor' ? t('roles.doctor') : user?.role === 'Admin' ? t('roles.admin') : t('roles.patient')}
+          </span>
         </div>
 
         {/* Avatar */}
@@ -217,7 +233,7 @@ function Topbar({ onToggleSidebar, sidebarOpen }) {
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-500 text-xs font-semibold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
         >
           {icons.logout}
-          <span className="hidden sm:inline">Sign Out</span>
+          <span className="hidden sm:inline">{t('topbar.sign_out')}</span>
         </button>
       </div>
     </header>
@@ -230,6 +246,7 @@ export default function AppLayout({ children }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -265,8 +282,16 @@ export default function AppLayout({ children }) {
                 <HeartPulse className="h-4 w-4" />
               </span>
               <div>
-                <h1 className="m-0 text-sm font-semibold text-slate-800 leading-tight">MaterNova</h1>
-                <p className="m-0 text-[10px] font-semibold text-slate-400 tracking-wider ">{user?.role || 'Portal'}</p>
+                <h1 className="m-0 text-sm font-semibold text-slate-800 leading-tight">{t('app_name')}</h1>
+                <p className="m-0 text-[10px] font-semibold text-slate-400 tracking-wider ">
+                  {user?.role === 'Doctor'
+                    ? t('roles.doctor')
+                    : user?.role === 'Admin'
+                    ? t('roles.admin')
+                    : user?.role === 'Patient'
+                    ? t('roles.patient')
+                    : t('roles.portal')}
+                </p>
               </div>
             </div>
           )}
@@ -297,7 +322,7 @@ export default function AppLayout({ children }) {
               key={item.to}
               to={item.to}
               icon={item.icon}
-              label={item.label}
+              label={t(item.labelKey)}
               collapsed={collapsed}
               onClick={() => setMobileOpen(false)}
             />
@@ -312,10 +337,10 @@ export default function AppLayout({ children }) {
             className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors border-0 bg-transparent cursor-pointer ${
               collapsed ? 'justify-center' : ''
             }`}
-            title={collapsed ? 'Sign Out' : undefined}
+            title={collapsed ? t('topbar.sign_out') : undefined}
           >
             {icons.logout}
-            {!collapsed && <span>Sign Out</span>}
+            {!collapsed && <span>{t('topbar.sign_out')}</span>}
           </button>
         </div>
       </aside>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { loginUser } from '../services/apiService.js';
 import loginImage from '../assets/images/login.jpg';
+import { useTranslation } from 'react-i18next';
 
 function getRedirectPath(role) {
   switch (role) {
@@ -19,6 +20,7 @@ function getRedirectPath(role) {
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +38,7 @@ export default function LoginPage() {
     } catch (error) {
       const message =
         error?.response?.data?.message ||
-        'Unable to sign in. Please verify your email and password.';
+        t('login.invalid');
       setErrorMessage(message);
     } finally {
       setIsSubmitting(false);
@@ -45,47 +47,46 @@ export default function LoginPage() {
 
   return (
     <main className="login-page">
-      <section className="login-shell" aria-label="Aama Care login">
+      <section className="login-shell" aria-label={t('login.aria')}>
         <aside
           className="login-hero"
           aria-hidden="true"
           style={{ '--login-hero-image': `url(${loginImage})` }}
         >
-          <h1>SAFE MOTHERHOOD, SMARTER CARE</h1>
-          <p>
-            Compassionate maternal healthcare supported by clinical excellence and modern risk
-            screening.
-          </p>
+          <h1>{t('login.hero_title')}</h1>
+          <p>{t('login.hero_subtitle')}</p>
         </aside>
 
         <section className="login-panel">
           <header className="login-header">
+            <div className="register-brand-row">
+            </div>
             <p className="login-eyebrow">
-              <strong>Welcome back</strong>
+              <strong>{t('login.welcome_back')}</strong>
             </p>
-            <h2>Sign in to your health portal</h2>
-            <p>Access monitoring dashboards, alerts, and care recommendations in one place.</p>
+            <h2>{t('login.title')}</h2>
+            <p>{t('login.subtitle')}</p>
           </header>
 
           <form onSubmit={handleSubmit} className="login-form" noValidate>
-            <label htmlFor="email">Email address</label>
+            <label htmlFor="email">{t('login.email')}</label>
             <input
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
-              placeholder="yourname@example.com"
+              placeholder={t('login.email_placeholder')}
               autoComplete="email"
               required
             />
 
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('login.password')}</label>
             <input
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              placeholder="Enter your password"
+              placeholder={t('login.password_placeholder')}
               autoComplete="current-password"
               required
             />
@@ -93,12 +94,12 @@ export default function LoginPage() {
             {errorMessage && <p className="login-error">{errorMessage}</p>}
 
             <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Signing in...' : 'Sign In'}
+              {isSubmitting ? t('login.signing_in') : t('login.sign_in')}
             </button>
           </form>
 
           <p className="login-footer-note">
-            Don&apos;t have an account? <Link to="/register">Create one</Link>
+            {t('login.no_account')} <Link to="/register">{t('login.create_one')}</Link>
           </p>
         </section>
       </section>
