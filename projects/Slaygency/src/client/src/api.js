@@ -72,4 +72,27 @@ export async function updateProfile(payload) {
   return data; // { user: {...} }
 }
 
+export async function fetchDashboardStats() {
+  const [patientsResult, alertsResult] = await Promise.allSettled([
+    api.get('/patients', { params: { role: 'Patient', limit: 1 } }),
+    api.get('/alerts', { params: { status: 'active', limit: 10 } }),
+  ]);
+
+  const patientsData = patientsResult.status === 'fulfilled' ? patientsResult.value.data : {};
+  const alertsData = alertsResult.status === 'fulfilled' ? alertsResult.value.data : {};
+
+  const totalPatients = Number(patientsData?.total) || 0;
+  const urgentAlerts = Array.isArray(alertsData?.items) ? alertsData.items : [];
+
+  return {
+    stats: {
+      totalPatients,
+      highRiskCount: urgentAlerts.length,
+      pendingReports: 0,
+      avgResponseTime: '--',
+    },
+    urgentAlerts,
+  };
+}
+
 export default api;

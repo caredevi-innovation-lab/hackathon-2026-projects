@@ -4,7 +4,6 @@ import { useAuth } from '../hooks/useAuth.js';
 import { loginUser } from '../services/apiService.js';
 import loginImage from '../assets/images/login.jpg';
 
-
 function getRedirectPath(role) {
   switch (role) {
     case 'Admin':

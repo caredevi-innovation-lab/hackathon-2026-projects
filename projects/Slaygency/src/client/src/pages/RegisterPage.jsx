@@ -59,7 +59,6 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
         role: form.role,
-        phone: form.phone,
       });
       login(data);
       navigate(getRedirectPath(data?.user?.role), { replace: true });

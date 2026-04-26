@@ -1,32 +1,37 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth.js';
 import SharedNavbar from './components/admin/SharedNavbar.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import AboutUsPage from './pages/AboutUsPage.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
-import AdminDashboard from './pages/admin/AdminDashboard.jsx';
-import AlertsPage from './pages/admin/AlertsPage.jsx';
-import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
-import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
-import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import RegisterPage from './pages/RegisterPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
 import PatientHistory from './pages/patients/PatientHistory.jsx';
 import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
-import PatientsPage from './pages/admin/PatientsPage.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
+import PatientRecord from './pages/patients/PatientRecord.jsx';
+import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
+import PatientSettingsPage from './pages/patients/setting.jsx';
+import DoctorDashboard from './pages/doctor/DoctorDashboard.jsx';
+import DoctorAlertCenter from './pages/doctor/AlertCenter.jsx';
+import DoctorPatientRecords from './pages/doctor/PatientRecords.jsx';
 import SubmitHealthData from './pages/doctor/SubmitHealthData.jsx';
 import HealthEntry from './pages/doctor/HealthEntry.jsx';
-import SettingsPage from './pages/doctor/Settings.jsx';
-import UsersPage from './pages/UsersPage.jsx';
+import DoctorSettingsPage from './pages/doctor/Settings.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import UsersPage from './pages/admin/UsersPage.jsx';
+import PatientsPage from './pages/admin/PatientsPage.jsx';
+import AlertsPage from './pages/admin/AlertsPage.jsx';
 import './app.css';
 
 function RoleRedirect() {
   const { isAuthenticated, user } = useAuth();
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
+
   switch (user?.role) {
     case 'Admin':
       return <Navigate to="/admin/dashboard" replace />;
@@ -40,7 +45,15 @@ function RoleRedirect() {
 
 export default function App() {
   const location = useLocation();
-  const isDoctorRoute = location.pathname.startsWith('/doctor') || location.pathname === '/patient-records' || location.pathname === '/alerts' || location.pathname === '/submit' || location.pathname === '/health-entry' || location.pathname === '/settings';
+  const isAuthRoute = ['/login', '/register'].includes(location.pathname);
+  const isDoctorRoute =
+    location.pathname.startsWith('/doctor') ||
+    location.pathname === '/patient-records' ||
+    location.pathname === '/alerts' ||
+    location.pathname === '/submit' ||
+    location.pathname === '/health-entry' ||
+    location.pathname === '/settings';
+
   const shellClassName = isDoctorRoute
     ? 'app-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(92,76,255,0.12),transparent_28%),linear-gradient(180deg,#fbfaff_0%,#f6f2ff_100%)]'
     : 'app-shell min-h-screen';
@@ -50,10 +63,10 @@ export default function App() {
       {!isAuthRoute && <SharedNavbar />}
       <Routes>
         <Route path="/" element={<RoleRedirect />} />
+        <Route path="/about" element={<AboutUsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* ── Patient Routes ── */}
         <Route
           path="/patient"
           element={
@@ -106,11 +119,11 @@ export default function App() {
           path="/patient-settings"
           element={
             <ProtectedRoute allowedRoles={['Patient', 'patient']}>
-              <SettingsPage />
+              <PatientSettingsPage />
             </ProtectedRoute>
           }
         />
-        {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
+
         <Route
           path="/doctor"
           element={
@@ -138,7 +151,9 @@ export default function App() {
         <Route
           path="/submit"
           element={
-            <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}>
+            <ProtectedRoute
+              allowedRoles={['Doctor', 'doctor', 'Admin', 'admin', 'Patient', 'patient']}
+            >
               <SubmitHealthData />
             </ProtectedRoute>
           }
@@ -155,12 +170,11 @@ export default function App() {
           path="/settings"
           element={
             <ProtectedRoute allowedRoles={['Doctor', 'doctor', 'Admin', 'admin']}>
-              <SettingsPage />
+              <DoctorSettingsPage />
             </ProtectedRoute>
           }
         />
 
-        {/* ── Admin Routes ── */}
         <Route
           path="/admin"
           element={
