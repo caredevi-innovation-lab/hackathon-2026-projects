@@ -1,3 +1,6 @@
+import { USER_ROLES } from '../models/User.js';
+import { validateRiskInput } from '../services/clinicalValidationService.js';
+
 export function validateHealthPayload(req, res, next) {
   const { age, bpSystolic, bpDiastolic, hemoglobin, symptoms, priorHypertension } = req.body;
 
@@ -15,7 +18,41 @@ export function validateHealthPayload(req, res, next) {
   return next();
 }
 
+export function validateRiskPayload(req, res, next) {
+  const error = validateRiskInput(req.body || {});
+  if (error) {
+    return res.status(400).json({ message: error });
+  }
+
+  return next();
+}
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function normalizeRegisterRole(role) {
+  if (!role) {
+    return USER_ROLES.PATIENT;
+  }
+
+  const normalized = String(role).trim().toLowerCase();
+  if (normalized === 'healthworker') {
+    return USER_ROLES.DOCTOR;
+  }
+
+  if (normalized === String(USER_ROLES.PATIENT).toLowerCase()) {
+    return USER_ROLES.PATIENT;
+  }
+
+  if (normalized === String(USER_ROLES.DOCTOR).toLowerCase()) {
+    return USER_ROLES.DOCTOR;
+  }
+
+  if (normalized === String(USER_ROLES.ADMIN).toLowerCase()) {
+    return USER_ROLES.ADMIN;
+  }
+
+  return null;
+}
 
 export function validateRegisterPayload(req, res, next) {
   const { name, email, password, role } = req.body;
@@ -32,10 +69,12 @@ export function validateRegisterPayload(req, res, next) {
     return res.status(400).json({ message: 'Password must be at least 8 characters' });
   }
 
-  const allowedRoles = ['Patient', 'Doctor', 'Admin'];
-  if (role && !allowedRoles.includes(role)) {
+  const normalizedRole = normalizeRegisterRole(role);
+  if (role && !normalizedRole) {
     return res.status(400).json({ message: 'Invalid role' });
   }
+
+  req.body.role = normalizedRole || USER_ROLES.PATIENT;
 
   return next();
 }
