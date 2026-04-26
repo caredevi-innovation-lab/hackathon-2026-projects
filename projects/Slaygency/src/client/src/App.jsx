@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage.jsx';
 import Navbar from './components/Navbar.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import AlertsPage from './pages/AlertsPage.jsx';
 import DoctorDashboard from './pages/DoctorDashboard.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import PatientDashboard from './pages/patients/PatientDashboard.jsx';
@@ -11,9 +13,11 @@ import PatientRecord from './pages/patients/PatientRecord.jsx';
 import SettingsPage from './pages/patients/setting.jsx';
 import PatientRiskPage from './pages/patients/patientRiskPage.jsx';
 import PatientHealthReport from './pages/patients/PatientHealthReport.jsx';
+import PatientHealthDataEntryForm from './pages/patients/PatientHealthDataEntryForm.jsx';
 
 import RegisterPage from './pages/RegisterPage.jsx';
 import SubmitHealthData from './pages/SubmitHealthData.jsx';
+import UsersPage from './pages/UsersPage.jsx';
 import './app.css';
 
 export default function App() {
@@ -31,6 +35,8 @@ export default function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/patient-history" element={<PatientHistory />} />
+        <Route path="/patient-health-data-entry" element={<PatientHealthDataEntryForm />} />
+        <Route path="/patient-risk-assessment" element={<PatientRiskPage />} />
         {/* <Route path="/worker" element={<WorkerDashboard />} /> */}
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient-records" element={<PatientRecords />} />
