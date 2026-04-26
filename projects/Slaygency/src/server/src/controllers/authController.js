@@ -17,8 +17,10 @@ function signAccessToken(user) {
 }
 
 function authPayload(user) {
+	const token = signAccessToken(user);
 	return {
-		token: signAccessToken(user),
+		token,
+		accessToken: token,
 		user: user.toPublicJSON(),
 	};
 }

@@ -1,3 +1,5 @@
+import { validateRiskInput } from './clinicalValidationService.js';
+
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 const REQUEST_TIMEOUT_MS = 10000;
 const SAFE_AI_SERVICE_URL = AI_SERVICE_URL.replace(/\/$/, '');
@@ -115,4 +117,21 @@ export async function predictMaternalRisk(payload) {
 
 export async function getAiServiceHealth() {
 	return requestJson('/health', { method: 'GET' });
+}
+
+export async function predictRiskForPayload(payload) {
+	if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+		throw createHttpError('Invalid payload', 400);
+	}
+
+	const error = validateRiskInput(payload);
+	if (error) {
+		throw createHttpError(error, 400);
+	}
+
+	return predictMaternalRisk(payload);
+}
+
+export async function getRiskServiceHealth() {
+	return getAiServiceHealth();
 }

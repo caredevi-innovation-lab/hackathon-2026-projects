@@ -1,3 +1,6 @@
+import { USER_ROLES } from '../models/User.js';
+import { validateRiskInput } from '../services/clinicalValidationService.js';
+
 export function validateHealthPayload(req, res, next) {
   const { age, bpSystolic, bpDiastolic, hemoglobin, symptoms, priorHypertension } = req.body;
 
@@ -15,37 +18,41 @@ export function validateHealthPayload(req, res, next) {
   return next();
 }
 
-function isFiniteNumber(value) {
-  return Number.isFinite(Number(value));
-}
-
 export function validateRiskPayload(req, res, next) {
-  const { age, bpSystolic, bpDiastolic, hemoglobin, symptoms } = req.body || {};
-
-  if (!isFiniteNumber(age) || Number(age) < 10 || Number(age) > 60) {
-    return res.status(400).json({ message: 'Age must be between 10 and 60' });
-  }
-
-  if (!isFiniteNumber(bpSystolic) || Number(bpSystolic) < 60 || Number(bpSystolic) > 200) {
-    return res.status(400).json({ message: 'Systolic BP must be between 60 and 200' });
-  }
-
-  if (!isFiniteNumber(bpDiastolic) || Number(bpDiastolic) < 40 || Number(bpDiastolic) > 130) {
-    return res.status(400).json({ message: 'Diastolic BP must be between 40 and 130' });
-  }
-
-  if (!isFiniteNumber(hemoglobin) || Number(hemoglobin) < 4 || Number(hemoglobin) > 20) {
-    return res.status(400).json({ message: 'Hemoglobin must be between 4 and 20' });
-  }
-
-  if (symptoms !== undefined && !Array.isArray(symptoms)) {
-    return res.status(400).json({ message: 'Symptoms must be an array of strings' });
+  const error = validateRiskInput(req.body || {});
+  if (error) {
+    return res.status(400).json({ message: error });
   }
 
   return next();
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function normalizeRegisterRole(role) {
+  if (!role) {
+    return USER_ROLES.PATIENT;
+  }
+
+  const normalized = String(role).trim().toLowerCase();
+  if (normalized === 'healthworker') {
+    return USER_ROLES.DOCTOR;
+  }
+
+  if (normalized === String(USER_ROLES.PATIENT).toLowerCase()) {
+    return USER_ROLES.PATIENT;
+  }
+
+  if (normalized === String(USER_ROLES.DOCTOR).toLowerCase()) {
+    return USER_ROLES.DOCTOR;
+  }
+
+  if (normalized === String(USER_ROLES.ADMIN).toLowerCase()) {
+    return USER_ROLES.ADMIN;
+  }
+
+  return null;
+}
 
 export function validateRegisterPayload(req, res, next) {
   const { name, email, password, role } = req.body;
@@ -62,10 +69,12 @@ export function validateRegisterPayload(req, res, next) {
     return res.status(400).json({ message: 'Password must be at least 8 characters' });
   }
 
-  const allowedRoles = ['Patient', 'Doctor', 'Admin'];
-  if (role && !allowedRoles.includes(role)) {
+  const normalizedRole = normalizeRegisterRole(role);
+  if (role && !normalizedRole) {
     return res.status(400).json({ message: 'Invalid role' });
   }
+
+  req.body.role = normalizedRole || USER_ROLES.PATIENT;
 
   return next();
 }
