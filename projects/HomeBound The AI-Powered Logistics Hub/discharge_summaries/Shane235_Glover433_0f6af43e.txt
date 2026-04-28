@@ -1,0 +1,68 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Shane235 Glover433
+    Date of Birth:       2015-10-29
+    Sex:                 Male
+    Address:             676 Ruecker Road Apt 44, Melrose, MA, 02176
+    MRN:                 0f6af43e-64f8-4f7f-e813-1b821de7dd25
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 21, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      4 days
+    Attending Physician: Dr. Garcia
+
+================================================================================
+
+CLINICAL COURSE:
+    Patient experienced post-stroke rehabilitation and underwent medication optimization and titration. Recovery was steady without complications. Patient tolerating diet well by discharge. Now appropriate for discharge with home care support.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    • Medication 7: Continue as prescribed
+    • Medication 8: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 9-16 days
+    • Specialty: Pulmonology - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Blood Pressure Monitor
+    Description:         Automated home blood pressure cuff for hypertension monitoring and Telehealth reporting.
+    Vendor Type:         Remote Monitoring
+    Category:            Monitoring
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to skilled nursing facility.
+    Home care services arranged: No
+    Visiting nurse evaluation: Not needed
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 0f6af43e-64f8-4f7f-e813-1b821de7dd25
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

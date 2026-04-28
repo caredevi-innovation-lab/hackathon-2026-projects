@@ -1,0 +1,78 @@
+{
+  "app_name": "MaterNova",
+  "topbar": {
+    "search_patients": "Search patients...",
+    "search_alerts": "Search alerts...",
+    "sign_out": "Sign Out",
+    "lang_label": "Language"
+  },
+  "roles": {
+    "patient": "Patient",
+    "doctor": "Doctor",
+    "admin": "Admin",
+    "portal": "Portal",
+    "user": "User"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "health_entry": "Health Entry",
+    "my_records": "My Records",
+    "reports": "Reports",
+    "settings": "Settings",
+    "patients": "Patients",
+    "alerts": "Alerts",
+    "health_records": "Health Records",
+    "users": "Users"
+  },
+  "login": {
+    "aria": "Login page",
+    "hero_title": "Safe motherhood, smarter care",
+    "hero_subtitle": "Compassionate maternal healthcare supported by clinical excellence and modern risk screening.",
+    "welcome_back": "Welcome back",
+    "title": "Sign in to your health portal",
+    "subtitle": "Access monitoring dashboards, alerts, and care recommendations in one place.",
+    "email": "Email address",
+    "password": "Password",
+    "email_placeholder": "yourname@example.com",
+    "password_placeholder": "Enter your password",
+    "signing_in": "Signing in...",
+    "sign_in": "Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one",
+    "invalid": "Unable to sign in. Please verify your email and password."
+  },
+  "register": {
+    "aria": "Registration page",
+    "hero_title": "Elevate maternal care with intelligent monitoring.",
+    "hero_subtitle": "Join a care ecosystem designed for health professionals and families. Coordinate visits, streamline reporting, and reduce avoidable risks.",
+    "hero_quote": "The platform helped us focus on patients instead of paperwork and delays.",
+    "title": "Create account",
+    "subtitle": "Start your journey toward human-centric care.",
+    "role_title": "Select your role",
+    "patient_role": "Patient / Guardian",
+    "doctor_role": "Doctor / Health Worker",
+    "name": "Full name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "password": "Password",
+    "name_placeholder": "Enter your full name",
+    "email_placeholder": "name@institution.com",
+    "phone_placeholder": "+977 98X XXX XXX",
+    "password_placeholder": "Min. 8 characters",
+    "terms": "I agree to the Terms of Service and Privacy Policy.",
+    "creating": "Creating account...",
+    "submit": "Complete Registration",
+    "join_via": "Or join via",
+    "google": "Google",
+    "facebook": "Facebook",
+    "already": "Already have an account?",
+    "signin": "Sign in",
+    "need_terms": "Please accept Terms and Privacy Policy to continue.",
+    "failed": "Registration failed. Please review your details and try again."
+  },
+  "common": {
+    "loading": "Loading...",
+    "english": "English",
+    "nepali": "Nepali"
+  }
+}

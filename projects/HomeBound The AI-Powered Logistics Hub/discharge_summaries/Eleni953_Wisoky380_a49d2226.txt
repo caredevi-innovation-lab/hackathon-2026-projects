@@ -1,0 +1,67 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Eleni953 Wisoky380
+    Date of Birth:       1984-03-05
+    Sex:                 Female
+    Address:             432 Hyatt Rapid Suite 26, New Bedford, MA, 02745
+    MRN:                 a49d2226-6a7c-9aaa-7ec9-8974f3855274
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 20, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      5 days
+    Attending Physician: Dr. Martinez
+
+================================================================================
+
+CLINICAL COURSE:
+    Patient presented with sepsis from urinary tract infection complicated by uncontrolled hypertension. Multi-disciplinary team managed with oxygen therapy and nebulized bronchodilators. Achieved adequate pain control (VAS 3). Ready for discharge.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    • Medication 7: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 6-13 days
+    • Specialty: Pulmonology - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   TENS Unit
+    Description:         Transcutaneous electrical nerve stimulation device for chronic pain relief.
+    Vendor Type:         Physical Therapy
+    Category:            Pain Management
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to assisted living.
+    Home care services arranged: No
+    Visiting nurse evaluation: Pending
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: a49d2226-6a7c-9aaa-7ec9-8974f3855274
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

@@ -1,0 +1,67 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Mora209 Ernser583
+    Date of Birth:       1989-06-10
+    Sex:                 Female
+    Address:             201 Tromp Trail Unit 84, Fall River, MA, 02790
+    MRN:                 5532bf23-7e81-eca1-5887-06204013d427
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 24, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      1 days
+    Attending Physician: Dr. Martinez
+
+================================================================================
+
+CLINICAL COURSE:
+    Admitted for management of bowel obstruction requiring surgical intervention. intensive rehabilitation protocols was initiated, resulting in symptomatic relief. Patient remained stable throughout 1-day admission. Discharged after clinical goals met.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    • Medication 7: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 12-19 days
+    • Specialty: Orthopedics - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Portable Oxygen Tank
+    Description:         Portable oxygen cylinder (E-tank) with regulator for patient mobility.
+    Vendor Type:         Clinical Respiratory
+    Category:            Respiratory
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to assisted living.
+    Home care services arranged: As needed
+    Visiting nurse evaluation: Pending
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 5532bf23-7e81-eca1-5887-06204013d427
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

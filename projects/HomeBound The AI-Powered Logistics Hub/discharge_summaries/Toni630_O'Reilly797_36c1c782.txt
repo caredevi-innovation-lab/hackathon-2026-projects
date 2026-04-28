@@ -1,0 +1,63 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Toni630 O'Reilly797
+    Date of Birth:       1998-01-23
+    Sex:                 Female
+    Address:             838 Treutel Crossing, Worcester, MA, 01608
+    MRN:                 36c1c782-8400-4e3f-4428-c8a53c26fbe1
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 23, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      2 days
+    Attending Physician: Dr. Chen
+
+================================================================================
+
+CLINICAL COURSE:
+    Patient experienced acute atrial fibrillation with rate control and underwent blood glucose management with sliding scale insulin. Recovery was steady without complications. Patient tolerating diet well by discharge. Now appropriate for discharge with home care support.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 6-13 days
+    • Specialty: Orthopedics - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Raised Toilet Seat
+    Description:         Elevated toilet seat riser to reduce hip flexion stress in post-op patients.
+    Vendor Type:         Home Care Accessories
+    Category:            Bathroom
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to home with home health services.
+    Home care services arranged: Yes
+    Visiting nurse evaluation: Scheduled
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 36c1c782-8400-4e3f-4428-c8a53c26fbe1
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________
