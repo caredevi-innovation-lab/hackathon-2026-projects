@@ -24,6 +24,7 @@ Built for the CareDevi AI Innovation Hackathon 2026.
 </div>
 
 ---
+## Solution Description
 
 ## 👥 Team Members
 
@@ -52,6 +53,7 @@ MedRoute conducts a short conversational interview, asks focused follow-up quest
 The app uses Groq's `llama-3.3-70b-versatile` model through a server-side proxy so the API key never touches the browser.
 
 ---
+## Tech Stack
 
 ## Tech stack
 
