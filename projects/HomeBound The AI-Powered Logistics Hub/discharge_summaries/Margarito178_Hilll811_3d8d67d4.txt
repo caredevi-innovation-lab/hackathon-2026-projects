@@ -1,0 +1,66 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Margarito178 Hilll811
+    Date of Birth:       1975-11-27
+    Sex:                 Male
+    Address:             1075 Littel Trace Unit 14, Springfield, MA, 01129
+    MRN:                 3d8d67d4-62a1-32fd-4878-04b0ec39d0fd
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 20, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      5 days
+    Attending Physician: Dr. Williams
+
+================================================================================
+
+CLINICAL COURSE:
+    Initial presentation of post-operative recovery from hip replacement responded well to transfusion and blood product management. Vitals stable (BP 158/72, HR 57). Patient educated on follow-up. Safe for discharge.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 21-28 days
+    • Specialty: Orthopedics - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Shower Chair
+    Description:         Waterproof chair with back support and armrests for safe bathing.
+    Vendor Type:         Home Care Accessories
+    Category:            Bathroom
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to home with home health services.
+    Home care services arranged: Yes
+    Visiting nurse evaluation: Pending
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 3d8d67d4-62a1-32fd-4878-04b0ec39d0fd
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

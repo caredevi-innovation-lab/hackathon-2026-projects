@@ -1,0 +1,67 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Shizuko29 Dickens475
+    Date of Birth:       2013-05-15
+    Sex:                 Female
+    Address:             342 Stehr Ville, South Hadley, MA, 00000
+    MRN:                 62df1c3b-1310-8efe-7499-01499edd1452
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 21, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      4 days
+    Attending Physician: Dr. Martinez
+
+================================================================================
+
+CLINICAL COURSE:
+    Patient presented with acute coronary syndrome complicated by chronic kidney disease stage 3. Multi-disciplinary team managed with anticoagulation therapy initiation. Achieved adequate pain control (VAS 3). Ready for discharge.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    • Medication 7: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 10-17 days
+    • Specialty: Infectious Disease - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   CPAP Machine
+    Description:         Continuous positive airway pressure device for obstructive sleep apnea treatment.
+    Vendor Type:         Clinical Respiratory
+    Category:            Respiratory
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to assisted living.
+    Home care services arranged: As needed
+    Visiting nurse evaluation: Not needed
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 62df1c3b-1310-8efe-7499-01499edd1452
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

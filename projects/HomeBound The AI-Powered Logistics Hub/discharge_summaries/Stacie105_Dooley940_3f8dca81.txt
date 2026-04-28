@@ -1,0 +1,68 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Stacie105 Dooley940
+    Date of Birth:       1992-11-09
+    Sex:                 Female
+    Address:             283 Fahey Byway, Springfield, MA, 01020
+    MRN:                 3f8dca81-462c-d582-e162-f1b5c6589526
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 24, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      1 days
+    Attending Physician: Dr. Patel
+
+================================================================================
+
+CLINICAL COURSE:
+    Initial presentation of post-surgical wound infection management responded well to IV hydration and electrolyte management. Vitals stable (BP 125/88, HR 56). Patient educated on follow-up. Safe for discharge.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    • Medication 6: Continue as prescribed
+    • Medication 7: Continue as prescribed
+    • Medication 8: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 5-12 days
+    • Specialty: Pulmonology - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Rollator Walker
+    Description:         Wheeled walker with seat and hand brakes for elderly patients with limited endurance.
+    Vendor Type:         Mobility & Rehabilitation
+    Category:            Mobility
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to home.
+    Home care services arranged: No
+    Visiting nurse evaluation: Not needed
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 3f8dca81-462c-d582-e162-f1b5c6589526
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________

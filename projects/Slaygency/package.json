@@ -1,0 +1,28 @@
+{
+  "name": "slaygency-mern",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hackathon MERN starter",
+  "workspaces": [
+    "src/server",
+    "src/client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace src/server\" \"npm run dev --workspace src/client\"",
+    "dev:server": "npm run dev --workspace src/server",
+    "dev:client": "npm run dev --workspace src/client",
+    "lint": "npm run lint --workspace src/server && npm run lint --workspace src/client",
+    "format": "prettier --write .",
+    "build": "npm run build --workspace src/client",
+    "start": "npm run start --workspace src/server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "recharts": "^3.8.1"
+  }
+}

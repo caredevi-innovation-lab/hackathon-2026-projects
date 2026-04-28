@@ -1,0 +1,9 @@
+.venv
+datasets
+dataset
+__pycache__
+combined_datasets.csv
+models
+dataset.zip
+.env
+hypertensive_and_glaucoma_model.pth

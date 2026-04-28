@@ -1,0 +1,65 @@
+DISCHARGE SUMMARY
+
+================================================================================
+
+PATIENT IDENTIFICATION:
+    Name:                Caterina17 Mante251
+    Date of Birth:       2022-10-14
+    Sex:                 Female
+    Address:             598 Donnelly Divide, Milton, MA, 02186
+    MRN:                 40e96868-17cd-84dc-5ebd-d593befe782e
+
+ADMISSION/DISCHARGE INFORMATION:
+    Admission Date:      April 21, 2026
+    Discharge Date:      April 25, 2026
+    Length of Stay:      4 days
+    Attending Physician: Dr. Chen
+
+================================================================================
+
+CLINICAL COURSE:
+    Presented with post-operative pain management. Managed conservatively with transfusion and blood product management over 3 days. Patient improved significantly and is ready for home-based care.
+
+================================================================================
+
+DISCHARGE PLAN:
+
+Medications:
+    • Medication 1: Continue as prescribed
+    • Medication 2: Continue as prescribed
+    • Medication 3: Continue as prescribed
+    • Medication 4: Continue as prescribed
+    • Medication 5: Continue as prescribed
+    All prescriptions filled at discharge pharmacy.
+
+Follow-up Appointments:
+    • Primary Care: 18-25 days
+    • Specialty: Cardiology - 1-2 weeks
+    • Lab work: As ordered by primary care physician
+
+Durable Medical Equipment (DME):
+    Equipment Ordered:   Standard Walker
+    Description:         Four-legged walker with front wheels for gait stability and balance support.
+    Vendor Type:         Mobility & Rehabilitation
+    Category:            Mobility
+    Expected Delivery:   3-5 business days
+
+Patient Disposition:
+    Patient discharged to skilled nursing facility.
+    Home care services arranged: Yes
+    Visiting nurse evaluation: Not needed
+
+================================================================================
+
+ADDITIONAL NOTES:
+    • Comprehensive discharge education provided regarding medications, diet, activity
+    • Patient and caregiver demonstrated understanding of discharge instructions
+    • Activity restrictions and weight-bearing status clearly communicated
+    • Warning signs reviewed: seek emergency care if experiencing chest pain, shortness of breath, severe fever
+    • Follow-up immunizations status reviewed
+    • Completed advance directive documentation
+
+______________________________________________________________________________
+MRN: 40e96868-17cd-84dc-5ebd-d593befe782e
+Generated: 2026-04-25 15:41:48
+______________________________________________________________________________
